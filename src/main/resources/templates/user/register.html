@@ -7,43 +7,49 @@
 <h1>Register User</h1>
 <form method='post' th:action='@{/register}' th:object="${user}">
 
-<div class='field'>
-<label class='label'>Name</label>
-<div class='control'>
-<input class='input' type='text' name='name'/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Name</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='name'/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Staff ID</label>
-<div class='control'>
-<input class='input' type='text' name='staffid'/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Staff ID</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='staffid'/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>E-mail</label>
-<div class='control'>
-<input class='input' type='text' name='email'/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>E-mail</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='email'/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Password</label>
-<div class='control'>
-<input class='input' type='password' name='password'/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Password</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='password' name='password'/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Confirm Password</label>
-<div class='control'>
-<input class='input' type='password' name='confirm'/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Confirm Password</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='password' name='confirm'/>
 </div>
 </div>
 
-<div class='field'>
-<button class='button' name='register'>Register</button>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<button class='btn btn-primary' name='register'>Register</button>
 </div>
 </form>
 </div>

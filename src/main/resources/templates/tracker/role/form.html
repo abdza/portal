@@ -8,16 +8,18 @@
 <form method='post' th:action='@{/trackers/roles/{tracker_id}/save(tracker_id=${tracker.id})}' th:object="${tracker_role}">
 <input type='hidden' name='id' th:value='${tracker_role.id}'/>
 <input type='hidden' name='tracker_id' th:value='${tracker.id}'/>
-<div class='field'>
-<label class='label'>Name</label>
-<div class='control'>
-<input class='input' type='text' name='name' th:value="${tracker_role.name}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Name</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='name' th:value="${tracker_role.name}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Role Type</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Role Type</label></div>
+<div class='col-sm-9'>
 <select class='input' name='role_type'>
 <option value='User Role' th:selected="${tracker_role.roleType=='User Role'}">User Role</option>
 <option value='Data Compare' th:selected="${tracker_role.roleType=='Data Compare'}">Data Compare</option>
@@ -25,15 +27,17 @@
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Role Rule</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Role Rule</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='role_rule' th:text="${tracker_role.roleRule}"/>
 </div>
 </div>
 
 
-<div class='field'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
 <button class='button' name='save'>Save</button>
 <button class='button' name='cancel'>Cancel</button>
 </div>

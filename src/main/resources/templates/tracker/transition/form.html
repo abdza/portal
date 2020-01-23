@@ -9,77 +9,88 @@
 <input type='hidden' name='id' th:value='${tracker_transition.id}'/>
 <input type='hidden' name='tracker_id' th:value='${tracker.id}'/>
 
-<div class='field'>
-<label class='label'>Name</label>
-<div class='control'>
-<input class='input' type='text' name='name' th:value="${tracker_transition.name}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Name</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='name' th:value="${tracker_transition.name}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Prev Status</label>
-<div class='control'>
-<input class='input' type='text' name='prevStatus' th:value="${tracker_transition.prevStatus}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Prev Status</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='prevStatus' th:value="${tracker_transition.prevStatus}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Next Status</label>
-<div class='control'>
-<input class='input' type='text' name='nextStatus' th:value="${tracker_transition.nextStatus}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Next Status</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='nextStatus' th:value="${tracker_transition.nextStatus}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Allowed Roles</label>
-<div class='control'>
-<input class='input' type='text' name='allowedRoles' th:value="${tracker_transition.allowedRoles}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Allowed Roles</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='text' name='allowedRoles' th:value="${tracker_transition.allowedRoles}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Display Fields</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Display Fields</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='displayFields' th:text="${tracker_transition.displayFields}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Edit Fields</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Edit Fields</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='editFields' th:text="${tracker_transition.editFields}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Required Fields</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Required Fields</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='requiredFields' th:text="${tracker_transition.requiredFields}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Enabled Condition</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Enabled Condition</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='enabledCondition' th:text="${tracker_transition.enabledCondition}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Update Trails</label>
-<div class='control'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Update Trails</label></div>
+<div class='col-sm-9'>
 <textarea class='input' name='updateTrails' th:text="${tracker_transition.updateTrails}"/>
 </div>
 </div>
 
-<div class='field'>
-<label class='label'>Goto Prev Status List</label>
-<div class='control'>
-<input class='input' type='checkbox' name='gotoPrevStatusList' th:value="${tracker_transition.gotoPrevStatusList}"/>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+<label class='mb-0'>Goto Prev Status List</label></div>
+<div class='col-sm-9'>
+<input class="form-control col-sm-8 col-md-6" type='checkbox' name='gotoPrevStatusList' th:value="${tracker_transition.gotoPrevStatusList}"/>
 </div>
 </div>
 
-<div class='field'>
+<div class='form-group row'>
+<div class='col-sm-3 col-form-label text-sm-right pr-0'>
 <button class='button' name='save'>Save</button>
 <button class='button' name='cancel'>Cancel</button>
 </div>
