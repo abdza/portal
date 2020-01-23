@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>DataUpdate Form</title>
+<body>
+<section  class='page-content'>
+<div class='content'>
+<h1>Create DataUpdate</h1>
+<form method='post' th:action='@{/dataupdates/save}' th:object="${dataupdate}" enctype="multipart/form-data">
+<input type='hidden' name='id' th:value='${dataupdate.id}'/>
+
+<div class='field'>
+<label class='label'>Tracker</label>
+<div class='control'>
+<select class='input' name='tracker' th:value="${dataupdate.tracker}">
+<option th:each="tracker,iter: ${trackers}" th:text="${tracker.title}" th:value="${tracker.id}"  th:selected="${dataupdate?.tracker?.id==opt}">title</option> 
+</select>
+</div>
+</div>
+
+<div class='field'>
+<label class='label'>Header Start</label>
+<div class='control'>
+<input class='input' type='text' name='headerstart' th:value="${dataupdate.headerStart}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Header End</label>
+<div class='control'>
+<input class='input' type='text' name='headerend' th:value="${dataupdate.headerEnd}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Data Start</label>
+<div class='control'>
+<input class='input' type='text' name='datarow' th:value="${dataupdate.dataRow}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Data End</label>
+<div class='control'>
+<input class='input' type='text' name='dataend' th:value="${dataupdate.dataEnd}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>File</label>
+<div class='control'>
+<input class='input' type='file' name='file'/>
+</div>
+</div>
+
+<div class='field'>
+<button class='button' name='save'>Save</button>
+<button class='button' name='cancel'>Cancel</button>
+</div>
+</form>
+</div>
+</section>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>File Form</title>
+<body>
+<section  class='page-content'>
+<div class='content'>
+<h1>Create File</h1>
+<form method='post' th:action='@{/files/save}' th:object="${filelink}" enctype="multipart/form-data">
+<input type='hidden' name='id' th:value='${filelink.id}'/>
+
+<div class='field'>
+<label class='label'>Module</label>
+<div class='control'>
+<input class='input' type='text' name='module' th:value="${filelink.module}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Slug</label>
+<div class='control'>
+<input class='input' type='text' name='slug' th:value="${filelink.slug}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>File</label>
+<div class='control'>
+<input class='input' type='file' name='file'/>
+</div>
+</div>
+
+<div class='field'>
+<button class='button' name='save'>Save</button>
+<button class='button' name='cancel'>Cancel</button>
+</div>
+</form>
+</div>
+</section>
+</body>
+</html>

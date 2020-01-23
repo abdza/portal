@@ -1,0 +1,9 @@
+spring.datasource.url=jdbc:sqlserver://xx.xx.xx.xx:1433;databaseName=dbname
+spring.datasource.username=sa
+spring.datasource.password=dbpassword
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.servlet.multipart.max-file-size=1024MB
+spring.servlet.multipart.max-request-size=1024MB
+portal.uploadroot=upload

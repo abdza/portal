@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>Page Listing</title>
+
+<section  class='page-content'>
+<div class='content'>
+<h1>Tracker Listing</h1>
+<a href="#" th:href="@{/trackers/create}" class="btn btn-primary">Add</a>
+<table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
+<tr><th>#</th><th>Module</th><th>Slug</th><th>Title</th></tr>
+<tr th:each="tracker,iter: ${trackers}">
+<td><a href='#' th:href='@{/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a></td>
+<td th:text="${tracker.module}">module</td>
+<td><a href='#' th:href='@{/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug</td>
+<td th:text="${tracker.title}">title</td>
+</tr>
+</table>
+</div>
+
+<nav th:replace="macros::navpagination(items=${trackers},url='/trackers')"></nav>
+
+</section>

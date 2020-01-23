@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>DataUpdate Display</title>
+<body>
+<section  class='page-content'>
+
+<div class='columns'>
+<div class='column has-text-weight-bold'>Tracker:</div>
+<div class='column' th:text="${dataupdate.tracker.title}">module</div>
+<div class='column has-text-weight-bold'>Date:</div>
+<div class='column' th:text="${dataupdate.dateCreated}">slug</div>
+</div>
+
+</section>
+</body>
+</html>

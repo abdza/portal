@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}" 
+		xmlns="http://www.w3.org/1999/xhtml" 
+		xmlns:th="http://www.thymeleaf.org"
+		xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" >
+<title th:text='${tracker.title}'>Tracker Display</title>
+<body>
+<section  class='page-content'>
+<h1>Tracker Info</h1>
+<h2 th:text="${tracker.title}">Tracker title</h2>
+
+<div th:replace="tracker/trackerbase::trackertabs(current_active='details')" class="tabs is-boxed">
+
+</div>
+
+<div class='row m-1'>
+<a href="#" th:href="@{/{module}/{slug}/list(module=${tracker.module},slug=${tracker.slug})}" class="btn btn-primary mr-1">View</a>
+<a href="#" th:href="@{/trackers/edit/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Edit</a>
+<a href="#" th:href="@{/trackers/updatedb/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Update DB</a>
+<a href="#" th:href="@{/trackers/fixstatus/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Fix Status</a>
+<form method='post' th:action='@{/trackers/delete/{id}(id=${tracker.id})}' th:object="${tracker}" class="form-inline">
+<input type='submit'  class="btn btn-warning" th:onClick='return confirm("Confirm delete tracker " + this.getAttribute("data-fname") + "?");' th:attr="data-fname=${tracker.title}" value='Delete'/>
+</form>
+</div>
+
+<div class="container">
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Title:</div>
+<div class='col-sm' th:text="${tracker.title}">module</div>
+<div class='col-sm font-bold text-sm-right'>Type:</div>
+<div class='col-sm' th:text="${tracker.trackerType}">slug</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Module:</div>
+<div class='col-sm' th:text="${tracker.module}">module</div>
+<div class='col-sm font-bold text-sm-right'>Slug:</div>
+<div class='col-sm' th:text="${tracker.slug}">slug</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Data Table:</div>
+<div class='col-sm' th:text="${tracker.dataTable}" >dataTable</div>
+<div class='col-sm font-bold text-sm-right'>Updates Table:</div>
+<div class='col-sm' th:text="${tracker.updatesTable}" >tail_table</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Initial Status:</div>
+<div class='col-sm-9' th:text="${tracker.initialStatus}" >dataTable</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>List Fields:</div>
+<div class='col-sm-9' th:text="${tracker.listFields}" >dataTable</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Display Fields:</div>
+<div class='col-sm-9' th:text="${tracker.displayFields}" >dataTable</div>
+</div>
+
+<div class='row'>
+<div class='col-sm font-bold text-sm-right'>Form Fields:</div>
+<div class='col-sm-9' th:text="${tracker.formFields}" >dataTable</div>
+</div>
+
+</div>
+
+</section>
+</body>
+</html>

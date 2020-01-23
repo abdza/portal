@@ -1,0 +1,52 @@
+{
+  "_from": "basictable@",
+  "_id": "basictable@1.0.9",
+  "_inBundle": false,
+  "_integrity": "sha512-yjdATUNCL2bM8WQTfhVnEZmtXSttiDotZOK5S0PCFydDnMmUa03OsM8NLtwJMRwNGl/oNBtLtvmzfwIdCXr0eQ==",
+  "_location": "/basictable",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "basictable@",
+    "name": "basictable",
+    "escapedName": "basictable",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/basictable/-/basictable-1.0.9.tgz",
+  "_shasum": "de456feb18419dbddaa40b7049ea7d74001184cd",
+  "_spec": "basictable@",
+  "_where": "D:\\xampp\\htdocs\\ace",
+  "author": {
+    "name": "jerrylow"
+  },
+  "bugs": {
+    "url": "https://github.com/jerrylow/basictable/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Basic Table jQuery plugin for simple responsive tables.",
+  "homepage": "https://github.com/jerrylow/basictable#readme",
+  "keywords": [
+    "jquery",
+    "table",
+    "responsive"
+  ],
+  "license": "MIT",
+  "main": "jquery.basictable.js",
+  "name": "basictable",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerrylow/basictable.git"
+  },
+  "scripts": {
+    "compile": "uglifyjs jquery.basictable.js > jquery.basictable.min.js -c -m --comments",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.9"
+}

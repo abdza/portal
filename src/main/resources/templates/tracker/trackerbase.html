@@ -1,0 +1,71 @@
+<table th:fragment="datatable(tracker,dataset)" class="table">
+<tr><th>#</th>
+<th th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
+</tr>
+<tr th:each="datas,iter: ${dataset.dataRows}">
+<td><a href='#' th:text="${iter.count}" th:href="@{/{module}/{slug}/display/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')?.toString()})}" >2</a></td>
+<td th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
+</tr>
+</table>
+
+<div th:fragment="dataform(tracker,datas,transition)" class='dataform'>
+<form method='post' th:action='@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
+<input type='hidden' name='id' th:value="${datas.get('id')?.toString()}" th:if="${datas?.get('id')!=null}"/>
+<input type='hidden' name='transition_id' th:value="${transition.id}" th:if="${transition!=null}"/>
+
+<div th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}">
+<div th:replace="tracker/trackerbase::dataformfield(tracker=${tracker},datas=${datas},field=${field})"></div>
+</div>
+
+<div class='field'>
+<button class='button' name='save'>Save</button>
+<button class='button' name='cancel'>Cancel</button>
+</div>
+
+</form>
+</div>
+
+<div th:fragment="dataformfield(tracker,datas,field)" class="dataform">
+<label class='label' th:text="${field.label}">Module</label>
+<div class='control'>
+<input class='input' type='text' th:name="${'val_' + field.name}" th:value="${datas?.get(field.name)?.toString()}"/>
+</div>
+</div>
+
+<div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
+<div th:each="field,iter: ${trackerservice.field_list(tracker,'display',null)}" class='columns'>
+<div class='column is-one-quarter has-text-weight-bold' th:text="${field.label + ':'}">Form Fields:</div>
+<div class='column' th:text="${datas.get(field.name)?.toString()}" >data_table</div>
+</div>
+</div>
+
+<div th:fragment="trackertabs(current_active)" class="tabs-above">
+
+<ul class="nav nav-tabs nav-justified" role="tablist">
+<li class="nav-item mr-1px">
+    <a th:classappend="${current_active=='details'}?'active'" th:href="@{/trackers/display/{tracker_id}(tracker_id=${tracker.id})}" class="nav-link text-left radius-0"  >
+        Details
+    </a>
+</li>
+<li class="nav-item mr-1px">
+    <a th:classappend="${current_active=='fields'}?'active'" th:href="@{/trackers/fields/{tracker_id}(tracker_id=${tracker.id})}" class="nav-link text-left radius-0" >
+        Fields
+    </a>
+</li>
+<li class="nav-item mr-1px">
+    <a th:classappend="${current_active=='roles'}?'active'" th:href="@{/trackers/roles/{id}(id=${tracker.id})}" class="nav-link text-left radius-0" >
+        Roles
+    </a>
+</li>
+<li class="nav-item mr-1px">
+    <a th:classappend="${current_active=='status'}?'active'" th:href="@{/trackers/status/{id}(id=${tracker.id})}" class="nav-link text-left radius-0" >
+        Status
+    </a>
+</li>
+<li class="nav-item mr-1px">
+    <a th:classappend="${current_active=='transitions'}?'active'" th:href="@{/trackers/transitions/{id}(id=${tracker.id})}" class="nav-link text-left radius-0" >
+        Transitions
+    </a>
+</li>
+</ul>
+</div>

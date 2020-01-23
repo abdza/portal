@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html th:replace="~{base::layout(~{::title},~{::section})}">
+<title>Login</title>
+<body>
+<section  class='page-content'>
+<div class='p-2 p-md-4'>
+
+    <div class="d-none d-lg-block col-md-6 offset-md-3 mt-lg-4 px-0">
+        <h4 class="text-dark-tp4 border-b-1 brc-grey-l1 pb-1 text-130">
+            <i class="fa fa-coffee text-orange-m2 mr-1"></i>
+            Welcome Back
+        </h4>
+    </div>
+    
+    <div class="d-lg-none text-secondary-m1 my-4 text-center">
+        <a href="{{getPageLink 'dashboard'}}"><i class="fa fa-leaf text-success-m2 text-200 mb-4"></i></a>
+        <h1 class="text-170">
+            <span class="text-blue-d1">Ace <span class="text-80 text-dark-tp3">Application</span></span>
+        </h1>
+    
+        Welcome back
+    </div>
+    
+    <form class="form-row mt-4" th:action='@{/login}' method='post'>
+        <div class="form-group col-md-6 offset-md-3">
+            <div class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
+                <input type="text" class="form-control form-control-lg pr-4 shadow-none" id="username" name="username" autocomplete="off" />
+                <i class="fa fa-user text-grey-m2 ml-n4"></i>
+                <label class="floating-label text-grey-l1 text-100 ml-n3" for="username">Username</label>
+            </div>
+        </div>
+    
+        <div class="form-group col-md-6 offset-md-3 mt-2 mt-md-1">
+            <div class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
+                <input type="password" class="form-control form-control-lg pr-4 shadow-none" id="password" name="password" autocomplete="off" />
+                <i class="fa fa-key text-grey-m2 ml-n4"></i>
+                <label class="floating-label text-grey-l1 text-100 ml-n3" for="password">Password</label>
+            </div>
+        </div>
+        <div class="col-md-6 offset-md-3 text-right text-md-right mt-n2 mb-2">
+            <a href="#" class="text-primary-m2 text-95" data-toggle="tab" data-target="#id-tab-forgot">
+                Forgot Password?
+            </a>
+        </div>
+    
+        <div class="form-group col-md-6 offset-md-3">
+            <label class="d-inline-block mt-3 mb-0 text-secondary-d2">
+                <input type="checkbox" class="mr-1" id="id-remember-me" />
+                Remember me
+            </label>
+    
+            <input type="submit" value="Sign In" class="btn btn-info btn-block btn-md btn-bold mt-2 mb-4"/>
+        </div>
+    </form>
+    
+    
+    <div class="form-row">
+     <div class="col-12 col-md-6 offset-md-3 d-flex flex-column align-items-center justify-content-center">
+        
+        <hr class="brc-default-m4 mt-0 mb-2 w-100" />
+        
+        <div class="p-0 px-md-2 text-dark-tp3 my-3">
+            Not a member?
+            <a class="text-success-m2 text-600 mx-1" data-toggle="tab" data-target="#id-tab-signup" href="#">
+                Signup now
+            </a>
+        </div>
+    
+     </div>
+    </div>
+
+</div>
+</section>
+</body>
+</html>

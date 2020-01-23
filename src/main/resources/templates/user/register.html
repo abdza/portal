@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>Register</title>
+<body>
+<section  class='page-content'>
+<div class='content'>
+<h1>Register User</h1>
+<form method='post' th:action='@{/register}' th:object="${user}">
+
+<div class='field'>
+<label class='label'>Name</label>
+<div class='control'>
+<input class='input' type='text' name='name'/>
+</div>
+</div>
+
+<div class='field'>
+<label class='label'>Staff ID</label>
+<div class='control'>
+<input class='input' type='text' name='staffid'/>
+</div>
+</div>
+
+<div class='field'>
+<label class='label'>E-mail</label>
+<div class='control'>
+<input class='input' type='text' name='email'/>
+</div>
+</div>
+
+<div class='field'>
+<label class='label'>Password</label>
+<div class='control'>
+<input class='input' type='password' name='password'/>
+</div>
+</div>
+
+<div class='field'>
+<label class='label'>Confirm Password</label>
+<div class='control'>
+<input class='input' type='password' name='confirm'/>
+</div>
+</div>
+
+<div class='field'>
+<button class='button' name='register'>Register</button>
+</div>
+</form>
+</div>
+</section>
+</body>
+</html>

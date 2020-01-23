@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>DataUpdate Form</title>
+<body>
+<section  class='page-content'>
+<div class='content'>
+<h1>Create DataUpdate</h1>
+<form method='post' th:action='@{/dataupdates/setparam/{id}(id=${dataupdate.id})}' th:object="${dataupdate}" enctype="multipart/form-data">
+<input type='hidden' name='id' th:value='${dataupdate.id}'/>
+
+<table class='table'>
+<tr><th>Field</th><th>Column</th><th>Manual Entry</th><th>Key Update</th></tr>
+<tr th:each="field,iter:${dataupdate.tracker.fields}">
+<td th:text="${field.name}"></td>
+<td>
+<select th:name='${"col_" + field.name}'>
+<option value='ignore'>Ignore</option>
+<option value='manual'>Manual</option>
+<option th:each="opt,iter: ${columns}" th:text="${opt.getValue()}" th:value="${opt.getKey()}"  th:selected='${field.name==opt.getValue().replace(" ","_").replaceAll("[^A-Za-z0-9_]","").toLowerCase()}'>
+</select>
+</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<div class='field'>
+<button class='button' name='save'>Save</button>
+</div>
+</form>
+</div>
+</section>
+</body>

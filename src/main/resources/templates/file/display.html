@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" th:href="@{/css/bulma.css}"/>
+<title th:text="${page.title}">Page Title</title>
+</head>
+<body>
+<section  class='page-content'>
+<div class='content' th:utext='${page.content}'>
+</div>
+</section>
+</body>
+</html>

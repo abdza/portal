@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title th:text='${setting.name}'>Page Display</title>
+<body>
+<section  class='page-content'>
+
+<div class='columns'>
+<div class='column has-text-weight-bold'>Module:</div>
+<div class='column' th:text="${setting.module}">module</div>
+<div class='column has-text-weight-bold'>Name:</div>
+<div class='column' th:text="${setting.name}">slug</div>
+</div>
+
+<div class='columns'>
+<div class='column has-text-weight-bold'>Text:</div>
+<div class='column' th:text="${setting.textValue}">module</div>
+<div class='column has-text-weight-bold'>Number:</div>
+<div class='column' th:text="${setting.number}">slug</div>
+</div>
+
+<div class='columns'>
+<div class='column has-text-weight-bold'>Date:</div>
+<div class='column' th:text="${setting.dateValue}">module</div>
+</div>
+
+</section>
+</body>
+</html>

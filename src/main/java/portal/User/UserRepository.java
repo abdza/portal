@@ -1,0 +1,11 @@
+package portal.User;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+	
+	User findOneByStaffid(String staffid);
+	
+	User findByUsername(String username);
+
+}

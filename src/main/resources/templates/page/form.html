@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title>Page Form</title>
+<body>
+<section  class='page-content'>
+<div class='content'>
+<h1>Create Page</h1>
+<form method='post' th:action='@{/pages/save}' th:object="${page}">
+<input type='hidden' name='id' th:value='${page.id}'/>
+<div class='field'>
+<label class='label'>Module</label>
+<div class='control'>
+<input class='input' type='text' name='module' th:value="${page.module}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Slug</label>
+<div class='control'>
+<input class='input' type='text' name='slug' th:value="${page.slug}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Title</label>
+<div class='control'>
+<input class='input' type='text' name='title' th:value="${page.title}"/>
+</div>
+</div>
+<div class='field'>
+<label class='label'>Content</label>
+<div class='control'>
+<textarea class='textarea' name='content' th:value="${page.content}" th:text="${page.content}">
+</textarea>
+</div>
+</div>
+<div class='field'>
+<button class='button' name='save'>Save</button>
+<button class='button' name='cancel'>Cancel</button>
+</div>
+</form>
+</div>
+</section>
+</body>
+</html>

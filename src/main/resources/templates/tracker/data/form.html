@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html th:replace="~{layout::layout(~{::title},~{::section})}">
+<title th:text="${formtitle}">Add Data</title>
+
+<section  class='page-content'>
+<div class='content'>
+<h1 th:text="${formtitle}">Add Data</h1>
+
+<div class='dataform' th:replace="tracker/trackerbase::dataform(tracker=${tracker},datas=${datas},transition=${transition})">
+</div>
+
+</div>
+
+</section>
