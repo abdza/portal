@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Page Listing</title>
-<body>
-<section  class='page-content'>
-<div class='content'>
-<h1>Welcome To Portal</h1>
+<html layout:decorate="~{layout}">
 
-</div>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Welcome To Portal</h1>
+
+    </div>
 </section>
-</body>
+
 </html>

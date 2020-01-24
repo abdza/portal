@@ -1,42 +1,42 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Import Excel Template</title>
-<body>
-<section  class='page-content'>
-<div class='content'>
-<h1>Import Excel Template</h1>
-<form method='post' th:action='@{/trackers/{tracker_id}/exceltemplate(tracker_id=${tracker.id})}' th:object="${tracker}" enctype="multipart/form-data">
-<input type='hidden' name='id' th:value='${tracker.id}'/>
+<html layout:decorate="~{layout}">
 
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'>
-<label class='mb-0'>File</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='file' name='file'/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'>
-<label class='mb-0'>Header Start</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='headerstart' value="1"/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'>
-<label class='mb-0'>Header End</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='headerend' value="1"/>
-</div>
-</div>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Import Excel Template</h1>
+        <form method='post' th:action='@{/trackers/{tracker_id}/exceltemplate(tracker_id=${tracker.id})}'
+            th:object="${tracker}" enctype="multipart/form-data">
+            <input type='hidden' name='id' th:value='${tracker.id}' />
 
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'>
-<button class='button' name='save'>Save</button>
-<button class='button' name='cancel'>Cancel</button>
-</div>
-</form>
-</div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>File</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='file' name='file' />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Header Start</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='headerstart' value="1" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Header End</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='headerend' value="1" />
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <button class='button' name='save'>Save</button>
+                    <button class='button' name='cancel'>Cancel</button>
+                </div>
+        </form>
+    </div>
 </section>
-</body>
+
 </html>

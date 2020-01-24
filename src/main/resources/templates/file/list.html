@@ -1,39 +1,38 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<head>
-<title>File Listing</title>
-</head>
+<html layout:decorate="~{layout}">
 
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>File Listing</h1>
+        <a href="#" th:href="@{/files/create}" class="btn btn-primary">Add</a>
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Module</th>
+                <th>Slug</th>
+                <th>Name</th>
+                <th>Path</th>
+                <th>Filegroup</th>
+                <th>Allowed Roles</th>
+                <th>Sort Num</th>
+            </tr>
+            <tr th:each="filelink,iter: ${files}">
+                <td><a href='#' th:href='@{/files/edit/{id}(id=${filelink.id})}' th:text="${iter.index + 1}">2</a></td>
+                <td><a href='#' th:href='@{/files/download/{id}(id=${filelink.id})}'
+                        th:text="${filelink.module}">Module</a></td>
+                <td th:text="${filelink.slug}">Slug</td>
+                <td th:text="${filelink.name}">Name</td>
+                <td th:text="${filelink.path}">Path</td>
+                <td th:text="${filelink.fileGroup}">File Group</td>
+                <td th:text="${filelink.allowedRoles}">Allowed Roles</td>
+                <td th:text="${filelink.sortNum}">Sort Num</td>
+            </tr>
+        </table>
+    </div>
 
-<section  class='page-content'>
-<div class='content'>
-<h1>File Listing</h1>
-<a href="#" th:href="@{/files/create}" class="btn btn-primary">Add</a>
-<table class="table">
-<tr>
-<th>#</th>
-<th>Module</th>
-<th>Slug</th>
-<th>Name</th>
-<th>Path</th>
-<th>Filegroup</th>
-<th>Allowed Roles</th>
-<th>Sort Num</th>
-</tr>
-<tr th:each="filelink,iter: ${files}">
-<td><a href='#' th:href='@{/files/edit/{id}(id=${filelink.id})}' th:text="${iter.index + 1}">2</a></td>
-<td><a href='#' th:href='@{/files/download/{id}(id=${filelink.id})}'  th:text="${filelink.module}">Module</a></td>
-<td th:text="${filelink.slug}">Slug</td>
-<td th:text="${filelink.name}">Name</td>
-<td th:text="${filelink.path}">Path</td>
-<td th:text="${filelink.fileGroup}">File Group</td>
-<td th:text="${filelink.allowedRoles}">Allowed Roles</td>
-<td th:text="${filelink.sortNum}">Sort Num</td>
-</tr>
-</table>
-</div>
-
-<nav th:replace="macros::navpagination(items=${files},url='/files')"></nav>
+    <nav th:replace="macros::navpagination(items=${files},url='/files')"></nav>
 
 
 </section>
+
+</html>

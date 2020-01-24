@@ -1,31 +1,36 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Excel Type</title>
-<body>
-<section  class='page-content'>
-<div class='content'>
-<h1>Excel Type</h1>
-<form method='post' th:action='@{/trackers/{tracker_id}/savetemplate(tracker_id=${tracker.id})}'>
-<input type='hidden' name='id' th:value='${tracker.id}'/>
+<html layout:decorate="~{layout}">
 
-<table class='table'>
-<tr><th>Field</th><th>Type</th></tr>
-<tr th:each="field,iter:${fieldname}">
-<td th:text="${field.value}"></td>
-<td>
-<input type='hidden' th:name='${"lbl_" + field.key}' th:value='${field.value}'/>
-<select th:name='${"col_" + field.key}'>
-<option th:each="field_type,iter: ${trackerfield.typeOptions}" th:value="${field_type}" th:text="${field_type}" value='ignore'  th:selected="${fieldtype[field.key]==field_type}">Ignore</option>
-</select>
-</td>
-</tr>
-</table>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Excel Type</h1>
+        <form method='post' th:action='@{/trackers/{tracker_id}/savetemplate(tracker_id=${tracker.id})}'>
+            <input type='hidden' name='id' th:value='${tracker.id}' />
 
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'>
-<button class='button' name='save'>Save</button>
-</div>
-</form>
-</div>
+            <table class='table'>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                </tr>
+                <tr th:each="field,iter:${fieldname}">
+                    <td th:text="${field.value}"></td>
+                    <td>
+                        <input type='hidden' th:name='${"lbl_" + field.key}' th:value='${field.value}' />
+                        <select th:name='${"col_" + field.key}'>
+                            <option th:each="field_type,iter: ${trackerfield.typeOptions}" th:value="${field_type}"
+                                th:text="${field_type}" value='ignore'
+                                th:selected="${fieldtype[field.key]==field_type}">Ignore</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <button class='button' name='save'>Save</button>
+                </div>
+        </form>
+    </div>
 </section>
-</body>
+
+</html>

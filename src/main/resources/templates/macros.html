@@ -93,7 +93,7 @@
        <!-- mobile #navbarMenu toggler button -->
        <button class="navbar-toggler ml-1 mr-2 px-1" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navbar menu">
            <span class="pos-rel">
-               <img class="border-2 brc-white-tp1 radius-round" width="36" src="assets/image/user.jpg" alt="Jason's Photo">
+               <img class="border-2 brc-white-tp1 radius-round" width="36" th:src="@{/images/profile.png}" alt="Profile Photo">
                <span class="bgc-warning radius-round border-2 brc-white p-1 position-tr mr-1px mt-1px"></span>
            </span>
        </button>
@@ -106,7 +106,7 @@
    
                <li class="nav-item dropdown order-first order-lg-last">
                   <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">          
-                       <img id="id-navbar-user-image" class="d-none d-lg-inline-block radius-round border-2 brc-white-tp1 mr-2" src="assets/image/user.jpg" alt="Jason's Photo">
+                       <img id="id-navbar-user-image" class="d-none d-lg-inline-block radius-round border-2 brc-white-tp1 mr-2" th:src="@{/images/profile.png}" alt="Profile Photo">
                        <span class="d-inline-block d-lg-none d-xl-inline-block">
                            <span class="text-90" id="id-user-welcome">Welcome,</span>
                            <span class="nav-user-name">Jason</span>
