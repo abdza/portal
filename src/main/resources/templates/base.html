@@ -6,7 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title layout:fragment="head-title">Page Title</title>
 	<link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/fontawesome.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/regular.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/brands.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/solid.min.css}" />
+
+	<link rel="stylesheet" th:href="@{/libs/ace/css/ace-font.min.css}" />
 	<link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}" />
+
+	<th:block layout:fragment="head-end"></th:block>
 </head>
 
 <body>
@@ -23,8 +31,9 @@
 	</div>
 
 	<script type="text/javascript" th:src="@{/libs/jquery/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/popper.js/dist/umd/popper.min.js}"></script>
 	<script type="text/javascript" th:src="@{/libs/bootstrap/js/bootstrap.min.js}"></script>
-	<script type="text/javascript" th:src="@{/libs/ace/js/ace.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/ace/js/ace.js}"></script>
 
 </body>
 

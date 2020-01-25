@@ -43,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
 		templateResolver.setPrefix("templates/");
 		templateResolver.setCacheable(true);
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("HTML");
 		templateResolver.setCharacterEncoding("UTF-8");
 		templateResolver.setOrder(1);
 		templateResolver.setCheckExistence(true);
@@ -53,7 +53,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public ITemplateResolver txtTemplateResolver() {
 		final StringTemplateResolver templateResolver = new StringTemplateResolver();
 		templateResolver.setCacheable(false);
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("HTML");
 		templateResolver.setOrder(2);
 		return templateResolver;
 	}

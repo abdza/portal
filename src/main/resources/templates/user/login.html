@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-<html layout:decorate="~{base}">
-<div layout:fragment="body-container" class="body-container">
-    <div class='p-2 p-md-4'>
+<html layout:decorate="~{special}">
+<th:block layout:fragment="head-end">
+    <link rel="stylesheet" th:href="@{/libs/ace/css/login.css}" />
+</th:block>
+<div layout:fragment="content" class="row">
+    <div class="shadow radius-1 overflow-hidden bg-white col-12 col-lg-6 offset-lg-3">
 
-        <div class="d-none d-lg-block col-md-6 offset-md-3 mt-lg-4 px-0">
-            <h4 class="text-dark-tp4 border-b-1 brc-grey-l1 pb-1 text-130">
-                <i class="fa fa-coffee text-orange-m2 mr-1"></i>
-                Welcome Back
-            </h4>
-        </div>
-
-        <div class="d-lg-none text-secondary-m1 my-4 text-center">
+        <div class="text-secondary-m1 my-4 text-center">
             <a href="{{getPageLink 'dashboard'}}"><i class="fa fa-leaf text-success-m2 text-200 mb-4"></i></a>
             <h1 class="text-170">
-                <span class="text-blue-d1">Ace <span class="text-80 text-dark-tp3">Application</span></span>
+                <span class="text-blue-d1">Portal <span class="text-80 text-dark-tp3">Engine</span></span>
             </h1>
 
             Welcome back

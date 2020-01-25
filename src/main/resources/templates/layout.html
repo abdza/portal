@@ -3,17 +3,19 @@
 
 <div layout:fragment="body-container" class="body-container">
 
-	<div th:replace="~{macros::navbar}">
+	<div th:replace="~{interface/navbar}">
 	</div>
 
 
-	<div class="main-container container">
+	<div class="main-container">
 
-		<div th:replace="~{macros::sidebar}">
+		<div th:replace="~{interface/sidebar}">
 		</div>
-
-		<section layout:fragment="content">
-		</section>
+		
+		<div class="page-content container">
+			<section layout:fragment="content">
+			</section>
+		</div><!-- /.page-content -->
 
 	</div>
 

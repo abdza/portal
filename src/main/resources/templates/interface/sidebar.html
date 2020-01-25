@@ -1,0 +1,30 @@
+<div th:fragment="sidebar" id="sidebar" class="sidebar sidebar-fixed expandable sidebar-default d-none d-xl-block">
+    <div class="sidebar-inner">
+        <div class="ace-scroll flew-grow-1">
+            <div class="sidebar-section my-2">
+
+            </div>
+
+            <ul class="nav has-active-border" role="navigation" aria-label="main">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/pages}">Pages</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/files}">Files</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/settings}">Settings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/trackers}">Trackers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dataupdates}">Data Updates</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
