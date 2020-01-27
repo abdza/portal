@@ -101,7 +101,7 @@
                        <img id="id-navbar-user-image" class="d-none d-lg-inline-block radius-round border-2 brc-white-tp1 mr-2" th:src="@{/images/profile.png}" alt="Profile Photo">
                        <span class="d-inline-block d-lg-none d-xl-inline-block">
                            <span class="text-90" id="id-user-welcome">Welcome,</span>
-                           <span class="nav-user-name">Jason</span>
+                           <span class="nav-user-name" sec:authentication="principal.name">Jason</span>
                        </span>
    
                        <i class="caret fa fa-angle-down d-none d-xl-block"></i>
@@ -111,7 +111,7 @@
                    <div class="dropdown-menu dropdown-caret dropdown-menu-right dropdown-animated brc-primary-m3">
                        <div class="d-none d-lg-block d-xl-none">
                            <div class="dropdown-header">
-                               Welcome, Jason
+                               Welcome, <span sec:authentication="principal.name">Jason</span>
                            </div>
                            <div class="dropdown-divider"></div>
                        </div>
