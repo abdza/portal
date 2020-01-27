@@ -3682,7 +3682,7 @@
                 toolbarHtml += ' <div class="dropdown-menu p-3 brc-primary-tp2 border-2" style="min-width: 300px;">';
 
                 if (button.choose_file && 'FileReader' in window) {
-                  toolbarHtml += "<div class=\"text-muted\">Drag &amp; drop images into editor or</div>\n\t\t\t\t\t\t   <label class=\"text-center d-block mt-2 mb-0\">\n\t\t\t\t\t\t\t<button class=\"btn btn-sm ".concat(button.button_class, " wysiwyg-choose-file\" type=\"button\">").concat(button.button_text, "</button>\n\t\t\t\t\t\t\t<input type=\"file\" class=\"file-input-invisible\" data-edit=\"").concat(button.name, "\" />\n\t\t\t\t\t\t   </label><hr /> ");
+                  toolbarHtml += "<div class=\"text-muted\">Drag &amp; drop images into editor or</div>\n\t\t\t\t\t\t   <label class=\"text-center d-block mt-2 mb-0\">\n\t\t\t\t\t\t\t<button class=\"btn btn-sm ".concat(button.button_class, " wysiwyg-choose-file\" type=\"button\">").concat(button.button_text, "</button>\n\t\t\t\t\t\t\t<input type=\"file\" class=\"file-input-invisible\" data-edit=\"").concat(button.name, "\" />\n\t\t\t\t\t\t   </label></div><hr /> ");
                 }
 
                 toolbarHtml += "<div class=\"input-group my-3\">\n\t\t\t\t\t\t\t<input class=\"form-control\" placeholder=\"".concat(button.placeholder, "\" type=\"text\" data-edit=\"").concat(button.name, "\" />\n\t\t\t\t\t\t\t<div class=\"input-group-append\">\n\t\t\t\t\t\t\t\t<button class=\"btn btn-sm ").concat(button.button_insert_class, "\" type=\"button\">").concat(button.button_insert, "</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t </div>");

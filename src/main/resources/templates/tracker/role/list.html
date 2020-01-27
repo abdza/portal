@@ -1,34 +1,45 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title th:text='${tracker.title}'>Tracker Display</title>
-<body>
-<section  class='page-content'>
-<h1>Tracker Info</h1>
-<h2 th:text="${tracker.title}">Tracker title</h2>
+<html layout:decorate="~{layout}">
 
-<div th:replace="tracker/trackerbase::trackertabs(current_active='roles')" class="tabs is-boxed">
+<section layout:fragment="content" class='page-content'>
+    <h1>Tracker Info</h1>
+    <h2 th:text="${tracker.title}">Tracker title</h2>
 
-</div>
+    <div th:replace="tracker/trackerbase::trackertabs(current_active='roles')" class="tabs is-boxed">
 
-<a href="#" th:href="@{/trackers/roles/{id}/create(id=${tracker.id})}" class="btn btn-primary">Add</a>
+    </div>
 
-<div class='table-container'>
-<table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
-<tr><th>#</th><th>Name</th><th>Type</th><th>Rule</th><th>&nbsp;</th></tr>
-<tr th:each="tracker_role,iter: ${tracker.roles}">
-<td><a href='#' th:href='@{/trackers/roles/{tracker_id}/edit/{tracker_role_id}(tracker_id=${tracker.id},tracker_role_id=${tracker_role.id})}' th:text="${iter.index + 1}">2</a></td>
-<td th:text="${tracker_role.name}">name</td>
-<td th:text="${tracker_role.roleType}">name</td>
-<td th:text="${tracker_role.roleRule}">name</td>
-<td>
-<form method='post' th:action='@{/trackers/roles/{tracker_id}/delete/{tracker_role_id}(tracker_id=${tracker.id},tracker_role_id=${tracker_role.id})}' th:object="${tracker_role}">
-<input type='submit' class='button danger' th:onClick='return confirm("Confirm delete tracker_role " + this.getAttribute("data-fname") + "?");' th:attr="data-fname=${tracker_role.name}" value='Delete'/>
-</form>
-</td>
-</tr>
-</table>
-</div>
+    <a href="#" th:href="@{/trackers/roles/{id}/create(id=${tracker.id})}" class="btn btn-primary">Add</a>
+
+    <div class='table-container'>
+        <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Rule</th>
+                <th>&nbsp;</th>
+            </tr>
+            <tr th:each="tracker_role,iter: ${tracker.roles}">
+                <td><a href='#'
+                        th:href='@{/trackers/roles/{tracker_id}/edit/{tracker_role_id}(tracker_id=${tracker.id},tracker_role_id=${tracker_role.id})}'
+                        th:text="${iter.index + 1}">2</a></td>
+                <td th:text="${tracker_role.name}">name</td>
+                <td th:text="${tracker_role.roleType}">name</td>
+                <td th:text="${tracker_role.roleRule}">name</td>
+                <td>
+                    <form method='post'
+                        th:action='@{/trackers/roles/{tracker_id}/delete/{tracker_role_id}(tracker_id=${tracker.id},tracker_role_id=${tracker_role.id})}'
+                        th:object="${tracker_role}">
+                        <input type='submit' class='button danger'
+                            th:onClick='return confirm("Confirm delete tracker_role " + this.getAttribute("data-fname") + "?");'
+                            th:attr="data-fname=${tracker_role.name}" value='Delete' />
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </section>
-</body>
+
 </html>

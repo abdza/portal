@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Display Data</title>
+<html layout:decorate="~{layout}">
 
-<section  class='page-content'>
-<div class='content'>
-<h1>Display Data</h1>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Display Data</h1>
 
-<a href="#" th:href="@{/{module}/{slug}/list(module=${tracker.module},slug=${tracker.slug})}" class="button">List</a>
-<a th:if="${trackerservice.editable(tracker,datas.get('id'))}" href="#" th:href="@{/{module}/{slug}/edit/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}" class="button">Edit</a>
-<a th:each="transition:${trackerservice.record_transitions(tracker,datas.get('id'))}" class="button" th:href="@{/{module}/{slug}/transition/{transition_id}/{id}(transition_id=${transition.id},module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}"><span th:text="${transition.name}" >Transition</span> </a>
-<div class='dataform' th:replace="tracker/trackerbase::datadisplay(tracker=${tracker},datas=${datas})">
-</div>
+        <a href="#" th:href="@{/{module}/{slug}/list(module=${tracker.module},slug=${tracker.slug})}"
+            class="button">List</a>
+        <a th:if="${trackerservice.editable(tracker,datas.get('id'))}" href="#"
+            th:href="@{/{module}/{slug}/edit/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}"
+            class="button">Edit</a>
+        <a th:each="transition:${trackerservice.record_transitions(tracker,datas.get('id'))}" class="button"
+            th:href="@{/{module}/{slug}/transition/{transition_id}/{id}(transition_id=${transition.id},module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}"><span
+                th:text="${transition.name}">Transition</span> </a>
+        <div class='dataform' th:replace="tracker/trackerbase::datadisplay(tracker=${tracker},datas=${datas})">
+        </div>
 
-</div>
+    </div>
 
 </section>

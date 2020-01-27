@@ -1,46 +1,57 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Status Form</title>
-<body>
-<section  class='page-content'>
-<div class='content'>
-<h1>Status Tracker</h1>
-<form method='post' th:action='@{/trackers/status/{tracker_id}/save(tracker_id=${tracker.id})}' th:object="${tracker_status}">
-<input type='hidden' name='id' th:value='${tracker_status.id}'/>
-<input type='hidden' name='tracker_id' th:value='${tracker.id}'/>
-<div class='field'>
-<label class='label'>Name</label>
-<div class='control'>
-<input class='input' type='text' name='name' th:value="${tracker_status.name}"/>
-</div>
-</div>
-<div class='field'>
-<label class='label'>Display Fields</label>
-<div class='control'>
-<textarea class='input' name='displayfields' th:text="${tracker_status.displayFields}"/>
-</div>
-</div>
-<div class='field'>
-<label class='label'>Updateable</label>
-<div class='control'>
-<input class='input' type='checkbox' name='updateable' th:value="${tracker_status.updateable}"/>
-</div>
-</div>
-<div class='field'>
-<label class='label'>Attachable</label>
-<div class='control'>
-<input class='input' type='checkbox' name='attachable' th:value="${tracker_status.attachable}"/>
-</div>
-</div>
+<html layout:decorate="~{layout}">
 
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Status Tracker</h1>
+        <form method='post' th:action='@{/trackers/status/{tracker_id}/save(tracker_id=${tracker.id})}'
+            th:object="${tracker_status}">
+            <input type='hidden' name='id' th:value='${tracker_status.id}' />
+            <input type='hidden' name='tracker_id' th:value='${tracker.id}' />
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Name</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='name'
+                        th:value="${tracker_status.name}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Display Fields</label>
+                </div>
+                <div class='col-sm-9'>
+                    <textarea class='input' name='displayfields' th:text="${tracker_status.displayFields}">
+                    </textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Updateable</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='checkbox' name='updateable'
+                        th:value="${tracker_status.updateable}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Attachable</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='checkbox' name='attachable'
+                        th:value="${tracker_status.attachable}" />
+                </div>
+            </div>
 
-
-<div class='field'>
-<button class='button' name='save'>Save</button>
-<button class='button' name='cancel'>Cancel</button>
-</div>
-</form>
-</div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <button class='button' name='save'>Save</button>
+                    <button class='button' name='cancel'>Cancel</button>
+                </div>
+        </form>
+    </div>
 </section>
-</body>
+
 </html>

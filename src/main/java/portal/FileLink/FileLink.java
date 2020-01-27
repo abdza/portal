@@ -20,11 +20,9 @@ public class FileLink {
 	private Long id;
 	
 	@NotNull
-	@Size(min=3, message="Module must be at least 3 characters long")
 	private String module;
 	
 	@NotNull
-	@Size(min=3, message="Slug must be at least 3 characters long")
 	private String slug;
 	
 	private String name;

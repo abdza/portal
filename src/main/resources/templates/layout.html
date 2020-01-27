@@ -1,37 +1,24 @@
 <!DOCTYPE html>
-<html 	xmlns="http://www.w3.org/1999/xhtml" 
-		xmlns:th="http://www.thymeleaf.org"
-		xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" 
-		th:fragment="layout(title,content)">
-<head th:fragment="base_head">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title th:replace="${title}">Page Title</title>
-<link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}"/>
-<link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}"/>
-</head>
+<html layout:decorate="~{base}">
 
-<body>
-<div class="body-container">
+<div layout:fragment="body-container" class="body-container">
 
-<div th:replace="~{macros::navbar}">
-</div>
-
-
-<div class="main-container container">
-
-	<div th:replace="~{macros::sidebar}">
+	<div th:replace="~{interface/navbar}">
 	</div>
 
-<section th:replace="${content}">
-</section>
+
+	<div class="main-container">
+
+		<div th:replace="~{interface/sidebar}">
+		</div>
+		
+		<div class="page-content container">
+			<section layout:fragment="content">
+			</section>
+		</div><!-- /.page-content -->
+
+	</div>
 
 </div>
 
-</div>
-
-<script type="text/javascript" th:src="@{/libs/jquery/jquery.min.js}"></script>
-<script type="text/javascript" th:src="@{/libs/bootstrap/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/libs/ace/js/ace.min.js}"></script>
-
-</body>
 </html>

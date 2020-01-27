@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title th:text='${page.title}'>Page Display</title>
-<body>
-<section  class='page-content'>
-<div class='content' th:utext='${page.content}'>
-</div>
+<html layout:decorate="~{layout}">
+
+<section layout:fragment="content" class='page-content'>
+    <div class='content' th:utext='${page.content}'>
+    </div>
 </section>
-</body>
+
 </html>

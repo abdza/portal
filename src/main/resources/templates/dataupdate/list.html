@@ -1,28 +1,40 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>DataUpdate Listing</title>
+<html layout:decorate="~{layout}">
 
-<section  class='page-content'>
-<div class='content'>
-<h1>DataUpdate Listing</h1>
-<a href="#" th:href="@{/dataupdates/create}" class="button">Add</a>
-<table class="table">
-<tr><th>#</th><th>Tracker</th><th>Date</th><th>File<th>Batch #</th><th>&nbsp;</th></tr>
-<tr th:each="dataupdate,iter: ${dataupdates}">
-<td><a href='#' th:href='@{/dataupdates/edit/{id}(id=${dataupdate.id})}' th:text="${iter.index + 1}">2</a></td>
-<td th:text="${dataupdate.tracker.title}">module</td>
-<td th:text="${dataupdate.dateCreated}">title</td>
-<td th:text="${dataupdate.filelink?.name}">name</td>
-<td th:text="${dataupdate.batchNo}">title</td>
-<td>
-<form method='post' th:action='@{/dataupdates/delete/{id}(id=${dataupdate.id})}' th:object="${dataupdate}">
-<input type='submit' class='button danger' th:onClick='return confirm("Confirm delete dataupdate " + this.getAttribute("data-fname") + "?");' th:attr="data-fname=${dataupdate.dateCreated}" value='Delete'/>
-</form>
-</td>
-</tr>
-</table>
-</div>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>DataUpdate Listing</h1>
+        <a href="#" th:href="@{/dataupdates/create}" class="btn btn-primary">Add</a>
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Tracker</th>
+                <th>Date</th>
+                <th>File
+                <th>Batch #</th>
+                <th>&nbsp;</th>
+            </tr>
+            <tr th:each="dataupdate,iter: ${dataupdates}">
+                <td><a href='#' th:href='@{/dataupdates/edit/{id}(id=${dataupdate.id})}'
+                        th:text="${iter.index + 1}">2</a></td>
+                <td th:text="${dataupdate.tracker.title}">module</td>
+                <td th:text="${dataupdate.dateCreated}">title</td>
+                <td th:text="${dataupdate.filelink?.name}">name</td>
+                <td th:text="${dataupdate.batchNo}">title</td>
+                <td>
+                    <form method='post' th:action='@{/dataupdates/delete/{id}(id=${dataupdate.id})}'
+                        th:object="${dataupdate}">
+                        <input type='submit' class='button danger'
+                            th:onClick='return confirm("Confirm delete dataupdate " + this.getAttribute("data-fname") + "?");'
+                            th:attr="data-fname=${dataupdate.dateCreated}" value='Delete' />
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-<nav th:replace="macros::navpagination(items=${dataupdates},url='/dataupdates')"></nav>
+    <nav th:replace="macros::navpagination(items=${dataupdates},url='/dataupdates')"></nav>
 
 </section>
+
+</html>

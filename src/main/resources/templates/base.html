@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html 	xmlns="http://www.w3.org/1999/xhtml" 
-		xmlns:th="http://www.thymeleaf.org"
-		xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" 
-		th:fragment="layout(title,content)">
-<head th:fragment="base_head">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title th:replace="${title}">Page Title</title>
-<link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}"/>
-<link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}"/>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head layout:fragment="head">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title layout:fragment="head-title">Page Title</title>
+	<link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/fontawesome.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/regular.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/brands.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/solid.min.css}" />
+
+	<link rel="stylesheet" th:href="@{/libs/ace/css/ace-font.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}" />
+
+	<th:block layout:fragment="head-end"></th:block>
 </head>
 
 <body>
-<div class="body-container">
+	<div layout:fragment="body-container" class="body-container">
 
-<div class="main-container container">
+		<div class="main-container container">
 
-    <div role="main" class="main-content minh-100 justify-content-center">
+			<div role="main" class="main-content minh-100 justify-content-center">
 
-<section th:replace="${content}">
-</section>
+			</div>
 
-    </div>
+		</div>
 
-</div>
+	</div>
 
-</div>
-
-<script type="text/javascript" th:src="@{/libs/jquery/jquery.min.js}"></script>
-<script type="text/javascript" th:src="@{/libs/bootstrap/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/libs/ace/js/ace.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/jquery/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/popper.js/dist/umd/popper.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/libs/ace/js/ace.js}"></script>
 
 </body>
+
 </html>

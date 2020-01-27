@@ -36,11 +36,9 @@ public class TrackerField {
 	private Long id;
 	
 	@NotNull
-	@Size(min=3, message="Name must be at least 3 characters long")
 	private String name;
 	
 	@NotNull
-	@Size(min=3, message="Label must be at least 3 characters long")
 	private String label;
 	
 	private String fieldType;

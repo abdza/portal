@@ -17,6 +17,8 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
+import nz.net.ultraq.thymeleaf.LayoutDialect;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	
@@ -41,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
 		templateResolver.setPrefix("templates/");
 		templateResolver.setCacheable(true);
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("HTML");
 		templateResolver.setCharacterEncoding("UTF-8");
 		templateResolver.setOrder(1);
 		templateResolver.setCheckExistence(true);
@@ -51,7 +53,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public ITemplateResolver txtTemplateResolver() {
 		final StringTemplateResolver templateResolver = new StringTemplateResolver();
 		templateResolver.setCacheable(false);
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("HTML");
 		templateResolver.setOrder(2);
 		return templateResolver;
 	}
@@ -63,6 +65,7 @@ public class WebConfig implements WebMvcConfigurer {
 		templateEngine.addTemplateResolver(htmlTemplateResolver());
 		templateEngine.addTemplateResolver(txtTemplateResolver());
 		templateEngine.addDialect(new SpringSecurityDialect());
+		templateEngine.addDialect(new LayoutDialect());
 		return templateEngine;
 	}
 }

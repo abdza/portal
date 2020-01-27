@@ -28,7 +28,6 @@ public class TrackerTransition {
 	private Tracker tracker;
 	
 	@NotNull
-	@Size(min=3, message="Name must be at least 3 characters long")
 	private String name;
 
 	@org.hibernate.annotations.Type( type = "text" )

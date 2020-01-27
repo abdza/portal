@@ -1,0 +1,114 @@
+<div th:fragment="megamenu" class="row mx-0">
+
+    <div class="col-lg-4 col-12 p-2 p-lg-3 p-xl-4 d-flex align-items-center">
+        <div class="list-group mt-3 mx-auto px-0">
+            <a href="#" class="list-group-item list-group-item-action">
+              <i class="fab fa-facebook text-blue-m1 text-110 mr-2"></i>
+              Cras justo odio
+            </a>
+            <a href="#" class="list-group-item list-group-item-action text-primary">
+              <i class="fa fa-user text-success-m2 text-110 mr-2"></i>
+              Dapibus ac facilisis in
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <i class="fa fa-clock text-purple-m2 text-110 mr-2"></i>
+              Morbi leo risus
+            </a>
+            <a href="#" class="list-group-item list-group-item-action bgc-success-l1 bgc-h-success-l2">
+              <i class="fa fa-check text-orange text-110 mr-2"></i>
+              Porta ac consectetur
+              <span class="ml-2 badge badge-primary badge-pill badge-lg">14</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
+        </div>
+    </div><!-- .col:mega links -->
+  
+    <div class="bgc-white col-lg-4 col-12 p-4">
+      <h5 class="text-blue-m1">
+        <i class="fas fa-bullhorn mr-1 text-grey-m2"></i>
+        Notifications
+      </h5>
+  
+      <div>
+        <div class="media mt-2 px-3 pt-1 border-l-2 brc-purple-m2">
+          <span class="d-block bgc-purple-tp2 radius-1 mr-3 p-3"><i class="fa fa-user text-white text-150"></i></span>
+          <div class="media-body pb-0 mb-0  text-90 text-muted">
+            <div class="text-grey-d2 font-bolder">@username1</div>
+            Donec id elit non mi porta gravida at eget metus. Fusce dapibus...
+          </div>
+        </div>
+  
+        <hr />
+  
+        <div class="media mt-2 px-3 pt-1 border-l-2 brc-warning-m2">
+          <span class="d-block bgc-warning-tp2 radius-1 mr-3 p-3"><i class="fa fa-user text-white text-150"></i></span>
+          <div class="media-body pb-0 mb-0 text-90 text-muted">
+            <div class="text-grey-d2 font-bolder">@username2</div>
+            Fusce dapibus, tellus ac cursus commodo, tortor mauris...
+          </div>
+        </div>
+  
+         <hr />
+  
+        <div class="media mt-2 px-3 pt-1 border-l-2 brc-success-m2">
+          <span class="d-block bgc-success-tp2 radius-1 mr-3 p-3"><i class="fa fa-user text-white text-150"></i></span>
+          <div class="media-body pb-0 mb-0 text-90 text-muted">
+            <div class="text-grey-d2 font-bolder">@username3</div>
+            Tortor mauris condimentum nibh, fusce dapibus...
+          </div>
+        </div>
+     </div>
+    
+    </div><!-- .col:mega notifications -->
+  
+              
+    <div class="col-lg-4 col-12 p-4 dropdown-clickable">
+        <h5 class="text-blue-m1">
+          <i class="fa fa-envelope mr-1 text-grey-m2"></i>
+          Contact Us
+        </h5>
+  
+        <form class="my-3">
+          <div class="form-group mb-2">
+            <input placeholder="Name" type="text" class="form-control border-l-2" />
+          </div>
+  
+          <div class="form-group mb-2">
+            <input placeholder="Email" type="text" class="form-control border-l-2" />
+          </div>
+          
+          <div class="form-group mb-4">
+            <textarea class="form-control brc-primary-m2 border-l-2 text-grey-d1" rows="3" placeholder="Your message..."></textarea>
+          </div>
+  
+          <div class="text-center">
+            <button type="reset" class="btn btn-smd btn-wide btn-secondary text-110">Reset</button>
+            <button type="button" class="btn btn-smd btn-wide btn-primary text-110">Send</button>
+          </div>
+        </form>
+    </div><!-- .col:mega contact -->               
+          
+  </div><!-- .row: mega -->
+  
+  
+  <div class="row mx-0 order-first order-lg-last bgc-primary-l4 border-t-1 brc-default-m4">
+    <div class="col-lg-8 offset-lg-2 d-flex justify-content-center py-4 d-flex">
+       
+       <button class="mx-2px btn btn-sm btn-app btn-outline-warning btn-h-outline-warning btn-a-outline-warning radius-1 border-2">
+               <i class="fa fa-cog text-190 d-block mb-2 h-4"></i>
+               <span class="text-muted">Settings</span>
+           </button>
+  
+       <button class="mx-2px btn btn-sm btn-app btn-outline-info btn-h-outline-info radius-1 border-2">
+         <i class="fa fa-edit text-190 d-block mb-2 h-4"></i>
+               Edit
+               <span class="position-tr text-danger-m2 text-130 mr-1">*</span>
+           </button>
+  
+       <button class="mx-2px btn btn-sm btn-app btn-dark radius-1">
+         <i class="fa fa-lock text-150 d-block mb-2 h-4"></i>
+               Lock
+           </button>
+       
+    </div>
+</div><!-- .row:megamenu big buttons -->

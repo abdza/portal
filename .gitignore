@@ -33,3 +33,4 @@ src/main/resources/application.properties
 
 ### VIM ###
 *~
+*.swp

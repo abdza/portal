@@ -1,83 +1,98 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Tracker Form</title>
-<body>
-<section  class='page-content'>
-<div class='content'>
-<h1>Create Tracker</h1>
-<form method='post' th:action='@{/trackers/save}' th:object="${tracker}">
-<input type='hidden' name='id' th:value='${tracker.id}'/>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Module</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='module' th:value="${tracker.module}"/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Slug</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='slug' th:value="${tracker.slug}"/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Title</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='title' th:value="${tracker.title}"/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Type</label></div>
-<div class='col-sm-9'>
-<select class="form-control col-sm-8 col-md-6" name='trackerType' th:value="${tracker.trackerType}">
-<option th:each="opt,iter: ${tracker.typeOptions}" th:text="${opt}" th:value="${opt}" th:selected="${opt==tracker.trackerType}">
-</option>
-</select>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
-<div class='col-sm-9'>
-<textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.listFields}" name="listFields" th:value="${tracker.listFields}"></textarea>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
-<div class='col-sm-9'>
-<textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.formFields}" name="formFields" th:value="${tracker.formFields}"></textarea>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Display Fields</label></div>
-<div class='col-sm-9'>
-<textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.displayFields}" name="displayFields" th:value="${tracker.displayFields}"></textarea>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Initial Status</label></div>
-<div class='col-sm-9'>
-<textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.initialStatus}" name="initialStatus" th:value="${tracker.initialStatus}"></textarea>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Data Table</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='dataTable' th:value="${tracker.dataTable}"/>
-</div>
-</div>
-<div class='form-group row'>
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Updates Table</label></div>
-<div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' name='updatesTable' th:value="${tracker.updatesTable}"/>
-</div>
-</div>
-<div class='my-5 border-t-1 brc-secondary-l1 bgc-secondary-l3 py-3'>
-    <div class="offset-md-3 col-md-9">
-        <button class='btn btn-info' name='save'>Save</button>
-        <button class='btn btn-secondary' name='cancel'>Cancel</button>
+<html layout:decorate="~{layout}">
+
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Create Tracker</h1>
+        <form method='post' th:action='@{/trackers/save}' th:object="${tracker}">
+            <input type='hidden' name='id' th:value='${tracker.id}' />
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Module</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='module'
+                        th:value="${tracker.module}" />
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Slug</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='slug' th:value="${tracker.slug}" />
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Title</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='title'
+                        th:value="${tracker.title}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Type</label></div>
+                <div class='col-sm-9'>
+                    <select class="form-control col-sm-8 col-md-6" name='trackerType' th:value="${tracker.trackerType}">
+                        <option th:each="opt,iter: ${tracker.typeOptions}" th:text="${opt}" th:value="${opt}"
+                            th:selected="${opt==tracker.trackerType}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
+                <div class='col-sm-9'>
+                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.listFields}" name="listFields"
+                        th:value="${tracker.listFields}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
+                <div class='col-sm-9'>
+                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.formFields}" name="formFields"
+                        th:value="${tracker.formFields}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Display Fields</label></div>
+                <div class='col-sm-9'>
+                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.displayFields}"
+                        name="displayFields" th:value="${tracker.displayFields}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Initial Status</label></div>
+                <div class='col-sm-9'>
+                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.initialStatus}"
+                        name="initialStatus" th:value="${tracker.initialStatus}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Data Table</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='dataTable'
+                        th:value="${tracker.dataTable}" />
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Updates Table</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='updatesTable'
+                        th:value="${tracker.updatesTable}" />
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class="offset-md-3 col-md-9">
+                    <button class='btn btn-info' name='save'>Save</button>
+                    <button class='btn btn-secondary' name='cancel'>Cancel</button>
+                </div>
+            </div>
+        </form>
     </div>
-</div>
-</form>
-</div>
 </section>
-</body>
+
 </html>

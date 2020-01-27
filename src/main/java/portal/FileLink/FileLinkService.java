@@ -83,6 +83,7 @@ public class FileLinkService {
 			}
 			String filepath = targetpath + "/" + file.getOriginalFilename();
 			try {
+				System.out.println("Filepath:" + filepath);
 				file.transferTo(new File(filepath));
 			} catch (IllegalStateException e) {
 				// TODO Auto-generated catch block

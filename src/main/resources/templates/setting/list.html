@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<html th:replace="~{layout::layout(~{::title},~{::section})}">
-<title>Setting Listing</title>
+<html layout:decorate="~{layout}">
 
-<section  class='page-content'>
-<div class='content'>
-<h1>Setting Listing</h1>
-<a href="#" th:href="@{/settings/create}" class="button">Add</a>
-<table class="table">
-<tr><th>#</th><th>Module</th><th>Name</th><th>Text</th><th>Number</th><th>Date</th><th>&nbsp;</th></tr>
-<tr th:each="setting,iter: ${settings}">
-<td><a href='#' th:href='@{/settings/edit/{id}(id=${setting.id})}' th:text="${iter.index + 1}">2</a></td>
-<td th:text="${setting.module}">module</td>
-<td th:text="${setting.name}">title</td>
-<td th:text="${setting.textValue}">title</td>
-<td th:text="${setting.number}">title</td>
-<td th:text="${setting.dateValue}">title</td>
-<td>
-<form method='post' th:action='@{/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">
-<input type='submit' class='button danger' th:onClick='return confirm("Confirm delete setting " + this.getAttribute("data-fname") + "?");' th:attr="data-fname=${setting.name}" value='Delete'/>
-</form>
-</td>
-</tr>
-</table>
-</div>
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Setting Listing</h1>
+        <a href="#" th:href="@{/settings/create}" class="btn btn-primary">Add</a>
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Module</th>
+                <th>Name</th>
+                <th>Text</th>
+                <th>Number</th>
+                <th>Date</th>
+                <th>&nbsp;</th>
+            </tr>
+            <tr th:each="setting,iter: ${settings}">
+                <td><a href='#' th:href='@{/settings/edit/{id}(id=${setting.id})}' th:text="${iter.index + 1}">2</a>
+                </td>
+                <td th:text="${setting.module}">module</td>
+                <td th:text="${setting.name}">title</td>
+                <td th:text="${setting.textValue}">title</td>
+                <td th:text="${setting.number}">title</td>
+                <td th:text="${setting.dateValue}">title</td>
+                <td>
+                    <form method='post' th:action='@{/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">
+                        <input type='submit' class='button danger'
+                            th:onClick='return confirm("Confirm delete setting " + this.getAttribute("data-fname") + "?");'
+                            th:attr="data-fname=${setting.name}" value='Delete' />
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-<nav th:replace="macros::navpagination(items=${settings},url='/settings')"></nav>
+    <nav th:replace="macros::navpagination(items=${settings},url='/settings')"></nav>
 
 </section>
+</html>
