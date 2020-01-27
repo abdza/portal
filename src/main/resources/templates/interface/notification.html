@@ -18,16 +18,12 @@
 
     <div class="tab-pane mh-none show active px-md-1 pt-1" id="navbar-notif-tab-1" role="tabpanel">
 
-        {{#each (get "layout/navbar-notif")}}
-            <a href="#" class="mb-0 border-0 list-group-item list-group-item-action btn-h-lighter-secondary">
-                <i class="{{icon}} {{icon-color}} text-white text-110 mr-1 p-2 radius-1"></i>
-                <span class="text-muted">{{title}}</span>
-                {{#if badge}}
-                <span class="float-right badge {{badge-color}} radius-round text-80">{{badge}}</span>
-                {{/if}}
-            </a>
-        {{/each}}
-
+        <a th:each="notification: ${@userService.currentNotifications()}" href="#" class="mb-0 border-0 list-group-item list-group-item-action btn-h-lighter-secondary">
+            <i th:if="${notification.icon}" th:appendclass="${notification.icon} ${notification.iconColor}" class="text-white text-110 mr-1 p-2 radius-1"></i>
+            <span class="text-muted" th:text="${notification.notification}">title</span>
+            <span th:if="${notification.badge}" th:appendclass="${notification.badgeColor}" class="float-right badge radius-round text-80" th:text="${notifcation.badge}">badge</span>
+        </a>
+        
         <hr class="mt-1 mb-1px brc-info-m4" />
         <a href="#" class="mb-0 py-3 border-0 list-group-item text-blue-m2 text-uppercase text-center text-85 font-bold">
             See All Notifications
