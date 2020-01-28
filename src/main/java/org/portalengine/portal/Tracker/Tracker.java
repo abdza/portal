@@ -1,4 +1,4 @@
-package portal.Tracker;
+package org.portalengine.portal.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +16,14 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Tracker.Field.TrackerField;
+import org.portalengine.portal.Tracker.Role.TrackerRole;
+import org.portalengine.portal.Tracker.Status.TrackerStatus;
+import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import lombok.Data;
-import portal.Tracker.Field.TrackerField;
-import portal.Tracker.Role.TrackerRole;
-import portal.Tracker.Status.TrackerStatus;
-import portal.Tracker.Transition.TrackerTransition;
 
 @Data
 @Entity

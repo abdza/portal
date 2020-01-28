@@ -1,4 +1,4 @@
-package portal.FileLink;
+package org.portalengine.portal.FileLink;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

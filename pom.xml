@@ -8,11 +8,11 @@
 		<version>2.1.9.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>cbmyportal</groupId>
+	<groupId>org.portalengine</groupId>
 	<artifactId>portal</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>portal</name>
-	<description>CBMY Portal in Java</description>
+	<description>Portal Engine in Java</description>
 
 	<properties>
 		<java.version>1.8</java.version>

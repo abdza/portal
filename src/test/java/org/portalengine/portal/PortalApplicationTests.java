@@ -1,4 +1,4 @@
-package portal;
+package org.portalengine.portal;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

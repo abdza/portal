@@ -1,4 +1,4 @@
-package portal;
+package org.portalengine.portal;
 
 
 import org.springframework.boot.SpringApplication;

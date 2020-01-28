@@ -1,4 +1,4 @@
-package portal.User;
+package org.portalengine.portal.User;
 
 import java.util.List;
 import java.util.Optional;

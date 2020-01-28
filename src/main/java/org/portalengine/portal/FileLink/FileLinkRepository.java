@@ -1,4 +1,4 @@
-package portal.FileLink;
+package org.portalengine.portal.FileLink;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

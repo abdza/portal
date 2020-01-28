@@ -1,4 +1,4 @@
-package portal.Tracker;
+package org.portalengine.portal.Tracker;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -6,6 +6,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Tracker.Transition.TrackerTransition;
+import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -14,12 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import portal.FileLink.FileLinkService;
-import portal.Page.Page;
-import portal.Page.PageService;
-import portal.Tracker.Transition.TrackerTransition;
-import portal.User.User;
 
 @Controller
 @RequestMapping("/")

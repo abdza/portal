@@ -1,4 +1,4 @@
-package portal.User;
+package org.portalengine.portal.User;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 

@@ -1,4 +1,4 @@
-package portal.User;
+package org.portalengine.portal.User;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

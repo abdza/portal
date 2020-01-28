@@ -1,10 +1,9 @@
-package portal.Tracker.Role;
+package org.portalengine.portal.Tracker.Role;
 
 import java.util.List;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import portal.Tracker.Tracker;
 
 public interface TrackerRoleRepository extends JpaRepository<TrackerRole, Long> {
 

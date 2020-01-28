@@ -1,4 +1,4 @@
-package portal.Setting;
+package org.portalengine.portal.Setting;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

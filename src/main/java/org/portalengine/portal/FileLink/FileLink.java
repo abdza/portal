@@ -1,4 +1,4 @@
-package portal.FileLink;
+package org.portalengine.portal.FileLink;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

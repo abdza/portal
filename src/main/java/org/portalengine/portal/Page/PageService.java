@@ -1,4 +1,4 @@
-package portal.Page;
+package org.portalengine.portal.Page;
 
 import java.util.HashMap;
 import java.util.Locale;

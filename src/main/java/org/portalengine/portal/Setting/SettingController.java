@@ -1,4 +1,4 @@
-package portal.Setting;
+package org.portalengine.portal.Setting;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

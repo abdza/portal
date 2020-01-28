@@ -1,4 +1,4 @@
-package portal.Page;
+package org.portalengine.portal.Page;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

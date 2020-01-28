@@ -1,4 +1,4 @@
-package portal.User;
+package org.portalengine.portal.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

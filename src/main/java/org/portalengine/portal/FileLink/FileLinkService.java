@@ -1,4 +1,4 @@
-package portal.FileLink;
+package org.portalengine.portal.FileLink;
 
 import java.io.File;
 import java.io.IOException;

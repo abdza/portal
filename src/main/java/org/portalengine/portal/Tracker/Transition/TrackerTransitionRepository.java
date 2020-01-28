@@ -1,12 +1,11 @@
-package portal.Tracker.Transition;
+package org.portalengine.portal.Tracker.Transition;
 
 import java.util.List;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import portal.Tracker.Tracker;
 
 public interface TrackerTransitionRepository extends JpaRepository<TrackerTransition, Long> {
 

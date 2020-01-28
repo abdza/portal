@@ -1,9 +1,15 @@
-package portal;
+package org.portalengine.portal;
 
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.portalengine.portal.FileLink.FileLink;
+import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Tracker.Tracker;
+import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,13 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import portal.FileLink.FileLink;
-import portal.FileLink.FileLinkService;
-import portal.Page.Page;
-import portal.Page.PageService;
-import portal.Tracker.Tracker;
-import portal.Tracker.TrackerService;
 
 @Controller
 @RequestMapping("/")

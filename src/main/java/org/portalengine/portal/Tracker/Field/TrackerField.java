@@ -1,4 +1,4 @@
-package portal.Tracker.Field;
+package org.portalengine.portal.Tracker.Field;
 
 import java.sql.Types;
 import java.text.DateFormat;
@@ -20,11 +20,11 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import lombok.Data;
-import portal.Tracker.Tracker;
 
 @Data
 @Entity

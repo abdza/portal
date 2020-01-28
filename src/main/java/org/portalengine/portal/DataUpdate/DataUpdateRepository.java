@@ -1,4 +1,4 @@
-package portal.DataUpdate;
+package org.portalengine.portal.DataUpdate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

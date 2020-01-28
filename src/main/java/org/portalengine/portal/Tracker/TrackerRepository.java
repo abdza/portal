@@ -1,4 +1,4 @@
-package portal.Tracker;
+package org.portalengine.portal.Tracker;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

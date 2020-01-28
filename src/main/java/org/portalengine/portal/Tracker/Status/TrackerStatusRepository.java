@@ -1,10 +1,9 @@
-package portal.Tracker.Status;
+package org.portalengine.portal.Tracker.Status;
 
 import java.util.List;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import portal.Tracker.Tracker;
 
 public interface TrackerStatusRepository extends JpaRepository<TrackerStatus, Long> {
 

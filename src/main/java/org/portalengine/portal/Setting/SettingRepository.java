@@ -1,4 +1,4 @@
-package portal.Setting;
+package org.portalengine.portal.Setting;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

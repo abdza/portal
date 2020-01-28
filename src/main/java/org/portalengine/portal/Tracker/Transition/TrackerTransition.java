@@ -1,4 +1,4 @@
-package portal.Tracker.Transition;
+package org.portalengine.portal.Tracker.Transition;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,8 +11,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Tracker.Tracker;
+
 import lombok.Data;
-import portal.Tracker.Tracker;
 
 @Data
 @Entity

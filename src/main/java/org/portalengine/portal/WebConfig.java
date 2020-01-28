@@ -1,4 +1,4 @@
-package portal;
+package org.portalengine.portal;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;

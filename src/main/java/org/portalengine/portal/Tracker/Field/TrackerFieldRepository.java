@@ -1,10 +1,9 @@
-package portal.Tracker.Field;
+package org.portalengine.portal.Tracker.Field;
 
 import java.util.List;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import portal.Tracker.Tracker;
 
 public interface TrackerFieldRepository extends JpaRepository<TrackerField, Long> {
 
