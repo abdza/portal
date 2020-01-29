@@ -3,6 +3,12 @@ package org.portalengine.portal.User;
 import java.util.List;
 import java.util.Optional;
 
+import org.portalengine.portal.User.Message.UserMessage;
+import org.portalengine.portal.User.Message.UserMessageRepository;
+import org.portalengine.portal.User.Notification.UserNotification;
+import org.portalengine.portal.User.Notification.UserNotificationRepository;
+import org.portalengine.portal.User.Task.UserTask;
+import org.portalengine.portal.User.Task.UserTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +28,12 @@ public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserNotificationRepository userNotificationRepo;
+	
+	@Autowired
+	private UserMessageRepository userMessageRepo;
+	
+	@Autowired
+	private UserTaskRepository userTaskRepo;
 
 	@Autowired
 	public UserService() {
@@ -42,6 +54,30 @@ public class UserService implements UserDetailsService {
 		if(secuser!=null){
 			User duser = repo.findById(((User)secuser).getId()).orElse(null);
 			List<UserNotification> toret = userNotificationRepo.findByUser(duser);
+			return toret;
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public List<UserMessage> currentMessages() {
+		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		if(secuser!=null){
+			User duser = repo.findById(((User)secuser).getId()).orElse(null);
+			List<UserMessage> toret = userMessageRepo.findByUser(duser);
+			return toret;
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public List<UserTask> currentTasks() {
+		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		if(secuser!=null){
+			User duser = repo.findById(((User)secuser).getId()).orElse(null);
+			List<UserTask> toret = userTaskRepo.findByUser(duser);
 			return toret;
 		}
 		else{
