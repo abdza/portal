@@ -35,6 +35,5 @@ public class UserRole {
 	@NotNull
 	private String module;
 	
-	private String slug;
 	
 }

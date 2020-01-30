@@ -11,20 +11,18 @@
             <tr>
                 <th>#</th>
                 <th>Module</th>
-                <th>Slug</th>
+                <th>Role</th>       
                 <th>Staff ID</th>
-                <th>Name</th>
-                <th>Role</th>                
+                <th>Name</th>         
             </tr>
             <tr th:each="user_role,iter: ${user_roles}">
                 <td><a href='#'
                         th:href='@{/users/roles/edit/{user_role_id}(user_role_id=${user_role.id})}'
                         th:text="${iter.index + 1}">2</a></td>
                 <td th:text="${user_role.module}">name</td>
-                <td th:text="${user_role.slug}">name</td>
-                <td th:text="${user_role.user.staffId}">name</td>
-                <td th:text="${user_role.user.name}">name</td>
                 <td th:text="${user_role.role}">name</td>
+                <td th:text="${user_role.user.staffId}">name</td>
+                <td th:text="${user_role.user.name}">name</td>                
                 <td>
                     <form method='post'
                         th:action='@{/users/roles/delete/{user_role_id}(user_role_id=${user_role.id})}'
