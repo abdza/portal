@@ -7,6 +7,7 @@ import org.portalengine.portal.User.Message.UserMessage;
 import org.portalengine.portal.User.Message.UserMessageRepository;
 import org.portalengine.portal.User.Notification.UserNotification;
 import org.portalengine.portal.User.Notification.UserNotificationRepository;
+import org.portalengine.portal.User.Role.UserRoleRepository;
 import org.portalengine.portal.User.Task.UserTask;
 import org.portalengine.portal.User.Task.UserTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,16 @@ public class UserService implements UserDetailsService {
 	private UserRepository repo;
 
 	@Autowired
-	private UserNotificationRepository userNotificationRepo;
+	private UserNotificationRepository notificationRepo;
 	
 	@Autowired
-	private UserMessageRepository userMessageRepo;
+	private UserMessageRepository messageRepo;
 	
 	@Autowired
-	private UserTaskRepository userTaskRepo;
+	private UserTaskRepository taskRepo;
+	
+	@Autowired
+	private UserRoleRepository roleRepo;
 
 	@Autowired
 	public UserService() {
@@ -53,7 +57,7 @@ public class UserService implements UserDetailsService {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
 		if(secuser!=null){
 			User duser = repo.findById(((User)secuser).getId()).orElse(null);
-			List<UserNotification> toret = userNotificationRepo.findByUser(duser);
+			List<UserNotification> toret = notificationRepo.findByUser(duser);
 			return toret;
 		}
 		else{
@@ -65,7 +69,7 @@ public class UserService implements UserDetailsService {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
 		if(secuser!=null){
 			User duser = repo.findById(((User)secuser).getId()).orElse(null);
-			List<UserMessage> toret = userMessageRepo.findByUser(duser);
+			List<UserMessage> toret = messageRepo.findByUser(duser);
 			return toret;
 		}
 		else{
@@ -77,7 +81,7 @@ public class UserService implements UserDetailsService {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
 		if(secuser!=null){
 			User duser = repo.findById(((User)secuser).getId()).orElse(null);
-			List<UserTask> toret = userTaskRepo.findByUser(duser);
+			List<UserTask> toret = taskRepo.findByUser(duser);
 			return toret;
 		}
 		else{
