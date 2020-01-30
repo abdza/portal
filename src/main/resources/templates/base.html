@@ -30,11 +30,16 @@
 
 	</div>
 
+	<th:block layout:fragment="base-javascript">
 	<script type="text/javascript" th:src="@{/libs/jquery/jquery.min.js}"></script>
 	<script type="text/javascript" th:src="@{/libs/popper.js/dist/umd/popper.min.js}"></script>
 	<script type="text/javascript" th:src="@{/libs/bootstrap/js/bootstrap.min.js}"></script>
+	
+	<th:block layout:fragment="javascript"></th:block>
+	
 	<script type="text/javascript" th:src="@{/libs/ace/js/ace.js}"></script>
-
+	</th:block>
+	
 </body>
 
 </html>

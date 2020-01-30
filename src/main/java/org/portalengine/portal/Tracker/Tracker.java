@@ -23,6 +23,7 @@ import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import javassist.bytecode.Descriptor.Iterator;
 import lombok.Data;
 
 @Data
@@ -77,6 +78,14 @@ public class Tracker {
 	public void add(TrackerField field) {
 		fields.add(field);
 		field.setTracker(this);
+	}
+	
+	public String fieldsList() {
+		String toret = "";
+		for(TrackerField field:this.fields) {
+			toret += "," + field.getName();
+		}
+		return toret;
 	}
 	
 	public void remove(TrackerField field) {

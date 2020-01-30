@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html layout:decorate="~{base}">
+<th:block layout:fragment="head-end">
+<link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
+</th:block>
+
+<div layout:fragment="body-container" class="body-container">
+
+	<div th:replace="~{interface/navbar}">
+	</div>
+
+
+	<div class="main-container">
+
+		<div th:replace="~{interface/sidebar}">
+		</div>
+		
+		<div class="page-content container">
+			<section layout:fragment="content">
+			</section>
+		</div><!-- /.page-content -->
+
+	</div>
+
+</div>
+
+<th:block layout:fragment="javascript">
+<script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
+<script type="text/javascript">
+$(".tagifinput").each(function(i,obj){
+	var whitelist = $(this).data("tagify-whitelist").split(",");
+	$(this).tagify({enforceWhitelist:true,whitelist:whitelist});
+});
+$(".tagiform").on("submit",function(){
+	$(".tagifinput").each(function(i,obj){
+		if($(this).is("textarea")||$(this).is("input")){
+			var jsonval = JSON.parse($(this).val());
+			var jvalue = [];
+			for(var i=0; i<jsonval.length; i++){
+				jvalue.push(jsonval[i].value)
+			}
+			$(this).val(jvalue.join(","));
+		}
+	});
+});
+</script>
+</th:block>
+
+</html>

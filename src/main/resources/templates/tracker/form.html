@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{formbase}">
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Tracker</h1>
-        <form method='post' th:action='@{/trackers/save}' th:object="${tracker}">
+        <form method='post' th:action='@{/trackers/save}' th:object="${tracker}" class="tagiform">
             <input type='hidden' name='id' th:value='${tracker.id}' />
 
             <div class='form-group row'>
@@ -42,22 +42,22 @@
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.listFields}" name="listFields"
-                        th:value="${tracker.listFields}"></textarea>
+                <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.listFields}" name="listFields"
+                        th:value="${tracker.listFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.formFields}" name="formFields"
-                        th:value="${tracker.formFields}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.formFields}" name="formFields"
+                        th:value="${tracker.formFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Display Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.displayFields}"
-                        name="displayFields" th:value="${tracker.displayFields}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.displayFields}"
+                        name="displayFields" th:value="${tracker.displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
