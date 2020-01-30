@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{formbase}">
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Transition Tracker</h1>
         <form method='post' th:action='@{/trackers/transitions/{tracker_id}/save(tracker_id=${tracker.id})}'
-            th:object="${tracker_transition}">
+            th:object="${tracker_transition}" class="tagiform">
             <input type='hidden' name='id' th:value='${tracker_transition.id}' />
             <input type='hidden' name='tracker_id' th:value='${tracker.id}' />
 
@@ -49,7 +49,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Display Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='displayFields' th:text="${tracker_transition.displayFields}">
+                    <textarea th:value="${tracker_transition.displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='displayFields' th:text="${tracker_transition.displayFields}">
 
                     </textarea>
                 </div>
@@ -59,7 +59,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Edit Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='editFields' th:text="${tracker_transition.editFields}">
+                    <textarea th:value="${tracker_transition.editFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='editFields' th:text="${tracker_transition.editFields}">
                     </textarea>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Required Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='requiredFields' th:text="${tracker_transition.requiredFields}">
+                    <textarea th:value="${tracker_transition.requiredFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='requiredFields' th:text="${tracker_transition.requiredFields}">
                     </textarea>
                 </div>
             </div>
