@@ -75,27 +75,29 @@ public class TrackerField {
 	
 	public void updateDb(JdbcTemplate jdbctemplate) {
 		String sqltype = "varchar(256)";
-		switch(this.fieldType) {
-		case "String":			 
-			break;
-		case "Text":
-			sqltype = "text";
-			break;
-		case "Integer":
-			sqltype = "numeric(24,0)";
-			break;
-		case "Number":
-			sqltype = "decimal(24,6)";
-			break;
-		case "Date":
-			sqltype = "date";
-			break;
-		case "DateTime":
-			sqltype = "datetime";
-			break;
-		case "Checkbox":
-			sqltype = "bit";
-			break;
+		if(this.fieldType!=null) {
+			switch(this.fieldType) {
+			case "String":			 
+				break;
+			case "Text":
+				sqltype = "text";
+				break;
+			case "Integer":
+				sqltype = "numeric(24,0)";
+				break;
+			case "Number":
+				sqltype = "decimal(24,6)";
+				break;
+			case "Date":
+				sqltype = "date";
+				break;
+			case "DateTime":
+				sqltype = "datetime";
+				break;
+			case "Checkbox":
+				sqltype = "bit";
+				break;
+			}
 		}
 		SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'dbo' "
 				+ "and TABLE_NAME = '" + this.tracker.getDataTable() + "' and COLUMN_NAME = '" + this.name + "'");
