@@ -39,7 +39,7 @@
             <a href="#" class="d-flex mb-0 border-0 list-group-item list-group-item-action btn-h-lighter-secondary">
                 <img th:src="@{/images/profile.png}" width="48" class="align-self-start border-2 brc-primary-m3 p-1px mr-2 radius-round" />
                 <div>
-                    <span class="text-blue-m1 font-bolder">{{name}}:</span>
+                    <span class="text-blue-m1 font-bolder" th:text="${message.from?.name}">{{name}}:</span>
                     <span class="text-grey text-90" th:text="${message.title}">{{summary}}</span>
                     <br />
                     <span class="text-grey-m2 text-85">

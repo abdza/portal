@@ -15,17 +15,23 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.User.User;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
 
 @Data
-@Entity
 @Table(name = "portal_user_role")
+@Entity
 public class UserRole {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne( fetch = FetchType.LAZY )
+	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "user_id" )
 	private User user;
 	

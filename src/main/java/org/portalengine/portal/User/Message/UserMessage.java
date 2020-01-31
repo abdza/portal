@@ -28,11 +28,11 @@ public class UserMessage {
     private String message;
     private Date sentDate;
 
-    @ManyToOne( fetch = FetchType.LAZY )
+    @ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "user_id" )
 	private User user; 
     
-    @ManyToOne( fetch = FetchType.LAZY )
+    @ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "from_id" )
 	private User from; 
 }
