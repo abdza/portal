@@ -30,8 +30,9 @@
                     <label class='mb-0'>User</label>
                 </div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='user'
-                        th:value="${user_role.user}" />
+                    <select class="form-control col-sm-8 col-md-6" type='text' id='user' name='user'>
+                    <option th:value="${user_role?.user?.id}" th:text="${user_role?.user?.name}" th:selected="${user_role?.user}">option</option>
+                    </select>
                 </div>
             </div>
 
@@ -45,5 +46,26 @@
         </form>
     </div>
 </section>
+
+<th:block layout:fragment="javascript">
+<script th:inline="javascript">
+$('#user').select2({
+	  ajax: {
+	    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+	    dataType: 'json',
+	    processResults: function (data) {
+	    	var dat = $.map(data.content, function(obj){
+	    		var user = {id:obj.id,text:obj.name};
+	    		return user;
+	    	});
+	    	console.log(dat);
+	        // Transforms the top-level key of the response object from 'items' to 'results'
+	        return {results:dat};
+	      }
+	    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+	  }
+	});
+</script>
+</th:block>
 
 </html>
