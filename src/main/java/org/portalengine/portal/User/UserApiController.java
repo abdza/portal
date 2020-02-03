@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,18 +52,19 @@ public class UserApiController {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
 		String search = "";
-		List<User> toreturn = null;
+		Page<User> toreturn = null;
 		if(request.getParameter("q")!=null) {
-			search = "%" + request.getParameter("q").replace(" ", "%") + "%";			
-			toreturn = service.getRepo().apiquery(search);
+			search = "%" + request.getParameter("q").replace(" " , "%") + "%";		
+			Pageable pageable = PageRequest.of(page, size);
+			toreturn = service.getRepo().apiquery(search,pageable);
 		}
 		else {
-			toreturn = service.getRepo().findAll();
+			toreturn = service.getRepo().findAll(PageRequest.of(page, size));
 		}
 		
 		ArrayList<ApiUser> userlist = new ArrayList<ApiUser>();
-		for(int i=0;i<toreturn.size();i++) {
-			User cu = toreturn.get(i);
+		for(int i=0;i<toreturn.getContent().size();i++) {
+			User cu = toreturn.getContent().get(i);
 			userlist.add(new ApiUser(cu.getName(),cu.getStaffid(),cu.getEmail()));
 		}
 		map.put("content", userlist);
