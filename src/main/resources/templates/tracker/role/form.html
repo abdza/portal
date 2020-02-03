@@ -23,7 +23,7 @@
                     <label class='mb-0'>Role Type</label>
                 </div>
                 <div class='col-sm-9'>
-                    <select class='input' name='role_type'>
+                    <select class='input' name='roleType'>
                         <option value='User Role' th:selected="${tracker_role.roleType=='User Role'}">User Role</option>
                         <option value='Data Compare' th:selected="${tracker_role.roleType=='Data Compare'}">Data Compare
                         </option>
@@ -35,7 +35,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Role Rule</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='role_rule' th:text="${tracker_role.roleRule}">
+                    <textarea class='input' name='roleRule' th:text="${tracker_role.roleRule}">
                     </textarea>
                 </div>
             </div>

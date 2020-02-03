@@ -3,7 +3,7 @@
 
 <section layout:fragment="content" class='page-content'>
 	<h1>Tracker Info</h1>
-	<h2 th:text="${tracker.title}">Tracker title</h2>
+	<h2 th:text="${tracker.name}">Tracker title</h2>
 
 	<div th:replace="tracker/trackerbase::trackertabs(current_active='fields')" class="tabs is-boxed">
 

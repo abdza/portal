@@ -3,7 +3,7 @@
 
 <section layout:fragment="content" class='page-content'>
 	<h1>Tracker Info</h1>
-	<h2 th:text="${tracker.title}">Tracker title</h2>
+	<h2 th:text="${tracker.name}">Tracker title</h2>
 
 	<div th:replace="tracker/trackerbase::trackertabs(current_active='details')" class="tabs is-boxed">
 
@@ -19,14 +19,14 @@
 			class="form-inline">
 			<input type='submit' class="btn btn-warning"
 				th:onClick='return confirm("Confirm delete tracker " + this.getAttribute("data-fname") + "?");'
-				th:attr="data-fname=${tracker.title}" value='Delete' />
+				th:attr="data-fname=${tracker.name}" value='Delete' />
 		</form>
 	</div>
 
 	<div class="container">
 		<div class='row'>
-			<div class='col-sm font-bold text-sm-right'>Title:</div>
-			<div class='col-sm' th:text="${tracker.title}">module</div>
+			<div class='col-sm font-bold text-sm-right'>Name:</div>
+			<div class='col-sm' th:text="${tracker.name}">module</div>
 			<div class='col-sm font-bold text-sm-right'>Type:</div>
 			<div class='col-sm' th:text="${tracker.trackerType}">slug</div>
 		</div>

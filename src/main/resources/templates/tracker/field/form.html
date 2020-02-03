@@ -28,7 +28,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Type</label></div>
                 <div class='col-sm-9'>
-                    <select class='input' name='field_type' th:value="${tracker_field.fieldType}">
+                    <select class='input' name='fieldType' th:value="${tracker_field.fieldType}">
                         <option th:each="opt,iter: ${tracker_field.typeOptions}" th:text="${opt}" th:value="${opt}"
                             th:selected="${tracker_field.fieldType==opt}">
                         </option>
@@ -39,7 +39,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Widget</label></div>
                 <div class='col-sm-9'>
-                    <select class='input' name='field_widget' th:value="${tracker_field.fieldWidget}">
+                    <select class='input' name='fieldWidget' th:value="${tracker_field.fieldWidget}">
                         <option th:each="opt,iter: ${tracker_field.widgetOptions}" th:text="${opt}" th:value="${opt}"
                             th:selected="${tracker_field.fieldWidget==opt}">
                         </option>

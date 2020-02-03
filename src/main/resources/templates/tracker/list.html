@@ -9,7 +9,7 @@
                 <th>#</th>
                 <th>Module</th>
                 <th>Slug</th>
-                <th>Title</th>
+                <th>Name</th>
             </tr>
             <tr th:each="tracker,iter: ${trackers}">
                 <td><a href='#' th:href='@{/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
@@ -17,7 +17,7 @@
                 <td th:text="${tracker.module}">module</td>
                 <td><a href='#' th:href='@{/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug
                 </td>
-                <td th:text="${tracker.title}">title</td>
+                <td th:text="${tracker.name}">title</td>
             </tr>
         </table>
     </div>

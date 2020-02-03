@@ -48,7 +48,7 @@ public class SystemController {
 			model.addAttribute("trackerservice",trackerservice);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("transition",transition);
-			String formtitle = tracker.getTitle() + " " + transition.getName();
+			String formtitle = tracker.getName() + " " + transition.getName();
 			model.addAttribute("formtitle",formtitle);
 			HashMap<String,Object> datarow = trackerservice.datarow(tracker, data_id);
 			model.addAttribute("datas", datarow);
@@ -78,7 +78,7 @@ public class SystemController {
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerservice);
 			model.addAttribute("tracker", tracker);
-			model.addAttribute("formtitle","New " + tracker.getTitle());
+			model.addAttribute("formtitle","New " + tracker.getName());
 			model.addAttribute("transition",trackerservice.create_transition(tracker));
 			return "tracker/data/form.html";
 		}
@@ -119,7 +119,7 @@ public class SystemController {
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerservice);
 			model.addAttribute("tracker", tracker);
-			String formtitle = "Edit " + tracker.getTitle();
+			String formtitle = "Edit " + tracker.getName();
 			model.addAttribute("formtitle",formtitle);
 			HashMap<String,Object> datarow = trackerservice.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
@@ -170,7 +170,7 @@ public class SystemController {
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerservice);
 			model.addAttribute("tracker", tracker);
-			String listtitle = tracker.getTitle();
+			String listtitle = tracker.getName();
 			model.addAttribute("listtitle",listtitle);
 			Page pp = pageservice.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
 			if(pp!=null) {

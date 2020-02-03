@@ -42,7 +42,7 @@ public class Tracker {
 	private String slug;
 	
 	@NotNull
-	private String title;
+	private String name;
 	
 	private String dataTable;
 	private String updatesTable;
@@ -136,7 +136,7 @@ public class Tracker {
 	
 	@PreRemove
 	void beforeDelete() {
-		System.out.println("This is going to delete the " + this.title + " tracker");
+		System.out.println("This is going to delete the " + this.name + " tracker");
 	}
 	
 
