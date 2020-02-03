@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html layout:decorate="~{base}">
 <th:block layout:fragment="head-end">
-<link rel="stylesheet" th:href="@{/libs/tagify/tagify.min.css}" />
+<link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
 <link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
 </th:block>
 
@@ -21,6 +21,9 @@
 			</section>
 		</div><!-- /.page-content -->
 
+	</div>
+	
+	<div th:replace="~{interface/footer}">
 	</div>
 
 </div>
