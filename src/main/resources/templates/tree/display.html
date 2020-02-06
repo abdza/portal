@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{treebase}">
 
 <section layout:fragment="content" class='page-content'>
-<h1>Tree Display</h1>
+<h1 th:text="${tree.name}"></h1>
+
+<div id="tree" class="jqtree tree-dotted" data-url="/api/trees/479">
+</div>
+
 </section>
 
+<th:block layout:fragment="javascript">
+<script>
+$('#tree').tree();
+</script>
+</th:block>
 </html>

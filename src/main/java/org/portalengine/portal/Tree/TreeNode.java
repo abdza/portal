@@ -15,6 +15,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Data
@@ -26,8 +30,9 @@ public class TreeNode {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne( fetch = FetchType.LAZY )
+	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "tree_id" )
+	@JsonBackReference
 	private Tree tree; 
 	
 	@NotNull
@@ -54,5 +59,6 @@ public class TreeNode {
 	private Long rgt;
 	
 	@OneToOne(mappedBy = "root")
+	@JsonIgnore
     private Tree rootTree;
 }

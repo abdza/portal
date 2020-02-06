@@ -6,4 +6,5 @@ spring.jpa.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
 spring.servlet.multipart.max-file-size=1024MB
 spring.servlet.multipart.max-request-size=1024MB
+spring.jackson.serialization.fail-on-empty-beans=false
 portal.uploadroot=upload

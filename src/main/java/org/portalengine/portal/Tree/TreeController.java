@@ -60,7 +60,7 @@ public class TreeController {
 		
 		@PostMapping("/save")
 		public String save(@Valid Tree tree,Model model) {
-			service.getTreeRepo().save(tree);
+			service.saveTree(tree);
 			return "redirect:/trees";
 		}
 }
