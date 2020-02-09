@@ -26,12 +26,14 @@ public class UserApiController {
 	
 	@Data
 	private class ApiUser {
-		public ApiUser(String name2, String staffid2, String email2) {
+		public ApiUser(Long id,String name2, String staffid2, String email2) {
 			// TODO Auto-generated constructor stub
+			this.id=id;
 			this.name=name2;
 			this.staffid=staffid2;
 			this.email=email2;
 		}
+		Long id;
 		String name;
 		String staffid;
 		String email;
@@ -65,7 +67,7 @@ public class UserApiController {
 		ArrayList<ApiUser> userlist = new ArrayList<ApiUser>();
 		for(int i=0;i<toreturn.getContent().size();i++) {
 			User cu = toreturn.getContent().get(i);
-			userlist.add(new ApiUser(cu.getName(),cu.getStaffid(),cu.getEmail()));
+			userlist.add(new ApiUser(cu.getId(),cu.getName(),cu.getStaffid(),cu.getEmail()));
 		}
 		map.put("content", userlist);
 		return map;
