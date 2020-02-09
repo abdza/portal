@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -63,9 +64,22 @@ public class TreeApiController {
 	@GetMapping("/{id}")
 	public Object display(@PathVariable Long id, Model model) {
 		Tree curtree = service.getTreeRepo().getOne(id);
-		System.out.println("Current tree:" + curtree.getName());
+		ArrayList<Object> children = new ArrayList<>();
+		children.add(nodeJson(curtree.getRoot()));
+		return children;
+	}
+	
+	public Object nodeJson(TreeNode current) {
 		Map<String, Object> map = new HashMap<String,Object>();
-		map.put("text",curtree.getName());
+		map.put("key", current.getId());
+		map.put("title",current.getName());
+		ArrayList<Object> children = new ArrayList<>();
+		for(int i=0; i<current.getChildren().size();i++) {
+			children.add(nodeJson(current.getChildren().get(i)));
+		}
+		if(current.getChildren().size()>0) {
+			map.put("children", children);
+		}
 		return map;
 	}
 	
