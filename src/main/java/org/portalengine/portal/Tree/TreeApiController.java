@@ -78,6 +78,7 @@ public class TreeApiController {
 			children.add(nodeJson(current.getChildren().get(i)));
 		}
 		if(current.getChildren().size()>0) {
+			map.put("folder", true);
 			map.put("children", children);
 		}
 		return map;
