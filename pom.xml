@@ -12,7 +12,9 @@
 	<artifactId>portal</artifactId>
 	<version>0.0.1</version>
 	<name>portal</name>
+	<packaging>war</packaging>
 	<description>Portal Engine in Java</description>
+
 
 	<properties>
 		<java.version>1.8</java.version>
