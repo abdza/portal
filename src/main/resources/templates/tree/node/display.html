@@ -4,14 +4,9 @@
 <section layout:fragment="content" class='page-content'>
 
 	<div class="row">
-		<div class="card border-0 col-12">
+		<div class="card border-0 col-11">
 			<div class="card-header bgc-default-d2">
 				<h3 th:text="${tree.name}" class="card-title text-130 text-white"></h3>
-				<div class="card-toolbar">
-				<a id="addnode" th:href="@{/trees/nodes/{parent_id}/create(parent_id=${tree.root.id})}" href="#" class="card-toolbar-btn text-white">
-				<i class="fa fa-plus"></i>
-				</a>
-				</div>
 			</div>
 			<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
 				<div id="tree" name="tree"></div>
@@ -26,9 +21,6 @@
 		$('#tree').fancytree({
 			source : {
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
-			},
-			click : function(event,data) {
-				$("#addnode").attr("href","/trees/nodes/" + data.node.key + "/create");
 			}
 		});
 	</script>

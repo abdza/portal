@@ -17,10 +17,12 @@
 		<div th:replace="~{interface/sidebar}">
 		</div>
 		
-		<div class="page-content container">
-			<section layout:fragment="content">
-			</section>
-		</div><!-- /.page-content -->
+		<div class="main-content" role="main">
+			<div class="page-content container">
+				<section layout:fragment="content"></section>
+			</div>
+			<!-- /.page-content -->
+		</div>
 
 	</div>
 	

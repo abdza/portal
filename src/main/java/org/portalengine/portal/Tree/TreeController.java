@@ -1,6 +1,8 @@
 package org.portalengine.portal.Tree;
 
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -62,5 +64,23 @@ public class TreeController {
 		public String save(@Valid Tree tree,Model model) {
 			service.saveTree(tree);
 			return "redirect:/trees";
+		}
+		
+		@PostMapping("/nodes/save")
+		public String saveNode(Model model, HttpServletRequest request) {
+			Map<String, String[]> postdata = request.getParameterMap();
+			TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
+			service.addNode(parentnode, postdata.get("name")[0], "last");
+			return "redirect:/trees/display/" + parentnode.getTree().getId().toString();
+		}
+		
+		@GetMapping("/nodes/{id}/create")
+		public String createNode(@PathVariable Long id, Model model) {
+			TreeNode parentnode = service.getNodeRepo().getOne(id);
+			TreeNode newnode = new TreeNode();
+			newnode.setParent(parentnode);
+			newnode.setTree(parentnode.getTree());
+			model.addAttribute("newnode",newnode);
+			return "tree/node/form.html";
 		}
 }
