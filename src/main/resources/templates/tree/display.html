@@ -27,8 +27,61 @@
 			source : {
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
 			},
-			click : function(event,data) {
+			activate : function(event,data) {
 				$("#addnode").attr("href","/trees/nodes/" + data.node.key + "/create");
+			},
+			modifyChild: function(event,data) {
+				console.log("node");
+				console.log(data.node);
+				console.log("childNode");
+				console.log(data.childNode);
+				console.log("operation");
+				console.log(data.operation);
+			},
+			extensions: ["dnd5"],
+			dnd5: {
+				preventVoidModes: true,
+				preventRecursion: true,
+				dragStart: function(node, data) {
+					data.effectAllowed = "all";
+					data.dropEffect = data.dropEffectSuggested;
+					return true;
+				},
+				dragEnter: function(node, data) {
+					data.node.info("dragEnter", data);
+					return true;
+				},
+				dragOver: function(node, data) {
+					data.dropEffect = data.dropEffectSuggested;
+					return true;
+				},
+				dragEnd: function(node, data) {
+					data.node.info("dragEnd", data);
+				},
+				dragDrop: function(node, data) {
+					var sourceNodes = data.otherNodeList,
+						copyMode = data.dropEffect !== "move";
+					
+					if(data.hitMode === "after"){
+						sourceNodes.reverse();
+					}
+					
+					if( copyMode ) {
+						$.each(sourceNodes, function(i, o){
+							o.CopyTo(node, data.hitMode, function(n){
+								delete n.key;
+								n.selected = false;
+								n.title  = "Copy of " + n.title;
+							});
+						});
+					} else {
+						$.each(sourceNodes, function(i, o){
+							o.moveTo(node, data.hitMode);
+						});
+					}
+					node.setExpanded();
+				}
+				
 			}
 		});
 	</script>
