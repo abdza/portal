@@ -49,8 +49,6 @@ public class TreeService {
 			tree.setRoot(root);
 		}
 		treeRepo.save(tree);
-		
-		addNode(tree.getRoot(),tree.getName() + " other","last");
 	}
 	
 	public void addNode(TreeNode node, String name, String position) {

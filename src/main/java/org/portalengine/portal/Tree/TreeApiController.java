@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,6 +60,15 @@ public class TreeApiController {
 		}
 		map.put("content", treelist);
 		return map;
+	}
+	
+	@PostMapping("/nodes/move")
+	public String moveNode(Model model, HttpServletRequest request) {
+		Map<String, String[]> postdata = request.getParameterMap();
+		TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
+		TreeNode currentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("node_id")[0]));
+		System.out.println("parent:" + parentnode.getId().toString() + " node:" + currentnode.getId().toString() + " move:" + postdata.get("position")[0]);
+		return "redirect:/trees/display/" + parentnode.getTree().getId().toString();
 	}
 	
 	@GetMapping("/{id}")

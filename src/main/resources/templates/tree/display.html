@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html layout:decorate="~{treebase}">
 
+<th:block layout:fragment="head-meta">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
 
 	<div class="row">
@@ -68,15 +73,33 @@
 					
 					if( copyMode ) {
 						$.each(sourceNodes, function(i, o){
-							o.CopyTo(node, data.hitMode, function(n){
+							o.copyTo(node, data.hitMode, function(n){
 								delete n.key;
 								n.selected = false;
 								n.title  = "Copy of " + n.title;
 							});
 						});
 					} else {
+						var token = $("meta[name='_csrf']").attr("content");
+						var header = $("meta[name='_csrf_header']").attr("content");
 						$.each(sourceNodes, function(i, o){
 							o.moveTo(node, data.hitMode);
+							$.ajax({
+								url : /*[[@{/api/trees/nodes/move}]]*/'/dummy/api/users',
+								method : "post",
+								beforeSend: function(xhr) {
+									xhr.setRequestHeader(header,token);
+								},
+								data : {
+									parent_id : node.key,
+									node_id : o.key,
+									position : data.hitMode
+								}
+							});
+							console.log("from:");
+							console.log(node);
+							console.log("to");
+							console.log(o);
 						});
 					}
 					node.setExpanded();
