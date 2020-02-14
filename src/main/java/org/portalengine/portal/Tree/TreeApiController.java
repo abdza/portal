@@ -68,6 +68,7 @@ public class TreeApiController {
 		TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
 		TreeNode currentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("node_id")[0]));
 		System.out.println("parent:" + parentnode.getId().toString() + " node:" + currentnode.getId().toString() + " move:" + postdata.get("position")[0]);
+		service.moveNode(parentnode, currentnode, postdata.get("position")[0]);
 		return "redirect:/trees/display/" + parentnode.getTree().getId().toString();
 	}
 	

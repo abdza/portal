@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -46,6 +47,7 @@ public class TreeNode {
 	@OneToMany(
 			mappedBy = "parent",
 			orphanRemoval = true)
+	@OrderBy("lft ASC")
 	private List<TreeNode> children = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY )
