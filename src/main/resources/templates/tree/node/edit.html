@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<section layout:fragment="content" class='tree-content'>
+    <div class='content'>
+        <h1>Edit Node</h1>
+        <form method='post' th:action='@{/trees/nodes/{curnodeid}/update(curnodeid=${curnode.id})}' th:object="${curnode}">
+            <input type='hidden' name='id' th:value='${curnode.id}' />
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Name</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='name' th:value="${curnode.name}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Users</label>
+                </div>
+                <div class='col-sm-9'>
+                    <ul>
+                    <li>Role: Name</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class='form-group row'>
+                <div class="offset-md-3 col-md-9">
+                    <button class='btn btn-info' name='save'>Save</button>
+                    <button class='btn btn-secondary' name='cancel'>Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+</html>

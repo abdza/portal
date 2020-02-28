@@ -83,4 +83,20 @@ public class TreeController {
 			model.addAttribute("newnode",newnode);
 			return "tree/node/form.html";
 		}
+		
+		@GetMapping("/nodes/{id}/edit")
+		public String editNode(@PathVariable Long id, Model model) {
+			TreeNode curnode = service.getNodeRepo().getOne(id);
+			model.addAttribute("curnode",curnode);
+			return "tree/node/edit.html";
+		}
+		
+		@PostMapping("/nodes/{id}/update")
+		public String updateNode(@PathVariable Long id, HttpServletRequest request,Model model) {
+			Map<String, String[]> postdata = request.getParameterMap();
+			TreeNode curnode = service.getNodeRepo().getOne(id);
+			curnode.setName(postdata.get("name")[0]);
+			service.getNodeRepo().save(curnode);
+			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
+		}
 }

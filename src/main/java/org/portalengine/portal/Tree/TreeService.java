@@ -102,7 +102,7 @@ public class TreeService {
 		namedjdbctemplate.update("update portal_tree_node set lft=lft+:newlft+:nodesize,rgt=rgt+:newlft+:nodesize where lft<0 and tree_id=:tree_id", paramsource);
 		
 		//Update parent node
-		namedjdbctemplate.update("update portal_tree_node set parent_id=:parentid where id=:curid tree_id=:tree_id", paramsource);
+		namedjdbctemplate.update("update portal_tree_node set parent_id=:parentid where id=:curid", paramsource);
 		
 	}
 	
