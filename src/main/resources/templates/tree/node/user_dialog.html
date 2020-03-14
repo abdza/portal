@@ -1,0 +1,39 @@
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" th:fragment="dialog(tree)">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Node User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+        <input type='hidden' name='user_node_id' id='user_node_id' th:value="${tree.root.id}"/>
+        	<div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>User</label>
+                </div>
+                <div class='col-sm-9 col-12 tag-input-style'>
+                    <select class="form-control col-sm-8 col-md-6" type='text' id='user' name='user'>
+                    	<option>Please select a user</option>
+                    </select>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Role</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' name='role' id='role'/>
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id='save_user'>Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
