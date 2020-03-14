@@ -4,6 +4,13 @@
 <link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
 <link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
 <link rel="stylesheet" th:href="@{/libs/fancytree/skin-lion/ui.fancytree.css}" />
+<style>
+@media screen and (max-width: 767px) {
+    .select2 {
+        width: 100% !important;
+    }
+}
+</style>
 </th:block>
 
 <div layout:fragment="body-container" class="body-container">

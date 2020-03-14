@@ -23,11 +23,11 @@ public class TreeUser {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@ManyToOne( fetch = FetchType.LAZY )
+	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "node_id" )
 	private TreeNode node;
 	
-	@ManyToOne( fetch = FetchType.LAZY )
+	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "user_id" )
 	private User user;
 	
