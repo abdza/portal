@@ -15,6 +15,7 @@
                 <th>Filegroup</th>
                 <th>Allowed Roles</th>
                 <th>Sort Num</th>
+                <th>&nbsp;</th>
             </tr>
             <tr th:each="filelink,iter: ${files}">
                 <td><a href='#' th:href='@{/files/edit/{id}(id=${filelink.id})}' th:text="${iter.index + 1}">2</a></td>
@@ -26,6 +27,15 @@
                 <td th:text="${filelink.fileGroup}">File Group</td>
                 <td th:text="${filelink.allowedRoles}">Allowed Roles</td>
                 <td th:text="${filelink.sortNum}">Sort Num</td>
+                <td>
+					<form method='post'
+						th:action='@{/files/delete/{id}(id=${filelink.id})}'
+						th:object="${filelink}">
+						<input type='submit' class='button danger'
+							th:onClick='return confirm("Confirm delete file " + this.getAttribute("data-fname") + "?");'
+							th:attr="data-fname=${filelink.name}" value='Delete' />
+					</form>
+				</td>
             </tr>
         </table>
     </div>
