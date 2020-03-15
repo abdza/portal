@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Tracker;
@@ -42,7 +43,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_data_update")
-public class DataUpdate {
+public class DataUpdate extends Auditable<String> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

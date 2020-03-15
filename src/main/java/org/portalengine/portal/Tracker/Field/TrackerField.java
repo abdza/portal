@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -29,7 +30,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_tracker_field")
-public class TrackerField {
+public class TrackerField extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

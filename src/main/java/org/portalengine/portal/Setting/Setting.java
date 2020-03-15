@@ -10,6 +10,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
+import org.portalengine.portal.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Data;
@@ -17,7 +18,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_setting")
-public class Setting {
+public class Setting extends Auditable<String> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

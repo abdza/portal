@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.User.User;
 
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @Table(name = "portal_user_role")
 @Entity
-public class UserRole {
+public class UserRole extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

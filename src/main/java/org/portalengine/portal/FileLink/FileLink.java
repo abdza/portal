@@ -8,12 +8,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Auditable;
+
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "portal_file")
-public class FileLink {
+public class FileLink extends Auditable<String> {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

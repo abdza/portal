@@ -16,6 +16,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.portalengine.portal.Auditable;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -25,7 +27,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_tree_node")
-public class TreeNode {
+public class TreeNode extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

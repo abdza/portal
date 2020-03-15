@@ -1,5 +1,7 @@
 package org.portalengine.portal.Page;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,12 +10,14 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Auditable;
+
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "portal_page")
-public class Page {
+public class Page extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -31,5 +35,7 @@ public class Page {
 	@NotNull
 	@org.hibernate.annotations.Type( type = "text" )
 	private String content;	
+	
+	private Boolean published;
 
 }

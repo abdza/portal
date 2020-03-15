@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;
@@ -29,7 +30,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_tracker")
-public class Tracker {
+public class Tracker extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

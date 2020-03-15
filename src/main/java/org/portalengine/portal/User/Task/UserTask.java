@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.User.User;
 
 import lombok.Data;
@@ -18,7 +19,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "portal_user_task")
-public class UserTask {
+public class UserTask extends Auditable<String> {
     	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

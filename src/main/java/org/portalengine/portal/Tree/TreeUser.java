@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.portalengine.portal.Auditable;
 import org.portalengine.portal.User.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,7 +20,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "portal_tree_user")
-public class TreeUser {
+public class TreeUser extends Auditable<String> {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
