@@ -26,7 +26,7 @@
 					th:text="${portalpage.slug}">slug</td>
 				<td th:text="${portalpage.title}">title</td>
 				<td>published</td>
-				<td>created</td>
+				<td th:text="${portalpage.createdDate}">created</td>
 				<td>updated</td>
 				<td>
 					<form method='post'

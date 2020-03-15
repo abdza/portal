@@ -15,10 +15,10 @@
                 <th>&nbsp;</th>
             </tr>
             <tr th:each="dataupdate,iter: ${dataupdates}">
-                <td><a href='#' th:href='@{/dataupdates/edit/{id}(id=${dataupdate.id})}'
+                <td><a href='#' th:href='@{/dataupdates/display/{id}(id=${dataupdate.id})}'
                         th:text="${iter.index + 1}">2</a></td>
-                <td th:text="${dataupdate.tracker.title}">module</td>
-                <td th:text="${dataupdate.dateCreated}">title</td>
+                <td th:text="${dataupdate.tracker?.name}">module</td>
+                <td th:text="${dataupdate.createdDate}">title</td>
                 <td th:text="${dataupdate.filelink?.name}">name</td>
                 <td th:text="${dataupdate.batchNo}">title</td>
                 <td>
@@ -26,7 +26,7 @@
                         th:object="${dataupdate}">
                         <input type='submit' class='button danger'
                             th:onClick='return confirm("Confirm delete dataupdate " + this.getAttribute("data-fname") + "?");'
-                            th:attr="data-fname=${dataupdate.dateCreated}" value='Delete' />
+                            th:attr="data-fname=${dataupdate.createdDate}" value='Delete' />
                     </form>
                 </td>
             </tr>

@@ -12,7 +12,7 @@
                     <label class='mb-0'>Tracker</label></div>
                 <div class='col-sm-9'>
                     <select class='input' name='tracker' th:value="${dataupdate.tracker}">
-                        <option th:each="tracker,iter: ${trackers}" th:text="${tracker.title}" th:value="${tracker.id}"
+                        <option th:each="tracker,iter: ${trackers}" th:text="${tracker.name}" th:value="${tracker.id}"
                             th:selected="${dataupdate?.tracker?.id==opt}">title</option>
                     </select>
                 </div>

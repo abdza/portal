@@ -1,8 +1,6 @@
 package org.portalengine.portal.DataUpdate;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,9 +12,7 @@ import javax.sql.DataSource;
 import javax.validation.Valid;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,7 +23,6 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,7 +85,7 @@ public class DataUpdateController {
 	
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable Long id, Model model) {
-		DataUpdate dataupdate = service.getRepo().getOne(id);
+		DataUpdate dataupdate = service.getRepo().findById(id).orElse(null);
 		model.addAttribute("dataupdate", dataupdate);
 		return "dataupdate/form.html";
 	}
@@ -159,7 +154,6 @@ public class DataUpdateController {
 		return "redirect:/dataupdates/display/" + id.toString();
 	}
 	
-	@SuppressWarnings("deprecation")
 	@GetMapping("/setparam/{id}")
 	public String setparam(@PathVariable Long id, Model model) {
 		HashMap<Integer, String> columns = new HashMap<Integer, String>();

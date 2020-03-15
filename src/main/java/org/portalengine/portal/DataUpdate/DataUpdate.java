@@ -67,8 +67,6 @@ public class DataUpdate extends Auditable<String> {
 	private String fileName;
 	private String filePath;
 	
-	private Date dateCreated;
-	
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "user_id" )
 	private User user;
@@ -81,9 +79,4 @@ public class DataUpdate extends Auditable<String> {
 	
 	@org.hibernate.annotations.Type( type = "text" )
 	private String messages;
-	
-	@PrePersist
-	void updateDateCreated() {
-		this.dateCreated = new Date();
-	}
 }
