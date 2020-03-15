@@ -68,6 +68,12 @@ public class TreeController {
 			return "redirect:/trees";
 		}
 		
+		@PostMapping("/delete/{id}")
+		public String delete(@PathVariable Long id, Model model) {
+			service.getTreeRepo().deleteById(id);
+			return "redirect:/trees";
+		}
+		
 		@PostMapping("/nodes/save")
 		public String saveNode(Model model, HttpServletRequest request) {
 			Map<String, String[]> postdata = request.getParameterMap();

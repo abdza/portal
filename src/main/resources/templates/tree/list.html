@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
 
-<section  layout:fragment="content" class='tree-content'>
-<div class='content'>
-<h1>Tree Listing</h1>
-<a href="#" th:href="@{/trees/create}" class="btn btn-primary">Add</a>
-<table class="table">
-<tr><th>#</th><th>Module</th><th>Slug</th><th>Name</th></tr>
-<tr th:each="portaltree,iter: ${trees}">
-<td><a href='#' th:href='@{/trees/edit/{id}(id=${portaltree.id})}' th:text="${iter.index + 1}">2</a></td>
-<td th:text="${portaltree.module}">module</td>
-<td><a href='#' th:href='@{/trees/display/{id}(id=${portaltree.id})}' th:text="${portaltree.slug}">slug</td>
-<td th:text="${portaltree.name}">title</td>
-</tr>
-</table>
-</div>
+<section layout:fragment="content" class='tree-content'>
+	<div class='content'>
+		<h1>Tree Listing</h1>
+		<a href="#" th:href="@{/trees/create}" class="btn btn-primary">Add</a>
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Module</th>
+				<th>Slug</th>
+				<th>Name</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr th:each="portaltree,iter: ${trees}">
+				<td><a href='#'
+					th:href='@{/trees/edit/{id}(id=${portaltree.id})}'
+					th:text="${iter.index + 1}">2</a></td>
+				<td th:text="${portaltree.module}">module</td>
+				<td><a href='#'
+					th:href='@{/trees/display/{id}(id=${portaltree.id})}'
+					th:text="${portaltree.slug}">slug</td>
+				<td th:text="${portaltree.name}">title</td>
+				<td>
+					<form method='post'
+						th:action='@{/trees/delete/{id}(id=${portaltree.id})}'
+						th:object="${portaltree}">
+						<input type='submit' class='button danger'
+							th:onClick='return confirm("Confirm delete tree " + this.getAttribute("data-fname") + "?");'
+							th:attr="data-fname=${portaltree.name}" value='Delete' />
+					</form>
+			</tr>
+		</table>
+	</div>
 
-<nav th:replace="macros::navpagination(items=${trees},url='/trees')"></nav>
+	<nav th:replace="macros::navpagination(items=${trees},url='/trees')"></nav>
 
 </section>
 </html>
