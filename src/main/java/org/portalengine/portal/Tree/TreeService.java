@@ -40,15 +40,20 @@ public class TreeService {
 	}
 	
 	public void saveTree(Tree tree) {
-		if(tree.getRoot()==null) {
+		treeRepo.save(tree);
+		if(getRoot(tree)==null) {
 			TreeNode root = new TreeNode();
 			root.setName(tree.getName());
 			root.setTree(tree);
 			root.setLft((long) 1);
 			root.setRgt((long) 2);
-			tree.setRoot(root);
+			nodeRepo.save(root);
 		}
-		treeRepo.save(tree);
+	}
+	
+	public TreeNode getRoot(Tree tree) {
+		TreeNode root = nodeRepo.getRoot(tree);
+		return root;
 	}
 	
 	public void moveNode(TreeNode parent, TreeNode curnode, String position) {

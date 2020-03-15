@@ -78,19 +78,22 @@ public class TreeApiController {
 	}
 	
 	@PostMapping(value = "/nodes/saveuser", consumes = "application/x-www-form-urlencoded")
-	public String saveuser(HttpServletRequest request) {
+	public TreeNode saveuser(HttpServletRequest request) {
 		Map<String, String[]> postdata = request.getParameterMap();
 		String node_id = postdata.get("node_id")[0];
 		String user_id = postdata.get("user_id")[0];
 		String role = postdata.get("role")[0];
 		TreeUser tuser = new TreeUser();
-		TreeNode tnode = service.getNodeRepo().getOne(Long.parseLong(node_id));
-		tuser.setNode(tnode);
-		User user = userService.getRepo().findById(Long.parseLong(user_id)).orElse(null);
-		tuser.setUser(user);
-		tuser.setRole(role);
-		service.getUserRepo().save(tuser);
-		return "redirect:/trees/display";
+		TreeNode tnode = service.getNodeRepo().findById(Long.parseLong(node_id)).orElse(null);
+		if(tnode!=null) {
+			tuser.setNode(tnode);
+			User user = userService.getRepo().findById(Long.parseLong(user_id)).orElse(null);
+			tuser.setUser(user);
+			tuser.setRole(role);
+			service.getUserRepo().save(tuser);
+			return tnode;
+		}
+		return null;
 	}
 	
 	
@@ -98,8 +101,14 @@ public class TreeApiController {
 	public Object display(@PathVariable Long id, Model model) {
 		Tree curtree = service.getTreeRepo().getOne(id);
 		ArrayList<Object> children = new ArrayList<>();
-		children.add(nodeJson(curtree.getRoot()));
+		children.add(nodeJson(service.getRoot(curtree)));
 		return children;
+	}
+	
+	@GetMapping("/node/{node_id}")
+	public TreeNode treeNode(@PathVariable Long node_id) {
+		TreeNode curnode = service.getNodeRepo().findById(node_id).orElse(null);
+		return curnode;
 	}
 	
 	public Object nodeJson(TreeNode current) {

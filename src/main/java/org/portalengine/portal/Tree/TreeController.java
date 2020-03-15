@@ -57,6 +57,8 @@ public class TreeController {
 		public String display(@PathVariable Long id, Model model) {
 			Tree curtree = service.getTreeRepo().getOne(id);
 			model.addAttribute("tree", curtree);
+			TreeNode curnode = service.getRoot(curtree);
+			model.addAttribute("curnode",curnode);
 			return "tree/display.html";
 		}
 		

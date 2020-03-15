@@ -8,10 +8,10 @@
 
 <section layout:fragment="content" class='page-content'>
 
-<div class="modal" id="exampleModal" tabindex="-1" role="dialog" th:replace="~{tree/node/user_dialog::dialog(${tree})}">
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" th:replace="~{tree/node/user_dialog::dialog(${tree},${curnode})}">
 </div>
 
-	<div class="row" th:replace="~{tree/node/display::nodecard(${tree})}">
+	<div class="row" th:replace="~{tree/node/display::nodecard(${tree},${curnode})}">
 	</div>
 	<br/>
 	<div class="row">
@@ -19,10 +19,10 @@
 			<div class="card-header bgc-default-d2">
 				<h3 th:text="${tree.name}" class="card-title text-130 text-white"></h3>
 				<div class="card-toolbar">
-				<a id="addnode" th:href="@{/trees/nodes/{parent_id}/create(parent_id=${tree.root.id})}" href="#" class="card-toolbar-btn text-white">				
+				<a id="addnode" th:href="@{/trees/nodes/{parent_id}/create(parent_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-plus"></i>
 				</a>
-				<a id="editnode" th:href="@{/trees/nodes/{curnodeid}/edit(curnodeid=${tree.root.id})}" href="#" class="card-toolbar-btn text-white">
+				<a id="editnode" th:href="@{/trees/nodes/{curnodeid}/edit(curnodeid=${curnode.id})}" href="#" class="card-toolbar-btn text-white">
 				<i class="fa fa-edit"></i>
 				</a>
 				</div>
@@ -37,22 +37,42 @@
 
 <th:block layout:fragment="javascript">
 	<script th:inline="javascript">
-	$('#save_user').on('click',function(){
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-		console.log("nid:" + $('#user_node_id').val() + " uid:" + $('#user').val() + " role:" + $('#role').val());
-		$.ajax({
-			url : /*[[@{/api/trees/nodes/saveuser}]]*/'/dummy/api/users',
-			method : "post",
-			beforeSend: function(xhr) {
-				xhr.setRequestHeader(header,token);
-			},
-			data : {
-				node_id : $('#user_node_id').val(),
-				user_id : $('#user').val(),
-				role : $('#role').val()
-			}
+	
+	function updateNode(node) {
+		$('#bodynodetitle').text(node.name);
+		var users = $('<ul></ul>');
+		$('#bodynodeusers').html("")
+		node.users.forEach(function(item,index){
+			users.append($('<li></li>').text(item.user.name + " : " + item.role));			
 		});
+		$('#bodynodeusers').append(users);
+	}
+	
+	$('#save_user').on('click',function(){
+		if($('#role').val().length>0){
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$.ajax({
+				url : /*[[@{/api/trees/nodes/saveuser}]]*/'/dummy/api/users',
+				method : "post",
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader(header,token);
+				},
+				data : {
+					node_id : $('#user_node_id').val(),
+					user_id : $('#user').val(),
+					role : $('#role').val()
+				}
+			}).done(function(data){
+				updateNode(data);
+				$('#user').val("Please select a user");
+				$('#role').val("");
+				$('#user_dialog').modal('hide');
+			});
+		}
+		else{
+			alert('Please specify the role for the user');
+		};
 	});
 		$('#tree').fancytree({
 			source : {
@@ -64,14 +84,13 @@
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);
 				$('#user_node_id').val(data.node.key);
-			},
-			modifyChild: function(event,data) {
-				console.log("node");
-				console.log(data.node);
-				console.log("childNode");
-				console.log(data.childNode);
-				console.log("operation");
-				console.log(data.operation);
+				$.ajax({
+					/*[+
+					url : [[@{/api/trees/node}]] + '/' + data.node.key
+					+]*/
+				}).done(function(data){
+					updateNode(data);
+				});
 			},
 			extensions: ["dnd5"],
 			dnd5: {
@@ -126,10 +145,6 @@
 									position : data.hitMode
 								}
 							});
-							console.log("from:");
-							console.log(node);
-							console.log("to");
-							console.log(o);
 						});
 					}
 					node.setExpanded();

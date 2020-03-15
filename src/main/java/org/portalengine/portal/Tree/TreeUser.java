@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 
 import org.portalengine.portal.User.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -25,6 +27,7 @@ public class TreeUser {
 	
 	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "node_id" )
+	@JsonIgnore
 	private TreeNode node;
 	
 	@ManyToOne( fetch = FetchType.EAGER )

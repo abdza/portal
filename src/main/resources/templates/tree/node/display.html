@@ -1,9 +1,9 @@
-	<div class="row" th:fragment="nodecard(tree)">
+	<div class="row" th:fragment="nodecard(tree,curnode)">
 		<div class="card border-0 col-12">
 			<div class="card-header bgc-default-d2">
-				<h3 id="nodetitle" th:text="${tree.root.name}" class="card-title text-130 text-white"></h3>
+				<h3 id="nodetitle" th:text="${curnode.name}" class="card-title text-130 text-white"></h3>
 				<div class="card-toolbar">
-				<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#exampleModal">				
+				<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#user_dialog">				
 				<i class="fa fa-user-plus"></i>
 				</a>				
 				</div>
@@ -12,13 +12,13 @@
 				<dl>
 					<div class='row'>
 					<dt class="col-md-2">Name</dt>
-					<dd class="col-md-10" id='bodynodetitle' th:value="${tree.root.name}">Name</dd>
+					<dd class="col-md-10" id='bodynodetitle' th:text="${curnode.name}">Name</dd>
 					</div>
 					<div class='row'>
 					<dt class="col-md-2">Users</dt>
 					<dd class="col-md-10" id='bodynodeusers'>
 					<ul>
-					<li th:each="user:${tree.root.users}" th:text="${ user.role + ' : ' + user.user.name}">Role: Name</li>
+					<li th:each="user:${curnode.users}" th:text="${ user.role + ' : ' + user.user.name}">Role: Name</li>
 					</ul>
 					</dd>
 					</div>

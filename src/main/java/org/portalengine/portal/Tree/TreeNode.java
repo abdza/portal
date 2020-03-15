@@ -48,10 +48,13 @@ public class TreeNode {
 			mappedBy = "parent",
 			orphanRemoval = true)
 	@OrderBy("lft ASC")
+	@JsonManagedReference
+	@JsonBackReference
 	private List<TreeNode> children = new ArrayList<>();
 	
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "parent_id" )
+	@JsonIgnore
 	private TreeNode parent;
 	
 	@NotNull
@@ -59,8 +62,4 @@ public class TreeNode {
 	
 	@NotNull
 	private Long rgt;
-	
-	@OneToOne(mappedBy = "root")
-	@JsonIgnore
-    private Tree rootTree;
 }
