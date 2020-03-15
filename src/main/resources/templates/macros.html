@@ -5,13 +5,24 @@
             Previous
         </a>
     </li>
+    <li th:if="${items.number gt 10}" class="paginate_button page-item previous">
+        <a class="page-link"  th:href="@{{url}?page={id}(id=${0},url=${url})}">
+            1
+        </a>
+    </li>
     
-    <li th:class="${items.number == i} ? 'active paginate_button page-item' : 'paginate_button page-item'" th:each="i: ${#numbers.sequence(0, items.totalPages - 1, 1)}">
+    <li th:class="${items.number == i} ? 'active paginate_button page-item' : 'paginate_button page-item'" th:each="i: ${#numbers.sequence(items.number>5?items.number-5:0, items.totalPages-items.number>5?items.number+5:items.totalPages - 1, 1)}">
         <span th:if="${items.number != i}">
             <a class="page-link" aria-label="Goto page ${i+1}" th:text="${i+1}" th:href="@{{url}?page={id}(id=${i},url=${url})}">1</a>
         </span>
         <span class="page-link" th:if="${items.number == i}" th:text="${i+1}">
         </span>
+    </li>
+    
+    <li th:if="${items.number lt items.totalPages-10}" class="paginate_button page-item previous">
+        <a class="page-link"  th:href="@{{url}?page={id}(id=${items.totalPages-1},url=${url})}" th:text="${items.totalPages}">
+            1
+        </a>
     </li>
 
     <li th:if="${items.number lt items.totalPages - 1}" class="paginate_button page-item next">

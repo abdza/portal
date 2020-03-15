@@ -3,7 +3,7 @@
 <th th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
-<td><a href='#' th:text="${iter.count}" th:href="@{/{module}/{slug}/display/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')?.toString()})}" >2</a></td>
+<td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="@{/{module}/{slug}/display/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')?.toString()})}" >2</a></td>
 <td th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
 </tr>
 </table>
