@@ -63,4 +63,10 @@ public class PageController {
 			service.getRepo().save(page);
 			return "redirect:/pages";
 		}
+		
+		@PostMapping("/delete/{id}")
+		public String delete(@PathVariable Long id, Model model) {
+			service.getRepo().deleteById(id);
+			return "redirect:/pages";
+		}
 }
