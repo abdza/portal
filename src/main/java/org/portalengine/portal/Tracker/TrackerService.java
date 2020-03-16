@@ -182,7 +182,10 @@ public class TrackerService {
 		Integer offset = page * size;
 		String pagequery = " order by id offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";
 		Integer rowcount = namedjdbctemplate.queryForObject("select count(*) from " + tracker.getDataTable() + filterquery, paramsource, Integer.class); 
-		Integer totalPages = (rowcount/size) + 1;
+		Integer totalPages = rowcount/size;
+		if(rowcount%size>0) {
+			totalPages += 1;
+		}
 		dataset.setTotalPages(totalPages);
 		SqlRowSet toret = namedjdbctemplate.queryForRowSet(basequery + filterquery + pagequery, paramsource);
 		ArrayList<HashMap<String,Object>> rows = new ArrayList<HashMap<String,Object>>(); 
