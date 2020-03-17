@@ -14,8 +14,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
@@ -24,7 +22,6 @@ import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import javassist.bytecode.Descriptor.Iterator;
 import lombok.Data;
 
 @Data

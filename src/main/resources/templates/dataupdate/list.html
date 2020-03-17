@@ -10,8 +10,7 @@
                 <th>#</th>
                 <th>Tracker</th>
                 <th>Date</th>
-                <th>File
-                <th>Batch #</th>
+                <th>File</th>
                 <th>&nbsp;</th>
             </tr>
             <tr th:each="dataupdate,iter: ${dataupdates}">
@@ -20,7 +19,6 @@
                 <td th:text="${dataupdate.tracker?.name}">module</td>
                 <td th:text="${dataupdate.createdDate}">title</td>
                 <td th:text="${dataupdate.filelink?.name}">name</td>
-                <td th:text="${dataupdate.batchNo}">title</td>
                 <td>
                     <form method='post' th:action='@{/dataupdates/delete/{id}(id=${dataupdate.id})}'
                         th:object="${dataupdate}">

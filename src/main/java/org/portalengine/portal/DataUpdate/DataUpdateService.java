@@ -25,6 +25,7 @@ import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -40,6 +41,9 @@ public class DataUpdateService {
 	private TrackerFieldRepository trackerfieldrepo;
 	
 	@Autowired
+	private NamedParameterJdbcTemplate jdbctemplate;
+	
+	@Autowired
 	public DataUpdateService() {
 	}
 
@@ -51,7 +55,14 @@ public class DataUpdateService {
 		this.repo = repo;
 	}
 	
-	public void runupdate(DataUpdate dataupdate, NamedParameterJdbcTemplate jdbctemplate,FileLinkService fileservice) {
+	public void deleteUpdate(DataUpdate dataupdate) {
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();
+		String delquery = "delete from " + dataupdate.getTracker().getDataTable() + " where dataupdate_id=" + dataupdate.getId();
+		jdbctemplate.update(delquery,paramsource);
+		repo.deleteById(dataupdate.getId());
+	}
+	
+	public void runupdate(DataUpdate dataupdate,FileLinkService fileservice) {
 		Gson gson = new Gson();
 		//System.out.println("Running update for " + dataupdate.getId().toString());
 		

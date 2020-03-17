@@ -1,13 +1,5 @@
 package org.portalengine.portal.DataUpdate;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.function.BiConsumer;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,27 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.portalengine.portal.Auditable;
 import org.portalengine.portal.FileLink.FileLink;
-import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.User.User;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import lombok.Data;
 
@@ -57,7 +38,6 @@ public class DataUpdate extends Auditable<String> {
 	@JoinColumn( name = "filelink_id" )
 	private FileLink filelink;
 	
-	private Long batchNo;
 	private Long uploadStatus;
 	private Long dataRow;
 	private Long dataEnd;
@@ -79,4 +59,8 @@ public class DataUpdate extends Auditable<String> {
 	
 	@org.hibernate.annotations.Type( type = "text" )
 	private String messages;
+	
+	@Transient
+	@Autowired
+	private JdbcTemplate jdbctemplate;
 }

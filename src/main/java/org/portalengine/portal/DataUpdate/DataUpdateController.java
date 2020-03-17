@@ -92,7 +92,10 @@ public class DataUpdateController {
 	
 	@PostMapping("/delete/{id}")
 	public String delete(@PathVariable Long id, Model model) {
-		service.getRepo().deleteById(id);
+		DataUpdate dataupdate = service.getRepo().findById(id).orElse(null);
+		if(dataupdate!=null) {
+			service.deleteUpdate(dataupdate);
+		}
 		return "redirect:/dataupdates";
 	}
 	
@@ -150,7 +153,7 @@ public class DataUpdateController {
 	@GetMapping("/runupdate/{id}")
 	public String runupdate(@PathVariable Long id, Model model) {		
 		DataUpdate dataupdate = service.getRepo().getOne(id);
-		service.runupdate(dataupdate,jdbctemplate,fileservice);
+		service.runupdate(dataupdate,fileservice);
 		return "redirect:/dataupdates/display/" + id.toString();
 	}
 	
