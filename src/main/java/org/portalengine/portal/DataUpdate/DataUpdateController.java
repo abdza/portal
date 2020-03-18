@@ -77,14 +77,14 @@ public class DataUpdateController {
 		
 	@GetMapping(value={"/create","/edit/{id}"})
 	public String form(@PathVariable(required=false) Long id, Model model) {
-		DataUpdate dataupdate ;
 		if(id!=null) {
-			dataupdate = service.getRepo().findById(id).orElse(null);
+			DataUpdate dataupdate = service.getRepo().findById(id).orElse(null);
+			model.addAttribute("dataupdate", dataupdate);
 		}
 		else {
-			dataupdate = new DataUpdate();
+			model.addAttribute("dataupdate", new DataUpdate());
 		}
-		model.addAttribute("dataupdate", dataupdate);
+		
 		model.addAttribute("trackers",trackerService.getRepo().findAll());
 		return "dataupdate/form.html";
 	}

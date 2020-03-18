@@ -5,34 +5,32 @@
     <div class='content'>
         <h1>Create Tracker</h1>
         <form method='post' th:action='@{/trackers/save}' th:object="${tracker}" class="tagiform">
-            <input type='hidden' name='id' th:value='${tracker.id}' />
+            <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Module</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='module'
-                        th:value="${tracker.module}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{module}" />
                 </div>
             </div>
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Slug</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='slug' th:value="${tracker.slug}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{slug}" />
                 </div>
             </div>
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Name</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='name'
-                        th:value="${tracker.name}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}" />
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Type</label></div>
                 <div class='col-sm-9'>
-                    <select class="form-control col-sm-8 col-md-6" name='trackerType' th:value="${tracker.trackerType}">
+                    <select class="form-control col-sm-8 col-md-6" th:field="*{trackerType}">
                         <option th:each="opt,iter: ${tracker.typeOptions}" th:text="${opt}" th:value="${opt}"
                             th:selected="${opt==tracker.trackerType}">
                         </option>
@@ -42,36 +40,31 @@
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
                 <div class='col-sm-9'>
-                <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.listFields}" name="listFields"
-                        th:value="${tracker.listFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{listFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.formFields}" name="formFields"
-                        th:value="${tracker.formFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{formFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Display Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:text="${tracker.displayFields}"
-                        name="displayFields" th:value="${tracker.displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Initial Status</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6" th:text="${tracker.initialStatus}"
-                        name="initialStatus" th:value="${tracker.initialStatus}"></textarea>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{initialStatus}"/>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Data Table</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='dataTable'
-                        th:value="${tracker.dataTable}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{dataTable}" />
                 </div>
             </div>
 
@@ -80,8 +73,7 @@
                     <label class='mb-0'>Updates Table</label>
                 </div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='updatesTable'
-                        th:value="${tracker.updatesTable}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{updatesTable}" />
                 </div>
             </div>
 

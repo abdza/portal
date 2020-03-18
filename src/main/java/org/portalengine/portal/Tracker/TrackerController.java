@@ -69,16 +69,15 @@ public class TrackerController {
 			return "tracker/list.html";
 		}
 		
-		@GetMapping("/create")
-		public String create(Model model) {
-			model.addAttribute("tracker", new Tracker());
-			return "tracker/form.html";
-		}
-		
-		@GetMapping("/edit/{id}")
-		public String edit(@PathVariable Long id, Model model) {
-			Tracker tracker = service.getRepo().getOne(id);
-			model.addAttribute("tracker", tracker);
+		@GetMapping(value= {"/create","/edit/{id}"})
+		public String form(@PathVariable(required=false) Long id, Model model) {
+			if(id!=null) {
+				Tracker tracker = service.getRepo().getOne(id);
+				model.addAttribute("tracker", tracker);
+			}
+			else {
+				model.addAttribute("tracker",new Tracker());
+			}
 			return "tracker/form.html";
 		}
 		

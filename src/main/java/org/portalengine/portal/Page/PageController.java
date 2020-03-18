@@ -38,16 +38,16 @@ public class PageController {
 			return "page/list.html";
 		}
 		
-		@GetMapping("/create")
-		public String create(Model model) {
-			model.addAttribute("page", new Page());
-			return "page/form.html";
-		}
-		
-		@GetMapping("/edit/{id}")
-		public String edit(@PathVariable Long id, Model model) {
-			Page curpage = service.getRepo().getOne(id);
-			model.addAttribute("page", curpage);
+		@GetMapping(value= {"/create","/edit/{id}"})
+		public String edit(@PathVariable(required=false) Long id, Model model) {
+			if(id!=null) {
+				Page curpage = service.getRepo().getOne(id);
+				model.addAttribute("page", curpage);
+			}
+			else {
+				model.addAttribute("page", new Page());
+			}
+			
 			return "page/form.html";
 		}
 		
