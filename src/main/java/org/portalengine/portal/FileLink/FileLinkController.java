@@ -44,15 +44,15 @@ public class FileLinkController {
 			return "file/list.html";
 		}
 		
-		@GetMapping("/create")
-		public String create(Model model) {
-			model.addAttribute("filelink", new FileLink());
-			return "file/form.html";
-		}
-		
-		@GetMapping("/edit/{id}")
-		public String edit(@PathVariable Long id, Model model) {
-			FileLink curfile = service.getRepo().getOne(id);
+		@GetMapping(value= {"/create","/edit/{id}"})
+		public String form(@PathVariable(required=false) Long id, Model model) {
+			FileLink curfile;
+			if(id!=null) {
+				curfile = service.getRepo().getOne(id);
+			}
+			else {
+				curfile = new FileLink();
+			}
 			model.addAttribute("filelink", curfile);
 			return "file/form.html";
 		}
