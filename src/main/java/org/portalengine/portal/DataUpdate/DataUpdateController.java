@@ -43,10 +43,10 @@ public class DataUpdateController {
 	private DataUpdateService service;
 	
 	@Autowired
-	private TrackerService trackerservice;
+	private TrackerService trackerService;
 	
 	@Autowired
-	private FileLinkService fileservice;
+	private FileLinkService fileService;
 	
 	private DataSource datasource;
 	
@@ -74,19 +74,18 @@ public class DataUpdateController {
 		model.addAttribute("dataupdates", service.getRepo().findAll(PageRequest.of(page, size)));
 		return "dataupdate/list.html";
 	}
-	
-	@GetMapping("/create")
-	public String create(Model model) {
-		List<Tracker> trackers = trackerservice.getRepo().findAll();
-		model.addAttribute("dataupdate", new DataUpdate());
-		model.addAttribute("trackers",trackers);
-		return "dataupdate/form.html";
-	}
-	
-	@GetMapping("/edit/{id}")
-	public String edit(@PathVariable Long id, Model model) {
-		DataUpdate dataupdate = service.getRepo().findById(id).orElse(null);
+		
+	@GetMapping(value={"/create","/edit/{id}"})
+	public String form(@PathVariable(required=false) Long id, Model model) {
+		DataUpdate dataupdate ;
+		if(id!=null) {
+			dataupdate = service.getRepo().findById(id).orElse(null);
+		}
+		else {
+			dataupdate = new DataUpdate();
+		}
 		model.addAttribute("dataupdate", dataupdate);
+		model.addAttribute("trackers",trackerService.getRepo().findAll());
 		return "dataupdate/form.html";
 	}
 	
@@ -114,8 +113,8 @@ public class DataUpdateController {
 		Date curdate = new Date();
 		filelink.setSlug(dataupdate.getTracker().getModule() + "_upload_" + curdate.toString().replace(" ", "_"));
 		filelink.setName(dataupdate.getTracker().getModule() + "_upload_" + curdate.toString().replace(" ", "_"));
-		fileservice.getRepo().save(filelink);
-		fileservice.SaveFile(file, filelink);
+		fileService.getRepo().save(filelink);
+		fileService.SaveFile(file, filelink);
 		dataupdate.setFilelink(filelink);
 		dataupdate.setUploadStatus((long) 0);
 		if(dataupdate.getHeaderStart() == null || dataupdate.getHeaderStart()<1) {
@@ -153,7 +152,7 @@ public class DataUpdateController {
 	@GetMapping("/runupdate/{id}")
 	public String runupdate(@PathVariable Long id, Model model) {		
 		DataUpdate dataupdate = service.getRepo().getOne(id);
-		service.runupdate(dataupdate,fileservice);
+		service.runupdate(dataupdate,fileService);
 		return "redirect:/dataupdates/display/" + id.toString();
 	}
 	
@@ -162,7 +161,7 @@ public class DataUpdateController {
 		HashMap<Integer, String> columns = new HashMap<Integer, String>();
 		DataUpdate dataupdate = service.getRepo().getOne(id);
 		try {
-			Workbook workbook = WorkbookFactory.create(fileservice.getFile(dataupdate.getFilelink()));
+			Workbook workbook = WorkbookFactory.create(fileService.getFile(dataupdate.getFilelink()));
 			Sheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rows = sheet.rowIterator();
 			Row drow;

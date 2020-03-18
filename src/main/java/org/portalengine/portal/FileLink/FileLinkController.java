@@ -44,7 +44,7 @@ public class FileLinkController {
 			return "file/list.html";
 		}
 		
-		@GetMapping(value= {"/create","/edit/{id}"})
+		@GetMapping(value={"/create","/edit/{id}"})
 		public String form(@PathVariable(required=false) Long id, Model model) {
 			FileLink curfile;
 			if(id!=null) {
