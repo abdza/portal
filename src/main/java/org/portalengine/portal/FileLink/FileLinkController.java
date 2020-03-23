@@ -77,7 +77,7 @@ public class FileLinkController {
 		
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
-			service.getRepo().deleteById(id);
+			service.deleteById(id);
 			return "redirect:/files";
 		}
 }

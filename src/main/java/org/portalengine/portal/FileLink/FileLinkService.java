@@ -52,6 +52,17 @@ public class FileLinkService {
 		return file;
 	}
 	
+	public void deleteById(Long id) {
+		FileLink fileLink = repo.findById(id).orElse(null);
+		if(fileLink!=null) {
+			File fpath = new File(fileLink.getPath());			
+			if(!fpath.exists()) {
+				fpath.delete();
+			}
+			repo.deleteById(id);
+		}
+	}
+	
 	public String SaveTmpFile(MultipartFile file) {
 		String filepath=null;
 		if(file.getOriginalFilename().length()>0) {

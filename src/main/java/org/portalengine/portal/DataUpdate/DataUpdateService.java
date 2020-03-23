@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -20,6 +21,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class DataUpdateService {
 	private NamedParameterJdbcTemplate jdbctemplate;
 	
 	@Autowired
+	private FileLinkService fileLinkService;
+	
+	@Autowired
 	public DataUpdateService() {
 	}
 
@@ -53,6 +58,17 @@ public class DataUpdateService {
 
 	public void setRepo(DataUpdateRepository repo) {
 		this.repo = repo;
+	}
+	
+	public void deleteUpdateByTracker(Tracker tracker) {
+		List<DataUpdate> updates = repo.findAllByTracker(tracker);
+		for(DataUpdate update:updates) {
+			Long linkId = update.getFilelink().getId();
+			repo.deleteById(update.getId());
+			if(linkId!=null) {
+				fileLinkService.deleteById(linkId);
+			}			
+		}
 	}
 	
 	public void deleteUpdate(DataUpdate dataupdate) {

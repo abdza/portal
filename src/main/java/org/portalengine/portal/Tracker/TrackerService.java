@@ -15,6 +15,7 @@ import java.util.StringJoiner;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.portalengine.portal.DataUpdate.DataUpdateService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.portalengine.portal.Tracker.Role.TrackerRoleRepository;
@@ -61,6 +62,9 @@ public class TrackerService {
 	
 	@Autowired
 	private JdbcTemplate jdbctemplate;
+	
+	@Autowired
+	private DataUpdateService dataUpdateService;
 	
 	@Autowired
 	public TrackerService() {
@@ -140,6 +144,28 @@ public class TrackerService {
 			}
 		}
 		return toreturn;
+	}
+	
+	public void deleteById(Long id) {
+		Tracker tracker = repo.findById(id).orElse(null);
+		if(tracker!=null) {
+			dataUpdateService.deleteUpdateByTracker(tracker);
+			
+			SqlRowSet trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
+					+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = '" + tracker.getDataTable()+ "'");
+			if(trytrails.next()) {
+				jdbctemplate.execute("exec sp_rename '" + tracker.getDataTable() + "', 'deleted_" + tracker.getDataTable() + "'");
+			}
+			if(tracker.getTrackerType().equals("Trailed Tracker")) {
+				trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
+						+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = '" + tracker.getUpdatesTable() + "'");
+				if(trytrails.next()) {
+					jdbctemplate.execute("exec sp_rename '" + tracker.getUpdatesTable() + "', 'deleted_" + tracker.getUpdatesTable() + "'");
+				}
+			}			
+			
+			repo.deleteById(id);
+		}
 	}
 	
 	public HashMap<String,Object> datarow(Tracker tracker, Long id) {
