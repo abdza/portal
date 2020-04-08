@@ -16,6 +16,7 @@ import java.util.Locale;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,7 +28,6 @@ import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -123,7 +123,9 @@ public class DataUpdateService {
 									if(tf.getFieldType().contentEquals("String")||tf.getFieldType().contentEquals("Text")) {									
 										if(ccell.getCellType()==CellType.NUMERIC) {
 											if(String.valueOf(ccell.getNumericCellValue())!=null) {
-												paramsource.addValue(field, String.valueOf(ccell.getNumericCellValue()),Types.VARCHAR);
+												DataFormatter fmt = new DataFormatter();
+												String curcontent = fmt.formatCellValue(ccell);
+												paramsource.addValue(field, curcontent,Types.VARCHAR);
 												gotdata = true;
 											}
 										}
