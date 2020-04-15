@@ -57,7 +57,7 @@ public class PortalController {
 		FileLink curfile = fileservice.getRepo().findOneByModuleAndSlug(module, slug);
 		Resource resfile = fileservice.getResource(curfile);
 		return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-				"attachment; filename=" + curfile.getName()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
+				"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
 	}
 
 }

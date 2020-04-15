@@ -62,7 +62,7 @@ public class FileLinkController {
 			FileLink curfile = service.getRepo().getOne(id);
 			Resource resfile = service.getResource(curfile);
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=" + curfile.getName()).contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
+					"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
 		}
 		
 		@PostMapping("/save")

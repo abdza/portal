@@ -2,6 +2,7 @@ package org.portalengine.portal.FileLink;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,6 +88,10 @@ public class FileLinkService {
 	
 	public FileLink SaveFile(MultipartFile file, FileLink filelink) {
 		if(file.getOriginalFilename().length()>0) {
+			String curfolder = System.getProperty("user.dir");
+			if(!Paths.get(uploadroot).isAbsolute()) {
+				uploadroot = curfolder + "/" + uploadroot;
+			}			
 			String targetpath = uploadroot + "/" + filelink.getModule();			
 			File fpath = new File(targetpath);			
 			if(!fpath.exists()) {
