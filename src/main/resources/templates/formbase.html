@@ -39,14 +39,16 @@ $(".tagifinput").each(function(i,obj){
 	$(this).tagify({enforceWhitelist:true,whitelist:whitelist});
 });
 $(".tagiform").on("submit",function(){
-	$(".tagifinput").each(function(i,obj){
+	$(".tagifinput").each(function(j,obj){
 		if($(this).is("textarea")||$(this).is("input")){
-			var jsonval = JSON.parse($(this).val());
-			var jvalue = [];
-			for(var i=0; i<jsonval.length; i++){
-				jvalue.push(jsonval[i].value)
+			if($(this).val()){
+				var jsonval = JSON.parse($(this).val());
+				var jvalue = [];
+				for(var i=0; i<jsonval.length; i++){
+					jvalue.push(jsonval[i].value)
+				}
+				$(this).val(jvalue.join(","));
 			}
-			$(this).val(jvalue.join(","));
 		}
 	});
 });

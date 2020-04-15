@@ -33,6 +33,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+
 import lombok.Data;
 
 @Service
@@ -95,16 +97,18 @@ public class TrackerService {
 		case "list":
 			return fields(tracker,tracker.getListFields());
 		case "form":
-			if(transition==null) {
-				if(tracker.getFormFields()!=null && tracker.getFormFields().length()>0) {
-					return fields(tracker,tracker.getFormFields());
-				}
-				else {
-					return fields(tracker,tracker.getListFields());
-				}
+			String activefields=null;
+			if(transition!=null) {
+				activefields = transition.getEditFields();
 			}
-			else {
-				return fields(tracker,transition.getEditFields());
+			if(activefields==null || activefields=="") {
+				activefields = tracker.getFormFields();
+			}
+			if(activefields==null || activefields=="") {
+				activefields = tracker.getListFields();
+			}
+			if(activefields!=null && activefields.length()>0) {
+				return fields(tracker,activefields);
 			}
 		case "display":
 			if(tracker.getDisplayFields()!=null && tracker.getDisplayFields().length()>0) {
@@ -135,7 +139,7 @@ public class TrackerService {
 		return toreturn;
 	}
 	
-	public List<TrackerField> fields(Tracker tracker, String fieldnames) {
+	public List<TrackerField> fields(Tracker tracker, String fieldnames) {		
 		List<TrackerField> toreturn=new ArrayList<TrackerField>();
 		for(String fname:fieldnames.split(",")) {
 			TrackerField tf = fieldRepo.findByTrackerAndName(tracker, fname);

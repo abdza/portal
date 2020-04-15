@@ -143,44 +143,44 @@ public class Tracker extends Auditable<String> {
 		if(this.dataTable.length()>0) {
 			System.out.println("Checking existance of table:" + this.dataTable);
 			// Check whether data table already exists
-			SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
-					+ " TABLE_NAME = '" + this.dataTable + "'");
-			if(!trythis.next()) {
+			String toquery = "select count(*) as rowcount from INFORMATION_SCHEMA.TABLES where "
+					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "'";
+			SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
+			trythis.next();
+			if(trythis.getInt("rowcount")==0) {
 				// Data table does not exists yet, so please create
-				System.out.println("Creating table:" + this.dataTable);
-				jdbctemplate.execute("create table " + this.dataTable + " (id INT NOT NULL IDENTITY(1,1),"
-						+ "CONSTRAINT PK_" + this.dataTable + " PRIMARY KEY(id))");
+				jdbctemplate.execute("create table " + this.dataTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1),"
+						+ "CONSTRAINT PK_" + this.dataTable.toUpperCase() + " PRIMARY KEY(ID))");
 			}
-			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where "
-					+ " TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'record_status'");
-			if(!trythis.next()) {
+			trythis = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
+			trythis.next();
+			if(trythis.getInt("rowcount")==0) {
 				// Check to see if column record_status doesn't exist yet
 				if(!this.trackerType.equals("Statement")) {
 					// Please add record_status if type is a tracker (ie not a statement)
-					jdbctemplate.execute("alter table " + this.dataTable + " add record_status varchar(256) NULL");
+					jdbctemplate.execute("alter table " + this.dataTable.toUpperCase() + " add RECORD_STATUS varchar(256) NULL");
 				}
 			}
-			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where "
-					+ " TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'dataupdate_id'");
-			if(!trythis.next()) {
-				System.out.println("Creating field: dataupdate_id");
-				jdbctemplate.execute("alter table " + this.dataTable + " add dataupdate_id numeric(24,0) NULL");
+			trythis = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'");
+			trythis.next();
+			if(trythis.getInt("rowcount")==0) {
+				jdbctemplate.execute("alter table " + this.dataTable.toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
 			}
 			System.out.println("Type is:" + this.trackerType + "-----------------");
 			if(this.trackerType.equals("Trailed Tracker")) {
-				System.out.println("It's a trailed tracker");
 				// Need to check whether need to create updates table
 				if(this.updatesTable.length()>0) {
-					System.out.println("Updates table name exists");
-					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
-							+ " TABLE_NAME = '" + this.updatesTable + "'");
-					if(!trytrails.next()) {
-						System.out.println("updates table not in db");
+					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.TABLES where "
+							+ " TABLE_NAME = '" + this.updatesTable.toUpperCase() + "'");
+					trytrails.next();
+					if(trytrails.getInt("rowcount")==0) {
 						// If updates table does not exists please create one
-						jdbctemplate.execute("create table " + this.updatesTable + " (id INT NOT NULL IDENTITY(1,1), "
-								+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
-								+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
-								+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + this.updatesTable + " PRIMARY KEY(id))");
+						jdbctemplate.execute("create table " + this.updatesTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
+								+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
+								+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
+								+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + this.updatesTable.toUpperCase() + " PRIMARY KEY(ID))");
 					}
 					}
 			}

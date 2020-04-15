@@ -6,15 +6,14 @@
         <h1>Transition Tracker</h1>
         <form method='post' th:action='@{/trackers/transitions/{tracker_id}/save(tracker_id=${tracker.id})}'
             th:object="${tracker_transition}" class="tagiform">
-            <input type='hidden' name='id' th:value='${tracker_transition.id}' />
-            <input type='hidden' name='tracker_id' th:value='${tracker.id}' />
+            <input type='hidden' th:field="*{id}" />
+            <input type='hidden' th:name="tracker_id" th:value="${tracker.id}" />
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Name</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='name'
-                        th:value="${tracker_transition.name}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}" />
                 </div>
             </div>
 
@@ -22,8 +21,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Prev Status</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='prevStatus'
-                        th:value="${tracker_transition.prevStatus}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{prevStatus}" />
                 </div>
             </div>
 
@@ -31,8 +29,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Next Status</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='nextStatus'
-                        th:value="${tracker_transition.nextStatus}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{nextStatus}" />
                 </div>
             </div>
 
@@ -40,8 +37,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Allowed Roles</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='allowedRoles'
-                        th:value="${tracker_transition.allowedRoles}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{allowedRoles}" />
                 </div>
             </div>
 
@@ -49,9 +45,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Display Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea th:value="${tracker_transition.displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='displayFields' th:text="${tracker_transition.displayFields}">
-
-                    </textarea>
+                    <textarea th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' th:field="*{displayFields}"></textarea>
                 </div>
             </div>
 
@@ -59,8 +53,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Edit Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea th:value="${tracker_transition.editFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='editFields' th:text="${tracker_transition.editFields}">
-                    </textarea>
+                    <textarea th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' th:field="*{editFields}"></textarea>
                 </div>
             </div>
 
@@ -68,8 +61,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Required Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea th:value="${tracker_transition.requiredFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' name='requiredFields' th:text="${tracker_transition.requiredFields}">
-                    </textarea>
+                    <textarea th:attr="data-tagify-whitelist=${tracker.fieldsList()}" class='form-control col-sm-8 col-md-6 tagifinput' th:field="*{requiredFields}"></textarea>
                 </div>
             </div>
 
@@ -77,7 +69,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Enabled Condition</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='enabledCondition' th:text="${tracker_transition.enabledCondition}">
+                    <textarea class='input' th:field="*{enabledCondition}">
 
                     </textarea>
                 </div>
@@ -87,7 +79,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Update Trails</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='input' name='updateTrails' th:text="${tracker_transition.updateTrails}">
+                    <textarea class='input' th:field="*{updateTrails}">
                     </textarea>
 
                 </div>
@@ -97,8 +89,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Goto Prev Status List</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='checkbox' name='gotoPrevStatusList'
-                        th:value="${tracker_transition.gotoPrevStatusList}" />
+                    <input class="form-control col-sm-8 col-md-6" type='checkbox' th:field="*{gotoPrevStatusList}" />
                 </div>
             </div>
 
