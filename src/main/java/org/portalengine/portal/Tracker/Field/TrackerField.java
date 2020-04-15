@@ -100,10 +100,10 @@ public class TrackerField extends Auditable<String> {
 				break;
 			}
 		}
-		SqlRowSet trythis = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.COLUMNS where "
+		SqlRowSet trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
 				+ "TABLE_NAME = '" + this.tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = '" + this.name.toUpperCase() + "'");
 		trythis.next();
-		if(trythis.getInt("rowcount")==0) {
+		if(trythis.getInt("result")==0) {
 			jdbctemplate.execute("alter table " + this.tracker.getDataTable().toUpperCase() + " add " + this.name.toUpperCase() + " " + sqltype + " NULL");
 		}
 	}

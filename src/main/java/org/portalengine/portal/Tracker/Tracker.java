@@ -143,39 +143,39 @@ public class Tracker extends Auditable<String> {
 		if(this.dataTable.length()>0) {
 			System.out.println("Checking existance of table:" + this.dataTable);
 			// Check whether data table already exists
-			String toquery = "select count(*) as rowcount from INFORMATION_SCHEMA.TABLES where "
+			String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "'";
 			SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 			trythis.next();
-			if(trythis.getInt("rowcount")==0) {
+			if(trythis.getInt("result")==0) {
 				// Data table does not exists yet, so please create
 				jdbctemplate.execute("create table " + this.dataTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1),"
 						+ "CONSTRAINT PK_" + this.dataTable.toUpperCase() + " PRIMARY KEY(ID))");
 			}
-			trythis = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.COLUMNS where "
+			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
 					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
 			trythis.next();
-			if(trythis.getInt("rowcount")==0) {
+			if(trythis.getInt("result")==0) {
 				// Check to see if column record_status doesn't exist yet
 				if(!this.trackerType.equals("Statement")) {
 					// Please add record_status if type is a tracker (ie not a statement)
 					jdbctemplate.execute("alter table " + this.dataTable.toUpperCase() + " add RECORD_STATUS varchar(256) NULL");
 				}
 			}
-			trythis = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.COLUMNS where "
+			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
 					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'");
 			trythis.next();
-			if(trythis.getInt("rowcount")==0) {
+			if(trythis.getInt("result")==0) {
 				jdbctemplate.execute("alter table " + this.dataTable.toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
 			}
 			System.out.println("Type is:" + this.trackerType + "-----------------");
 			if(this.trackerType.equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
 				if(this.updatesTable.length()>0) {
-					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select count(*) as rowcount from INFORMATION_SCHEMA.TABLES where "
+					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 							+ " TABLE_NAME = '" + this.updatesTable.toUpperCase() + "'");
 					trytrails.next();
-					if(trytrails.getInt("rowcount")==0) {
+					if(trytrails.getInt("result")==0) {
 						// If updates table does not exists please create one
 						jdbctemplate.execute("create table " + this.updatesTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
 								+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
