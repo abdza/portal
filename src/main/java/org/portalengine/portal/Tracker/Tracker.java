@@ -143,28 +143,28 @@ public class Tracker extends Auditable<String> {
 		if(this.dataTable.length()>0) {
 			System.out.println("Checking existance of table:" + this.dataTable);
 			// Check whether data table already exists
-			SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where TABLE_SCHEMA = 'dbo' "
-					+ "and TABLE_NAME = '" + this.dataTable + "'");
+			SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
+					+ " TABLE_NAME = '" + this.dataTable + "'");
 			if(!trythis.next()) {
 				// Data table does not exists yet, so please create
 				System.out.println("Creating table:" + this.dataTable);
 				jdbctemplate.execute("create table " + this.dataTable + " (id INT NOT NULL IDENTITY(1,1),"
 						+ "CONSTRAINT PK_" + this.dataTable + " PRIMARY KEY(id))");
 			}
-			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'dbo' "
-					+ "and TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'record_status'");
+			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'record_status'");
 			if(!trythis.next()) {
 				// Check to see if column record_status doesn't exist yet
 				if(!this.trackerType.equals("Statement")) {
 					// Please add record_status if type is a tracker (ie not a statement)
-					jdbctemplate.execute("alter table " + this.dataTable + " add [record_status] varchar(256) NULL");
+					jdbctemplate.execute("alter table " + this.dataTable + " add record_status varchar(256) NULL");
 				}
 			}
-			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'dbo' "
-					+ "and TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'dataupdate_id'");
+			trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + this.dataTable + "' and COLUMN_NAME = 'dataupdate_id'");
 			if(!trythis.next()) {
 				System.out.println("Creating field: dataupdate_id");
-				jdbctemplate.execute("alter table " + this.dataTable + " add [dataupdate_id] numeric(24,0) NULL");
+				jdbctemplate.execute("alter table " + this.dataTable + " add dataupdate_id numeric(24,0) NULL");
 			}
 			System.out.println("Type is:" + this.trackerType + "-----------------");
 			if(this.trackerType.equals("Trailed Tracker")) {
@@ -173,14 +173,14 @@ public class Tracker extends Auditable<String> {
 				if(this.updatesTable.length()>0) {
 					System.out.println("Updates table name exists");
 					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
-							+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = '" + this.updatesTable + "'");
+							+ " TABLE_NAME = '" + this.updatesTable + "'");
 					if(!trytrails.next()) {
 						System.out.println("updates table not in db");
 						// If updates table does not exists please create one
 						jdbctemplate.execute("create table " + this.updatesTable + " (id INT NOT NULL IDENTITY(1,1), "
-								+ "[attachment_id] numeric(19,0), [description] text, [record_id] numeric(19,0),"
-								+ "[update_date] datetime, [updater_id] numeric(19,0), [status]varchar(255),"
-								+ "[changes]text,[allowedroles]varchar(255),CONSTRAINT PK_" + this.updatesTable + " PRIMARY KEY(id))");
+								+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
+								+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
+								+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + this.updatesTable + " PRIMARY KEY(id))");
 					}
 					}
 			}

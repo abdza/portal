@@ -1,10 +1,14 @@
-spring.datasource.url=jdbc:sqlserver://xx.xx.xx.xx:1433;databaseName=dbname
+spring.datasource.driverClassName=org.h2.Driver
+# spring.datasource.url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
+spring.datasource.url=jdbc:h2:file:~/portaldb;DB_CLOSE_DELAY=-1
 spring.datasource.username=sa
-spring.datasource.password=dbpassword
-spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.password=sa
+# spring.datasource.url=jdbc:sqlserver://127.0.0.1:1433;databaseName=portal
+# spring.datasource.username=sa
+# spring.datasource.password=sa
+# spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
 spring.jpa.show-sql=true
 spring.jpa.hibernate.ddl-auto=update
 spring.servlet.multipart.max-file-size=1024MB
 spring.servlet.multipart.max-request-size=1024MB
-spring.jackson.serialization.fail-on-empty-beans=false
-portal.uploadroot=upload
+portal.uploadroot=/home/user/portalfiles/upload

@@ -100,11 +100,11 @@ public class TrackerField extends Auditable<String> {
 				break;
 			}
 		}
-		SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'dbo' "
-				+ "and TABLE_NAME = '" + this.tracker.getDataTable() + "' and COLUMN_NAME = '" + this.name + "'");
+		SqlRowSet trythis = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.COLUMNS where "
+				+ "TABLE_NAME = '" + this.tracker.getDataTable() + "' and COLUMN_NAME = '" + this.name + "'");
 		if(!trythis.next()) {
 			System.out.println("Creating field:" + this.name);
-			jdbctemplate.execute("alter table " + this.tracker.getDataTable() + " add [" + this.name + "] " + sqltype + " NULL");
+			jdbctemplate.execute("alter table " + this.tracker.getDataTable() + " add " + this.name + " " + sqltype + " NULL");
 		}
 	}
 	
