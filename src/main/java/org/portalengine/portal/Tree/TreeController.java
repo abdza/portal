@@ -27,7 +27,7 @@ public class TreeController {
 		}
 
 		@GetMapping
-		public String list(HttpServletRequest request, Model model) {
+		public String list(HttpServletRequest request, Model model) {			
 			int page = 0;
 			int size = 10;
 			if(request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
@@ -104,6 +104,8 @@ public class TreeController {
 			Map<String, String[]> postdata = request.getParameterMap();
 			TreeNode curnode = service.getNodeRepo().getOne(id);
 			curnode.setName(postdata.get("name")[0]);
+			curnode.setObjectType(postdata.get("objectType")[0]);
+			curnode.setObjectId(Long.parseLong(postdata.get("objectId")[0]));
 			service.getNodeRepo().save(curnode);
 			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
 		}

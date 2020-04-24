@@ -41,6 +41,16 @@ public class TreeNode extends Auditable<String> {
 	@NotNull
 	private String name;
 	
+	@NotNull
+	private String slug;
+	
+	@NotNull
+	private String fullpath;
+	
+	private String objectType;
+	
+	private Long objectId;
+	
 	@OneToMany(
 			mappedBy = "node",
 			orphanRemoval = true)

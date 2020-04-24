@@ -1,5 +1,10 @@
 package org.portalengine.portal.Tree;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,6 +49,8 @@ public class TreeService {
 		if(getRoot(tree)==null) {
 			TreeNode root = new TreeNode();
 			root.setName(tree.getName());
+			root.setSlug(slugify(tree.getName()));
+			root.setFullpath(slugify(tree.getName()));
 			root.setTree(tree);
 			root.setLft((long) 1);
 			root.setRgt((long) 2);
@@ -111,15 +118,23 @@ public class TreeService {
 		
 	}
 	
+	public String slugify(String name) {
+		String toreturn = name.replaceAll("[^a-zA-Z0-9\\s]","").replaceAll(" ","_").toLowerCase();
+		return toreturn;
+	}
+	
 	public void addNode(TreeNode node, String name, String position) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
 		
 		position = "last";
 		TreeNode newnode = new TreeNode();
 		newnode.setName(name);
+		newnode.setSlug(slugify(name));
+		newnode.setFullpath(node.getFullpath() + "/" + slugify(name));
 		newnode.setTree(node.getTree());
 		newnode.setLft(node.getRgt());
-		newnode.setRgt(newnode.getLft()+1);
+		newnode.setRgt(newnode.getLft()+1);		
+		
 		newnode.setParent(node);
 		
 		paramsource.addValue("crgt", newnode.getLft());

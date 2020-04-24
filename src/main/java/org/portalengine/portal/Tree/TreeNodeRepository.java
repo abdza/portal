@@ -8,4 +8,5 @@ public interface TreeNodeRepository extends JpaRepository<TreeNode, Long> {
 	@Query("from TreeNode tn where tn.tree.id=:#{#tree.id} and tn.parent is null")
 	TreeNode getRoot(Tree tree);
 	
+	TreeNode findByFullpath(String fullpath);
 }

@@ -5,14 +5,32 @@
     <div class='content'>
         <h1>Edit Node</h1>
         <form method='post' th:action='@{/trees/nodes/{curnodeid}/update(curnodeid=${curnode.id})}' th:object="${curnode}">
-            <input type='hidden' name='id' th:value='${curnode.id}' />
+            <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Name</label>
                 </div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' name='name' th:value="${curnode.name}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Object Type</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{objectType}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Object Id</label>
+                </div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{objectId}" />
                 </div>
             </div>
             

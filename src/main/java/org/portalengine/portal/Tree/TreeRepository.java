@@ -10,4 +10,6 @@ public interface TreeRepository extends JpaRepository<Tree, Long> {
 
 	@Query("from Tree tt where tt.name like :#{#search} or tt.module like :#{#search} or tt.slug like :#{#search}")
 	Page<Tree> apiquery(String search, Pageable pageable);
+	
+	Tree findByName(String name);
 }
