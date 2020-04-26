@@ -83,6 +83,9 @@
 				$("#editnode").attr("href","/trees/nodes/" + data.node.key + "/edit");
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);
+				console.log("objecttype:" + data.node);
+				$("#bodynodeobjecttype").text(data.node.objectType);
+				$("#bodynodeobjectid").text(data.node.objectId);
 				$('#user_node_id').val(data.node.key);
 				$.ajax({
 					/*[+

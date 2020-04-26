@@ -45,7 +45,7 @@ public class TreeNode extends Auditable<String> {
 	private String slug;
 	
 	@NotNull
-	private String fullpath;
+	private String fullPath;
 	
 	private String objectType;
 	
@@ -74,4 +74,8 @@ public class TreeNode extends Auditable<String> {
 	
 	@NotNull
 	private Long rgt;
+	
+	public String rootLessPath() {
+		return this.fullPath.replaceAll("portal/", "");
+	}
 }

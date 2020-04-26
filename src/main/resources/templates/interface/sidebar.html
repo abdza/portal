@@ -9,6 +9,26 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/}">Home</a>
                 </li>
+                <li class="nav-item" th:if="${pnode}">
+                    <a class="nav-link dropdown-toggle" href="#">
+                    <span class="nav-text">
+                    	<span>New</span>
+                    </span>
+                    <b class="caret fa fa-angle-left rt-n90"></b>
+                    </a>
+                    
+                    <div class="submenu collapse">
+	                    <ul class="submenu-inner">
+		                    <li class="nav-item">
+			                    <a class="nav-link" th:href="@{/p/{fullpath}/create?objectType=page(fullpath=${pnode.rootLessPath()})}">Page</a>
+			                </li>
+			                <li class="nav-item">
+			                    <a class="nav-link" th:href="@{/p/{fullpath}/create?objectType=file(fullpath=${pnode.rootLessPath()})}">File</a>
+			                </li>
+	                    </ul>
+                    </div>
+                    
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/users/roles}">User Roles</a>
                 </li>

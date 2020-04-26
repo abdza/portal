@@ -50,7 +50,7 @@ public class TreeService {
 			TreeNode root = new TreeNode();
 			root.setName(tree.getName());
 			root.setSlug(slugify(tree.getName()));
-			root.setFullpath(slugify(tree.getName()));
+			root.setFullPath(slugify(tree.getName()));
 			root.setTree(tree);
 			root.setLft((long) 1);
 			root.setRgt((long) 2);
@@ -123,14 +123,14 @@ public class TreeService {
 		return toreturn;
 	}
 	
-	public void addNode(TreeNode node, String name, String position) {
+	public TreeNode addNode(TreeNode node, String name, String position) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
 		
 		position = "last";
 		TreeNode newnode = new TreeNode();
 		newnode.setName(name);
 		newnode.setSlug(slugify(name));
-		newnode.setFullpath(node.getFullpath() + "/" + slugify(name));
+		newnode.setFullPath(node.getFullPath() + "/" + slugify(name));
 		newnode.setTree(node.getTree());
 		newnode.setLft(node.getRgt());
 		newnode.setRgt(newnode.getLft()+1);		
@@ -142,5 +142,6 @@ public class TreeService {
 		namedjdbctemplate.update("update portal_tree_node set lft=lft+2 where lft>=:crgt and tree_id=:tree_id", paramsource);
 		namedjdbctemplate.update("update portal_tree_node set rgt=rgt+2 where rgt>=:crgt and tree_id=:tree_id", paramsource);
 		nodeRepo.save(newnode);		
+		return newnode;
 	}
 }
