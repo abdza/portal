@@ -116,7 +116,19 @@ public class PortalController {
 	}
 	
 	@GetMapping("/p/**/edit")
-	public String editResponse() {
+	public String editResponse(Model model) {
+		String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/edit", "");
+		System.out.println("pathuri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		if(pnode!=null) {
+			model.addAttribute("pnode",pnode);
+			if(pnode.getObjectType().equals("Page")) {
+				Page page = pageService.getRepo().getOne(pnode.getObjectId());
+				model.addAttribute("page",page);
+				return "tree/node/form/page.html";
+			}
+		}
 		return "whatedit";
 	}
 	
@@ -131,17 +143,25 @@ public class PortalController {
 			if(postdata.get("objectType")!=null) {
 				if(postdata.get("objectType")[0].equals("page")) {
 					Page newpage = new Page();
+					if(postdata.get("id")!=null && postdata.get("id")[0]!="") {
+						newpage = pageService.getRepo().getOne(Long.parseLong(postdata.get("id")[0]));
+					}					
 					newpage.setTitle(postdata.get("title")[0]);
 					newpage.setModule("content");
 					newpage.setContent(postdata.get("content")[0]);
 					newpage.setSlug(treeService.slugify(postdata.get("title")[0]));
 					pageService.getRepo().save(newpage);
-					TreeNode newnode = treeService.addNode(pnode, postdata.get("title")[0], "last");
-					newnode.setObjectType("Page");
-					newnode.setObjectId(newpage.getId());
-					treeService.getNodeRepo().save(newnode);
-					System.out.println("Saving page");
-					return "redirect:/p/" + pnode.rootLessPath() + "/" + newnode.getSlug();
+					
+					if(postdata.get("id")==null || postdata.get("id")[0]=="") {
+						TreeNode newnode = treeService.addNode(pnode, postdata.get("title")[0], "last");
+						newnode.setObjectType("Page");
+						newnode.setObjectId(newpage.getId());
+						treeService.getNodeRepo().save(newnode);
+						return "redirect:/p/" + pnode.rootLessPath() + "/" + newnode.getSlug();
+					}
+					else {
+						return "redirect:/p/" + pnode.rootLessPath();
+					}
 				}
 			}
 		}
