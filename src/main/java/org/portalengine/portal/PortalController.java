@@ -118,6 +118,11 @@ public class PortalController {
 				model.addAttribute("fileLink",fileLink);
 				return "tree/node/form/filelink.html";
 			}
+			else if(objectType.equals("Folder")) {
+				TreeNode cnode = new TreeNode();
+				model.addAttribute("cnode",cnode);
+				return "tree/node/form/folder.html";
+			}
 		}
 		return "whatcreate " + objectType ;
 	}
@@ -130,10 +135,16 @@ public class PortalController {
 		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
-			if(pnode.getObjectType().equals("Page")) {
-				Page page = pageService.getRepo().getOne(pnode.getObjectId());
-				model.addAttribute("page",page);
-				return "tree/node/form/page.html";
+			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
+				if(pnode.getObjectType().equals("Page")) {
+					Page page = pageService.getRepo().getOne(pnode.getObjectId());
+					model.addAttribute("page",page);
+					return "tree/node/form/page.html";
+				}
+			}
+			else {
+				model.addAttribute("cnode",pnode);
+				return "tree/node/form/folder.html";
 			}
 		}
 		return "whatedit";
@@ -196,6 +207,27 @@ public class PortalController {
 						treeService.getNodeRepo().save(newnode);
 					}
 					return "redirect:/p/" + pnode.rootLessPath();
+				}
+				else if(postdata.get("objectType").equals("Folder")) {
+					TreeNode cnode = new TreeNode();
+					boolean createNewNode = true;
+					try {
+						Long curid = Long.parseLong(postdata.get("id"));
+						cnode = treeService.getNodeRepo().getOne(curid);
+						createNewNode = false;
+					}
+					catch(Exception e) {
+						System.out.println("Id not found");
+					}
+					if(createNewNode) {
+						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
+						return "redirect:/p/" + newnode.rootLessPath();
+					}
+					else {
+						cnode.setName(postdata.get("name"));
+						treeService.getNodeRepo().save(cnode);
+						return "redirect:/p/" + cnode.rootLessPath();
+					}
 				}
 			}
 		}
