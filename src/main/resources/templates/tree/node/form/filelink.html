@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html layout:decorate="~{formbase}">
+<html layout:decorate="~{layout}">
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
-        <h1>Create Page</h1>
-        <form method='post' th:action='@{/p/{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${page}">
-            <input type='hidden' th:field='*{id}' />
-            <input type='hidden' name='objectType' value='Page'/>
+        <h1>Create File</h1>
+        <form method='post' th:action='@{/p/{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${fileLink}" enctype="multipart/form-data">
+            <input type='hidden' th:field='*{id}' />            
+			<input type='hidden' name='objectType' value='File'/>
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
-                    <label class='mb-0'>Title</label></div>
+                    <label class='mb-0'>Name</label></div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{title}" />
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}"/>
                 </div>
             </div>
+
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
-                    <label class='mb-0'>Content</label></div>
+                    <label class='mb-0'>File</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='textarea summernote' th:field="*{content}">
-                    </textarea>
+                    <input class="form-control col-sm-8 col-md-6" type='file' name='file' />
                 </div>
             </div>
+
             <div class='form-group row'>
                 <div class="offset-md-3 col-md-9">
                     <button class='btn btn-info' name='save'>Save</button>

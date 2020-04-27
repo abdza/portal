@@ -3,6 +3,7 @@ package org.portalengine.portal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.tags.Param;
 
@@ -106,10 +108,15 @@ public class PortalController {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
 			
-			if(objectType.equals("page")) {
+			if(objectType.equals("Page")) {
 				Page page = new Page();
 				model.addAttribute("page",page);
 				return "tree/node/form/page.html";
+			}
+			else if(objectType.equals("File")) {
+				FileLink fileLink = new FileLink();
+				model.addAttribute("fileLink",fileLink);
+				return "tree/node/form/filelink.html";
 			}
 		}
 		return "whatcreate " + objectType ;
@@ -133,27 +140,27 @@ public class PortalController {
 	}
 	
 	@PostMapping("/p/**/save")
-	public String saveResponse() {
+	public String saveResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") Optional<MultipartFile> file) {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
 		if(pnode!=null) {
-			Map<String, String[]> postdata = request.getParameterMap();
+			//Map<String, String[]> postdata = request.getParameterMap();
 			if(postdata.get("objectType")!=null) {
-				if(postdata.get("objectType")[0].equals("page")) {
+				if(postdata.get("objectType").equals("Page")) {
 					Page newpage = new Page();
-					if(postdata.get("id")!=null && postdata.get("id")[0]!="") {
-						newpage = pageService.getRepo().getOne(Long.parseLong(postdata.get("id")[0]));
+					if(postdata.get("id")!=null && postdata.get("id")!="") {
+						newpage = pageService.getRepo().getOne(Long.parseLong(postdata.get("id")));
 					}					
-					newpage.setTitle(postdata.get("title")[0]);
+					newpage.setTitle(postdata.get("title"));
 					newpage.setModule("content");
-					newpage.setContent(postdata.get("content")[0]);
-					newpage.setSlug(treeService.slugify(postdata.get("title")[0]));
+					newpage.setContent(postdata.get("content"));
+					newpage.setSlug(treeService.slugify(postdata.get("title")));
 					pageService.getRepo().save(newpage);
 					
-					if(postdata.get("id")==null || postdata.get("id")[0]=="") {
-						TreeNode newnode = treeService.addNode(pnode, postdata.get("title")[0], "last");
+					if(postdata.get("id")==null || postdata.get("id")=="") {
+						TreeNode newnode = treeService.addNode(pnode, postdata.get("title"), "last");
 						newnode.setObjectType("Page");
 						newnode.setObjectId(newpage.getId());
 						treeService.getNodeRepo().save(newnode);
@@ -162,6 +169,33 @@ public class PortalController {
 					else {
 						return "redirect:/p/" + pnode.rootLessPath();
 					}
+				}
+				else if(postdata.get("objectType").equals("File")) {
+					FileLink newfile = new FileLink();
+					boolean createNewNode = true;
+					try {
+						Long curid = Long.parseLong(postdata.get("id"));
+						newfile = fileService.getRepo().getOne(curid);
+						createNewNode = false;
+					}
+					catch(Exception e) {
+						System.out.println("Id not found");
+					}
+					newfile.setName(postdata.get("name"));
+					newfile.setModule("content");
+					newfile.setSlug(treeService.slugify(postdata.get("name")));
+					if(file != null) {
+						newfile.setType("user");
+						newfile = fileService.SaveFile(file.get(), newfile);
+						fileService.getRepo().save(newfile);
+					}
+					if(createNewNode) {
+						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
+						newnode.setObjectType("File");
+						newnode.setObjectId(newfile.getId());
+						treeService.getNodeRepo().save(newnode);
+					}
+					return "redirect:/p/" + pnode.rootLessPath();
 				}
 			}
 		}
