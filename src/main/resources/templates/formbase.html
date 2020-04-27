@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html layout:decorate="~{base}">
 <th:block layout:fragment="head-end">
+<link rel="stylesheet" th:href="@{/libs/summernote/summernote-bs4.min.css}" />
 <link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
 <link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
 </th:block>
@@ -33,6 +34,7 @@
 <th:block layout:fragment="layout-javascript">
 <script type="text/javascript" th:src="@{/libs/select2/js/select2.full.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/summernote/summernote-bs4.min.js}"></script>
 <script type="text/javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
@@ -51,6 +53,9 @@ $(".tagiform").on("submit",function(){
 			}
 		}
 	});
+});
+$(document).ready(function(){
+	$('.summernote').summernote();
 });
 </script>
 </th:block>

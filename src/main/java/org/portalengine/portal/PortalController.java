@@ -137,7 +137,7 @@ public class PortalController {
 					newpage.setSlug(treeService.slugify(postdata.get("title")[0]));
 					pageService.getRepo().save(newpage);
 					TreeNode newnode = treeService.addNode(pnode, postdata.get("title")[0], "last");
-					newnode.setObjectType("page");
+					newnode.setObjectType("Page");
 					newnode.setObjectId(newpage.getId());
 					treeService.getNodeRepo().save(newnode);
 					System.out.println("Saving page");

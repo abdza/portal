@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{formbase}">
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
@@ -19,7 +19,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Content</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='textarea' th:field="*{content}">
+                    <textarea class='textarea summernote' th:field="*{content}">
                     </textarea>
                 </div>
             </div>
