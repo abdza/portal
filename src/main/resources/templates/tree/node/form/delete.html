@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html layout:decorate="~{formbase}">
+
+<section layout:fragment="content" class='page-content'>
+    <div class='content'>
+        <h1>Confirm Delete</h1>
+        <form th:if="${pnode}" method='post' th:action='@{/p/{fullpath}/delete(fullpath=${pnode.rootLessPath()})}'>
+            <input type='hidden' name="id" th:value="${page.id}" th:if="${page}" />
+            <input type='hidden' name="id" th:value="${fileLink.id}" th:if="${fileLink}" />
+          	<input type='hidden' name='objectType' th:if="${page}" value='Page'/>
+    	    <input type='hidden' name='objectType' th:if="${fileLink}" value='File'/>
+    	    <input type='hidden' name='objectType' th:if="${folder}" value='Folder'/>
+    	    
+    	    <h2 th:if="${page}">Confirm delete page <span th:text="${page.title}">title</span>?</h2>
+    	    <h2 th:if="${fileLink}">Confirm delete file <span th:text="${fileLink.name}">name</span>?</h2>
+    	    <h2 th:if="${folder}">Confirm delete folder <span th:text="${folder.name}">name</span>?</h2>
+                      
+            <div class='form-group row'>
+                <div class="offset-md-3 col-md-9">
+                    <button class='btn btn-info' name='save'>Save</button>
+                    <button class='btn btn-secondary' name='cancel'>Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+</html>

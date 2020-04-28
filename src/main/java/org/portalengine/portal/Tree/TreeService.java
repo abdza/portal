@@ -144,4 +144,14 @@ public class TreeService {
 		nodeRepo.save(newnode);		
 		return newnode;
 	}
+	
+	public boolean deleteNode(TreeNode node) {
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
+		
+		paramsource.addValue("crgt", node.getRgt());
+		paramsource.addValue("clft", node.getLft());
+		paramsource.addValue("tree_id",node.getTree().getId());
+		namedjdbctemplate.update("delete from portal_tree_node where tree_id=:tree_id and lft>=:clft and rgt<=:crgt", paramsource);
+		return true;
+	}
 }

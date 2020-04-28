@@ -127,6 +127,67 @@ public class PortalController {
 		return "whatcreate " + objectType ;
 	}
 	
+	@GetMapping("/p/**/delete")
+	public String deleteResponse(Model model) {
+		String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
+		System.out.println("pathuri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		if(pnode!=null) {
+			model.addAttribute("pnode",pnode);
+			System.out.println("pnode:" + pnode.getName());
+			boolean gotobject = false;
+			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
+				if(pnode.getObjectType().equals("Page")) {
+					Page page = pageService.getRepo().getOne(pnode.getObjectId());
+					model.addAttribute("page",page);
+					gotobject = true;
+				}
+				else if(pnode.getObjectType().equals("File")) {
+					FileLink fileLink = fileService.getRepo().getOne(pnode.getObjectId());
+					model.addAttribute("fileLink",fileLink);
+					gotobject = true;
+				}
+			}
+			if(!gotobject) {
+				model.addAttribute("folder",pnode);
+			}
+		}
+		return "tree/node/form/delete.html";
+	}
+	
+	@PostMapping("/p/**/delete")
+	public String postDeleteResponse(Model model) {
+		String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
+		System.out.println("pathuri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		if(pnode!=null) {
+			model.addAttribute("pnode",pnode);
+			System.out.println("pnode:" + pnode.getName());
+			boolean gotobject = false;
+			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
+				if(pnode.getObjectType().equals("Page")) {
+					Page page = pageService.getRepo().getOne(pnode.getObjectId());
+					model.addAttribute("page",page);
+					gotobject = true;
+				}
+				else if(pnode.getObjectType().equals("File")) {
+					FileLink fileLink = fileService.getRepo().getOne(pnode.getObjectId());
+					model.addAttribute("fileLink",fileLink);
+					gotobject = true;
+				}
+			}
+			if(!gotobject) {
+				model.addAttribute("folder",pnode);
+			}
+			TreeNode parent = pnode.getParent();
+			treeService.deleteNode(pnode);
+			return "redirect:/p/" + parent.rootLessPath();
+		}
+		return "tree/node/form/delete.html";
+	}
+	
 	@GetMapping("/p/**/edit")
 	public String editResponse(Model model) {
 		String pathuri = request.getRequestURI();		
