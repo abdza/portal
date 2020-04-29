@@ -76,6 +76,10 @@ public class TreeNode extends Auditable<String> {
 	private Long rgt;
 	
 	public String rootLessPath() {
-		return this.fullPath.replaceFirst("portal/", "");
+		String toreturn = this.fullPath.replaceFirst("portal/", "");
+		if(this.fullPath.equals("portal")) {
+			toreturn = "";
+		}
+		return toreturn;
 	}
 }

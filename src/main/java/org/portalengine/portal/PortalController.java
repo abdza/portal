@@ -58,7 +58,10 @@ public class PortalController {
 	@GetMapping("/p/**")
 	public Object siteResponse(Model model) {
 		String pathuri = request.getRequestURI();		
-		pathuri = pathuri.replaceAll("/p/", "portal/");
+		pathuri = pathuri.replaceFirst("/p/", "portal/");
+		if(pathuri.equals("portal/")) {
+			pathuri = "portal";
+		}
 		
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);

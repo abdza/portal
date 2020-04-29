@@ -6,6 +6,9 @@
 				<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#user_dialog">				
 				<i class="fa fa-user-plus"></i>
 				</a>				
+				<a id="editnode" th:href="@{/trees/nodes/{curnodeid}/edit(curnodeid=${curnode.id})}" href="#" class="card-toolbar-btn text-white">
+				<i class="fa fa-edit"></i>
+				</a>
 				</div>
 			</div>
 			<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
