@@ -8,7 +8,11 @@
 
 <ul>
 <li th:each="cnode,iter: ${pnode.children}">
-<a th:href="@{/p/{fullpath}(fullpath=${cnode.rootLessPath()})}" th:text="${cnode.name}">Child</a>
+<a th:href="@{/p/{fullpath}(fullpath=${cnode.rootLessPath()})}">
+<b class="fa fa-file" th:if='${cnode.getObjectType().equals("File")}'></b> 
+<b class="fa fa-code" th:if='${cnode.getObjectType().equals("Page")}'></b>
+<b class="fa fa-folder" th:if='${cnode.getObjectType()==null}'></b>
+<span th:text="${cnode.name}">Child</span></a>
 </li>
 </ul>
 

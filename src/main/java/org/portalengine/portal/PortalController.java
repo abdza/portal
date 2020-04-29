@@ -64,8 +64,9 @@ public class PortalController {
 		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
+			model.addAttribute("breadcrumb",treeService.getPath(pnode));
 			System.out.println("pnode:" + pnode.getName() + " fullpath:" + pnode.getFullPath());
-			if(pnode.getObjectType()!=null) {
+			if(pnode.getObjectType()!=null) {				
 				if(pnode.getObjectType().equals("Page")) {
 					Page curpage = pageService.getRepo().getOne(pnode.getObjectId());
 					if(curpage==null) {
@@ -73,6 +74,7 @@ public class PortalController {
 					}
 					else {
 						model.addAttribute("page",curpage);
+						
 						return "page/display.html";
 					}
 				}

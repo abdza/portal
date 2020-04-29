@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -153,5 +154,9 @@ public class TreeService {
 		paramsource.addValue("tree_id",node.getTree().getId());
 		namedjdbctemplate.update("delete from portal_tree_node where tree_id=:tree_id and lft>=:clft and rgt<=:crgt", paramsource);
 		return true;
+	}
+	
+	public List<TreeNode> getPath(TreeNode node) {
+		return nodeRepo.getPath(node);
 	}
 }
