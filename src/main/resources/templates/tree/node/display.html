@@ -3,6 +3,9 @@
 			<div class="card-header bgc-default-d2">
 				<h3 id="nodetitle" th:text="${curnode.name}" class="card-title text-130 text-white"></h3>
 				<div class="card-toolbar">
+				<a id="viewnode" th:href="@{/p/{fullpath}(fullpath=${curnode.rootLessPath()})}" href="#" class="card-toolbar-btn text-white">
+				<i class="fa fa-link"></i>
+				</a>
 				<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#user_dialog">				
 				<i class="fa fa-user-plus"></i>
 				</a>				

@@ -117,6 +117,7 @@ public class TreeApiController {
 		map.put("title",current.getName());
 		map.put("objectType", current.getObjectType());
 		map.put("objectId", current.getObjectId());
+		map.put("rootLessPath", current.rootLessPath());
 		ArrayList<Object> children = new ArrayList<>();
 		for(int i=0; i<current.getChildren().size();i++) {
 			children.add(nodeJson(current.getChildren().get(i)));

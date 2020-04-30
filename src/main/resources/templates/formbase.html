@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html layout:decorate="~{base}">
+
+<th:block layout:fragment="head-meta">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</th:block>
+
 <th:block layout:fragment="head-end">
 <link rel="stylesheet" th:href="@{/libs/summernote/summernote-bs4.min.css}" />
 <link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
@@ -35,7 +41,7 @@
 <script type="text/javascript" th:src="@{/libs/select2/js/select2.full.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/summernote/summernote-bs4.min.js}"></script>
-<script type="text/javascript">
+<script th:inline="javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
 	$(this).tagify({enforceWhitelist:true,whitelist:whitelist});
@@ -55,8 +61,36 @@ $(".tagiform").on("submit",function(){
 	});
 });
 $(document).ready(function(){
-	$('.summernote').summernote();
+	$('.summernote').summernote({
+        height: "500px",
+        callbacks: {
+            onImageUpload: function(files, editor, welEditable) {
+              // upload image to server and create imgNode...
+              sendFile(files[0],editor, welEditable);
+            }
+        }
+    });
 });
+function sendFile(file,editor,welEditable) {
+    data = new FormData();
+    data.append("file", file);
+    var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+    $.ajax({
+        data: data,
+        beforeSend: function(xhr) {
+			xhr.setRequestHeader(header,token);
+		},
+        url: /*[[@{/p/{fullpath}/saveimage(fullpath=${pnode.rootLessPath()})}]]*/'/dummy/api/users',
+        cache: false,
+        contentType: false,
+        processData: false,
+        method: "POST",
+        success: function(url) {
+                editor.insertImage(welEditable, url);
+        }
+    });
+}
 </script>
 </th:block>
 

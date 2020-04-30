@@ -216,14 +216,45 @@ public class PortalController {
 		return "whatedit";
 	}
 	
+	@PostMapping(value = "/p/**/saveimage")
+	@ResponseBody
+	public String saveImageResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile[] file) {
+		String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/saveimage", "");
+		System.out.println("save uri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		if(pnode!=null) {
+			System.out.println("savedata:");
+			System.out.println(postdata.toString());
+			TreeNode pnodeparent = pnode.getParent();
+
+			FileLink newfile = new FileLink();
+			newfile.setName(file[0].getOriginalFilename());
+			newfile.setModule("content");
+			newfile.setSlug(treeService.slugify(file[0].getOriginalFilename()));
+			if(file != null) {
+				newfile.setType("user");
+				newfile = fileService.SaveFile(file[0], newfile);
+				fileService.getRepo().save(newfile);
+			}
+			TreeNode newnode = treeService.addNode(pnodeparent, file[0].getOriginalFilename(), "last");
+			newnode.setObjectType("File");
+			newnode.setObjectId(newfile.getId());
+			treeService.getNodeRepo().save(newnode);
+			return "/p/" + newnode.rootLessPath();
+		}
+		return "whatsave";
+	}
+	
 	@PostMapping("/p/**/save")
 	public String saveResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") Optional<MultipartFile> file) {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
-		System.out.println("pathuri:" + pathuri);
+		System.out.println("save uri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
 		if(pnode!=null) {
-			//Map<String, String[]> postdata = request.getParameterMap();
+			System.out.println("savedata:");
+			System.out.println(postdata.toString());
 			if(postdata.get("objectType")!=null) {
 				if(postdata.get("objectType").equals("Page")) {
 					Page newpage = new Page();

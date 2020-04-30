@@ -78,6 +78,7 @@
 			activate : function(event,data) {
 				$("#addnode").attr("href","/trees/nodes/" + data.node.key + "/create");
 				$("#editnode").attr("href","/trees/nodes/" + data.node.key + "/edit");
+				$("#viewnode").attr("href","/p/" + data.node.data.rootLessPath);
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);
 				$("#bodynodeobjecttype").text(data.node.data.objectType);
