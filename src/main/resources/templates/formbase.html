@@ -64,14 +64,14 @@ $(document).ready(function(){
 	$('.summernote').summernote({
         height: "500px",
         callbacks: {
-            onImageUpload: function(files, editor, welEditable) {
+            onImageUpload: function(files) {
               // upload image to server and create imgNode...
-              sendFile(files[0],editor, welEditable);
+              sendFile(files[0],$(this));
             }
         }
     });
 });
-function sendFile(file,editor,welEditable) {
+function sendFile(file,editor) {
     data = new FormData();
     data.append("file", file);
     var token = $("meta[name='_csrf']").attr("content");
@@ -87,7 +87,8 @@ function sendFile(file,editor,welEditable) {
         processData: false,
         method: "POST",
         success: function(url) {
-                editor.insertImage(welEditable, url);
+        	console.log(url);
+            editor.summernote('insertImage',url);
         }
     });
 }

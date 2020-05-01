@@ -64,7 +64,7 @@ public class PortalController {
 		}
 		
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			model.addAttribute("breadcrumb",treeService.getPath(pnode));
@@ -108,7 +108,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/create", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -137,7 +137,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -166,7 +166,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -198,7 +198,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/edit", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
@@ -222,7 +222,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/saveimage", "");
 		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());
@@ -251,7 +251,7 @@ public class PortalController {
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
 		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());

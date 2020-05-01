@@ -105,6 +105,13 @@ public class TreeApiController {
 		return children;
 	}
 	
+	@PostMapping("/node/{node_id}/delete")
+	public boolean deleteTreeNode(@PathVariable Long node_id) {
+		TreeNode curnode = service.getNodeRepo().findById(node_id).orElse(null);
+		service.deleteNode(curnode);
+		return true;
+	}
+	
 	@GetMapping("/node/{node_id}")
 	public TreeNode treeNode(@PathVariable Long node_id) {
 		TreeNode curnode = service.getNodeRepo().findById(node_id).orElse(null);
@@ -118,6 +125,8 @@ public class TreeApiController {
 		map.put("objectType", current.getObjectType());
 		map.put("objectId", current.getObjectId());
 		map.put("rootLessPath", current.rootLessPath());
+		map.put("slug", current.getSlug());
+		map.put("fullPath", current.getFullPath());
 		ArrayList<Object> children = new ArrayList<>();
 		for(int i=0; i<current.getChildren().size();i++) {
 			children.add(nodeJson(current.getChildren().get(i)));

@@ -124,14 +124,28 @@ public class TreeService {
 		return toreturn;
 	}
 	
+	public String nextSlug(String curslug, TreeNode curnode) {
+		String validslug = slugify(curslug);
+		String validfull = curnode.getFullPath() + "/" + validslug;		
+		TreeNode pnode = nodeRepo.findFirstByFullPath(validfull);
+		while(pnode!=null) {
+			validslug = validslug + "c";
+			validfull = pnode.getFullPath() + "c";
+			pnode = nodeRepo.findFirstByFullPath(validfull);
+		}	
+		return validslug;	
+	}
+	
 	public TreeNode addNode(TreeNode node, String name, String position) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
 		
 		position = "last";
 		TreeNode newnode = new TreeNode();
+		String validslug = nextSlug(slugify(name),node);
+				
 		newnode.setName(name);
-		newnode.setSlug(slugify(name));
-		newnode.setFullPath(node.getFullPath() + "/" + slugify(name));
+		newnode.setSlug(validslug);
+		newnode.setFullPath(node.getFullPath() + "/" + validslug);
 		newnode.setTree(node.getTree());
 		newnode.setLft(node.getRgt());
 		newnode.setRgt(newnode.getLft()+1);		

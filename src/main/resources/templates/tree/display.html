@@ -21,7 +21,10 @@
 				<div class="card-toolbar">
 				<a id="addnode" th:href="@{/trees/nodes/{parent_id}/create(parent_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-plus"></i>
-				</a>				
+				</a>
+				<a id="deletenode" th:href="@{/api/trees/node/{node_id}/delete(node_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
+				<i class="fa fa-trash"></i>
+				</a>
 				</div>
 			</div>
 			<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
@@ -34,6 +37,23 @@
 
 <th:block layout:fragment="javascript">
 	<script th:inline="javascript">
+	
+	$('#deletenode').on('click',function(){
+		if(confirm('Delete node?')){
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$.ajax({
+				url : $('#deletenode').attr('href'),
+				method : "post",
+				beforeSend: function(xhr) {
+					xhr.setRequestHeader(header,token);
+				}
+			}).done(function(data){
+				window.location.reload(true);
+			});
+		}
+		return false;
+	});
 	
 	function updateNode(node) {
 		$('#bodynodetitle').text(node.name);
@@ -77,10 +97,13 @@
 			},
 			activate : function(event,data) {
 				$("#addnode").attr("href","/trees/nodes/" + data.node.key + "/create");
+				$("#deletenode").attr("href","/api/trees/node/" + data.node.key + "/delete");
 				$("#editnode").attr("href","/trees/nodes/" + data.node.key + "/edit");
 				$("#viewnode").attr("href","/p/" + data.node.data.rootLessPath);
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);
+				$("#bodynodeslug").text(data.node.data.slug);
+				$("#bodynodefullpath").text(data.node.data.fullPath);
 				$("#bodynodeobjecttype").text(data.node.data.objectType);
 				$("#bodynodeobjectid").text(data.node.data.objectId);
 				$('#user_node_id').val(data.node.key);
