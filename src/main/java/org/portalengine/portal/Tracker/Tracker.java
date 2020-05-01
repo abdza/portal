@@ -80,8 +80,15 @@ public class Tracker extends Auditable<String> {
 	
 	public String fieldsList() {
 		String toret = "";
+		boolean firstfield = true;
 		for(TrackerField field:this.fields) {
-			toret += "," + field.getName();
+			if(!firstfield) {
+				toret += ",";
+			}
+			else {
+				firstfield = false;
+			}
+			toret += field.getName();
 		}
 		return toret;
 	}

@@ -51,6 +51,8 @@ public class TreeNode extends Auditable<String> {
 	
 	private Long objectId;
 	
+	private Long recordId;
+	
 	@OneToMany(
 			mappedBy = "node",
 			orphanRemoval = true)
