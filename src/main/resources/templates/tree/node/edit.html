@@ -21,7 +21,11 @@
                     <label class='mb-0'>Object Type</label>
                 </div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{objectType}" />
+                    <select class="form-control col-sm-8 col-md-6" th:field="*{objectType}">
+                    <option th:each="opt,iter: ${objectTypes}" th:text="${opt}" th:value="${opt}"
+                            th:selected="${opt==curnode.objectType}">
+                    </option>
+                    </select>
                 </div>
             </div>
             

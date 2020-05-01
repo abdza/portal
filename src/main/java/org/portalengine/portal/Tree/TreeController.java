@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/trees")
@@ -96,16 +97,22 @@ public class TreeController {
 		public String editNode(@PathVariable Long id, Model model) {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
 			model.addAttribute("curnode",curnode);
+			String[] objectTypes = {"","Folder","Page","File","Tracker","Record"};
+			model.addAttribute("objectTypes",objectTypes);
 			return "tree/node/edit.html";
 		}
 		
 		@PostMapping("/nodes/{id}/update")
-		public String updateNode(@PathVariable Long id, HttpServletRequest request,Model model) {
-			Map<String, String[]> postdata = request.getParameterMap();
+		public String updateNode(@RequestParam Map<String,String> postdata, @PathVariable Long id, HttpServletRequest request,Model model) {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
-			curnode.setName(postdata.get("name")[0]);
-			curnode.setObjectType(postdata.get("objectType")[0]);
-			curnode.setObjectId(Long.parseLong(postdata.get("objectId")[0]));
+			curnode.setName(postdata.get("name"));
+			curnode.setObjectType(postdata.get("objectType"));
+			if(postdata.get("objectId")!="") {
+				curnode.setObjectId(Long.parseLong(postdata.get("objectId")));
+			}
+			if(postdata.get("recordId")!="") {
+				curnode.setRecordId(Long.parseLong(postdata.get("recordId")));
+			}
 			service.getNodeRepo().save(curnode);
 			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
 		}
