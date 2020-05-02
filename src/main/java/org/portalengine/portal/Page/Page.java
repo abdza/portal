@@ -37,5 +37,14 @@ public class Page extends Auditable<String> {
 	private String content;	
 	
 	private Boolean published;
+	
+	public String contentPreview() {
+		if(this.content.length()>50) {
+			return this.content.substring(0,50);
+		}
+		else {
+			return this.content;
+		}
+	}
 
 }

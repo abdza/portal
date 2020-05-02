@@ -1,0 +1,6 @@
+<ul class="list-group">
+<li class="list-group-item objectItem" th:each="page,iter: ${pages}" onclick="updateObjectId($(this));" th:attr="data-object-id=${page.id}">
+<h6 th:text="${page.title}">title</h6>
+<p th:text="${page.contentPreview()}">preview</p>
+</li>
+</ul>

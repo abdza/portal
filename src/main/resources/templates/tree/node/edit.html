@@ -1,7 +1,32 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{formbase}">
 
 <section layout:fragment="content" class='tree-content'>
+
+<div class="modal" tabindex="-1" role="dialog" id="searchObject">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Search Object</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="objectSearchForm" name="objectSearchForm">
+        <input type="text" id="objectSearchQ" name="objectSearchQ" class="form-control"/>
+        </form>
+        <br/>
+        <div id="objectSearchResults" name="objectSearchResults">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <div class='content'>
         <h1>Edit Node</h1>
         <form method='post' th:action='@{/trees/nodes/{curnodeid}/update(curnodeid=${curnode.id})}' th:object="${curnode}">
@@ -34,7 +59,8 @@
                     <label class='mb-0'>Object Id</label>
                 </div>
                 <div class='col-sm-9'>
-                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{objectId}" />
+                    <input class="form-control col-sm-7 col-md-5" style="display: inline-block" type='text' th:field="*{objectId}" />
+                    <button onclick="return false;" class="col-sm-1 col-md-1 btn btn-primary" data-toggle="modal" data-target="#searchObject">Link</button>
                 </div>
             </div>
             
@@ -69,3 +95,31 @@
 </section>
 
 </html>
+
+<th:block layout:fragment="javascript">
+<script>
+$("#objectSearchQ").on("keyup",function(){
+	var curQ = $("#objectSearchQ").val();
+	if(curQ.length>2){
+	    var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+	    $.ajax({
+	        data: { searchType: $('#objectType').val(), q: curQ },
+	        beforeSend: function(xhr) {
+				xhr.setRequestHeader(header,token);
+			},
+	        url: "/trees/objectSearch",
+	        method: "POST",
+	        success: function(data) {
+	            $('#objectSearchResults').html(data);
+	        }
+	    });
+	}
+});
+function updateObjectId(selection){
+	$('#objectId').val(selection.data("object-id"));
+	$('#searchObject').modal('hide');
+	
+}
+</script>
+</th:block>

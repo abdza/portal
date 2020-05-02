@@ -1,11 +1,14 @@
 package org.portalengine.portal.Tree;
 
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,9 @@ public class TreeController {
 	
 		@Autowired
 		private TreeService service;
+		
+		@Autowired
+		private PageService pageService;
 		
 		@Autowired
 		public TreeController() {
@@ -115,5 +121,18 @@ public class TreeController {
 			}
 			service.getNodeRepo().save(curnode);
 			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
+		}
+		
+		@PostMapping("/objectSearch")
+		public String objectSearch(@RequestParam Map<String,String> postdata, Model model) {
+			String searchType = postdata.get("searchType").toLowerCase();
+			String tosearch = postdata.get("q");
+			tosearch = "%" + tosearch.replaceAll(" ", "%") + "%";
+			System.out.println("Searching:" + tosearch);
+			if(searchType.equals("page")) {
+				List<Page> pages = pageService.getRepo().findAllByQ(tosearch);
+				model.addAttribute("pages",pages);
+			}
+			return "tree/node/object_search/" + searchType + ".html";
 		}
 }

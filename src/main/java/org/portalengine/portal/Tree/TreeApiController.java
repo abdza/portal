@@ -96,7 +96,6 @@ public class TreeApiController {
 		return null;
 	}
 	
-	
 	@GetMapping("/{id}")
 	public Object display(@PathVariable Long id, Model model) {
 		Tree curtree = service.getTreeRepo().getOne(id);
