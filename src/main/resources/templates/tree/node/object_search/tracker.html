@@ -1,0 +1,6 @@
+<ul class="list-group">
+<li class="list-group-item objectItem" th:each="tracker,iter: ${trackers}" onclick="updateObjectId($(this));" th:attr="data-object-id=${tracker.id}">
+<h6 th:text="${tracker.name}">title</h6>
+<p th:text="${tracker.listFields}">preview</p>
+</li>
+</ul>

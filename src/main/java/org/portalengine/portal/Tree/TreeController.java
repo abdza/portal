@@ -11,6 +11,8 @@ import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Tracker.Tracker;
+import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,9 @@ public class TreeController {
 		
 		@Autowired
 		private FileLinkService fileLinkService;
+		
+		@Autowired
+		private TrackerService trackerService;
 		
 		@Autowired
 		public TreeController() {
@@ -141,6 +146,10 @@ public class TreeController {
 			else if(searchType.equals("file")) {
 				List<FileLink> files = fileLinkService.getRepo().findAllByQ(tosearch);
 				model.addAttribute("files",files);
+			}
+			else if(searchType.equals("tracker")) {
+				List<Tracker> trackers = trackerService.getRepo().findAllByQ(tosearch);
+				model.addAttribute("trackers",trackers);
 			}
 			return "tree/node/object_search/" + searchType + ".html";
 		}
