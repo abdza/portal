@@ -151,6 +151,10 @@ public class TreeController {
 				List<Tracker> trackers = trackerService.getRepo().findAllByQ(tosearch);
 				model.addAttribute("trackers",trackers);
 			}
+			else if(searchType.equals("folder")) {
+				List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
+				model.addAttribute("nodes",nodes);
+			}
 			return "tree/node/object_search/" + searchType + ".html";
 		}
 }
