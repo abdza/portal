@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.portalengine.portal.FileLink.FileLink;
+import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class TreeController {
 		
 		@Autowired
 		private PageService pageService;
+		
+		@Autowired
+		private FileLinkService fileLinkService;
 		
 		@Autowired
 		public TreeController() {
@@ -132,6 +137,10 @@ public class TreeController {
 			if(searchType.equals("page")) {
 				List<Page> pages = pageService.getRepo().findAllByQ(tosearch);
 				model.addAttribute("pages",pages);
+			}
+			else if(searchType.equals("file")) {
+				List<FileLink> files = fileLinkService.getRepo().findAllByQ(tosearch);
+				model.addAttribute("files",files);
 			}
 			return "tree/node/object_search/" + searchType + ".html";
 		}
