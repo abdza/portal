@@ -26,15 +26,23 @@ public class Setting extends Auditable<String> {
 	
 	private String module;
 	private String name;
+	private String type;
+	
 	private String textValue;
 	
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	private Date dateValue;
-	private Long number;
 	
-	@PrePersist
-	@PreUpdate
-	void checkValues() {
-		
+	private Long numberValue;
+	
+	public String getValue() {
+		if(this.type.equals("date")) {
+			return dateValue.toString();
+		}
+		else if(this.type.equals("number")) {
+			return numberValue.toString();
+		}
+		return textValue;
 	}
+	
 }

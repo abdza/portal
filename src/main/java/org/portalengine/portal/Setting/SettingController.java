@@ -37,14 +37,19 @@ public class SettingController {
 			return "setting/list.html";
 		}
 		
-		@GetMapping(value= {"/create","/edit/{id}"})
-		public String edit(@PathVariable(required=false) Long id, Model model) {
+		@GetMapping(value= {"/create/{type}","/edit/{id}"})
+		public String edit(@PathVariable(required=false) String type, @PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
 				Setting cursetting = service.getRepo().getOne(id);
 				model.addAttribute("setting", cursetting);
 			}
 			else {
-				model.addAttribute("setting",new Setting());
+				if(type==null) {
+					type = "string";
+				}
+				Setting cursetting = new Setting();
+				cursetting.setType(type);
+				model.addAttribute("setting",cursetting);
 			}
 			return "setting/form.html";
 		}
