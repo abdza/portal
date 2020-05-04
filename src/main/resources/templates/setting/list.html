@@ -13,7 +13,7 @@
                 <th>#</th>
                 <th>Module</th>
                 <th>Name</th>
-                <th>Value</th>
+                
                 <th>&nbsp;</th>
             </tr>
             <tr th:each="setting,iter: ${settings}">
@@ -21,7 +21,7 @@
                 </td>
                 <td th:text="${setting.module}">module</td>
                 <td th:text="${setting.name}">title</td>
-                <td th:text="${setting.getValue()}">title</td>
+                
                 <td>
                     <form method='post' th:action='@{/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">
                         <input type='submit' class='button danger'
