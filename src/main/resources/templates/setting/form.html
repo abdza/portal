@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
 
+<th:block layout:fragment="head-end">
+<link th:if="${setting.type.equals('json')}" rel="stylesheet" th:href="@{/libs/jsoneditor/jsoneditor.min.css}" />
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Setting</h1>
-        <form method='post' th:action='@{/settings/save}' th:object="${setting}">
+        <form method='post' th:action='@{/settings/save}' th:object="${setting}" id='settingsForm'>
             <input type='hidden' th:field='*{id}' />
             <input type='hidden' th:field='*{type}' />
             <div class='form-group row'>
@@ -21,11 +25,19 @@
                     <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}" />
                 </div>
             </div>
-            <div class='form-group row' th:if="${#arrays.contains({'string','json'},setting.type)}">
+            <div class='form-group row' th:if="${setting.type.equals('string')}">
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Text</label></div>
                 <div class='col-sm-9'>
                     <textarea class="form-control col-sm-8 col-md-6" th:field="*{textValue}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row' th:if="${setting.type.equals('json')}">
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Text</label></div>
+                <div class='col-sm-9'>
+                	<input type='hidden' th:field="*{textValue}"/>
+                    <div class="form-control col-sm-8 col-md-6" style="width: 400px; height: 400px;" id="jsonEditor"></div>
                 </div>
             </div>
             <div class='form-group row' th:if="${setting.type.equals('number')}">
@@ -54,3 +66,19 @@
 </section>
 
 </html>
+<th:block layout:fragment="page-javascript">
+<th:block th:if="${setting.type.equals('json')}">
+<script type="text/javascript" th:src="@{/libs/jsoneditor/jsoneditor.min.js}"></script>
+<script>
+var container = document.getElementById('jsonEditor');
+var options = {
+		mode: 'tree'
+};
+var editor = new JSONEditor(container,options);
+editor.set(JSON.parse($('#textValue').val()));
+$('#settingsForm').on('submit',function(){
+	$('#textValue').val(JSON.stringify(editor.get()));
+});
+</script>
+</th:block>
+</th:block>
