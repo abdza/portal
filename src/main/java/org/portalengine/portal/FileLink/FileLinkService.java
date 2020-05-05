@@ -67,6 +67,10 @@ public class FileLinkService {
 	public String SaveTmpFile(MultipartFile file) {
 		String filepath=null;
 		if(file.getOriginalFilename().length()>0) {
+			String curfolder = System.getProperty("user.dir");
+			if(!Paths.get(uploadroot).isAbsolute()) {
+				uploadroot = curfolder + "/" + uploadroot;
+			}		
 			String targetpath = uploadroot + "/tmp";			
 			File fpath = new File(targetpath);			
 			if(!fpath.exists()) {

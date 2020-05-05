@@ -3,6 +3,8 @@
 
 <section layout:fragment="content" class='page-content'>
 
+	<h1>Data Update</h1>
+	<a href="#" th:href="@{/dataupdates/runupdate/{id}(id=${dataupdate.id})}" class="btn btn-primary">Run Update</a>
     <div class='columns'>
         <div class='column has-text-weight-bold'>Tracker:</div>
         <div class='column' th:text="${dataupdate.tracker.name}">module</div>
