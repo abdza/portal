@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Controller
 @RequestMapping("/trees")
@@ -198,10 +199,11 @@ public class TreeController {
 								String curname = jnode.get("name").asText().toLowerCase();
 								System.out.println("comparing:" + curname + " with:" + searchType);
 								if(searchType.equals(curname)) {
+									JsonNode search = ((ObjectNode)jnode.get("search")).put("q",tosearch);									
 									System.out.println("found type:" + curname);
 									model.addAttribute("object",jnode);
 									Tracker tracker = trackerService.getRepo().getOne((long) jnode.get("objectId").asInt());
-									DataSet dataset = trackerService.dataset(tracker,false);
+									DataSet dataset = trackerService.dataset(tracker,false,search);
 									System.out.println("datas:" + dataset.getDataRows().toString());
 									model.addAttribute("items",dataset.getDataRows());
 									model.addAttribute("title",jnode.get("title").asText());

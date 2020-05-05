@@ -33,6 +33,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 
 import lombok.Data;
@@ -196,14 +197,57 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
-		return dataset(tracker, true);
+		return dataset(tracker, true, null);
 	}
 	
-	public DataSet dataset(Tracker tracker, boolean pagelimit) {
+	public DataSet dataset(Tracker tracker, boolean pagelimit, JsonNode search) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
-		String filterquery = " where 1=1";
+		String filterquery = " where 1=1 ";
+		if(search!=null) {
+			/*
+			 * search is a JsonNode with the following children
+			 * q - the query to search for
+			 * like - array node of fields to search for using the like query
+			 * equals - array node of fields to search for using the equals query
+			 * 
+			 * All of it would be or
+			 */
+			System.out.println("Got search node");
+			ArrayList<String> squery = new ArrayList<String>();
+			String qstring = "";
+			if(request.getParameter("q")!=null) {
+				qstring = request.getParameter("q");
+			}
+			else if(search.get("q").asText()!=null) {
+				qstring = search.get("q").asText();
+			}
+			System.out.println("Searching: " + qstring);
+			if(search.get("like")!=null) {
+				if(search.get("like").isArray()) {
+					qstring = "%" + qstring + "%";
+					for(final JsonNode jfield : search.get("like")) {
+						System.out.println("jfield:" + jfield.toString());
+						squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
+						paramsource.addValue(jfield.asText(), qstring);
+					}
+				}
+			}
+			if(search.get("equal")!=null) {
+				if(search.get("equal").isArray()) {
+					for(final JsonNode jfield : search.get("equal")) {
+						System.out.println("jfield:" + jfield.toString());
+						squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
+						paramsource.addValue(jfield.asText(), qstring);
+					}
+				}
+			}
+			if(squery.size()>0) {
+				filterquery += " and (" + String.join(" or ", squery) + ")";
+			}
+			System.out.println("filterquery:" + filterquery);
+		}
 		Integer size = 10;
 		Integer page = 0;
 		if(request.getParameter("page")!=null) {
