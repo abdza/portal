@@ -196,6 +196,10 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
+		return dataset(tracker, true);
+	}
+	
+	public DataSet dataset(Tracker tracker, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
@@ -211,6 +215,9 @@ public class TrackerService {
 		}
 		Integer offset = page * size;
 		String pagequery = " order by id offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";
+		if(!pagelimit) {
+			pagequery = "";
+		}
 		Integer rowcount = namedjdbctemplate.queryForObject("select count(*) from " + tracker.getDataTable() + filterquery, paramsource, Integer.class); 
 		Integer totalPages = rowcount/size;
 		if(rowcount%size>0) {

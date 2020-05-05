@@ -1,6 +1,9 @@
 package org.portalengine.portal.Tree;
 
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +14,9 @@ import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Setting.Setting;
+import org.portalengine.portal.Setting.SettingService;
+import org.portalengine.portal.Tracker.DataSet;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +28,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/trees")
@@ -38,6 +47,9 @@ public class TreeController {
 		
 		@Autowired
 		private TrackerService trackerService;
+		
+		@Autowired
+		private SettingService settingService;
 		
 		@Autowired
 		public TreeController() {
@@ -113,7 +125,25 @@ public class TreeController {
 		public String editNode(@PathVariable Long id, Model model) {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
 			model.addAttribute("curnode",curnode);
-			String[] objectTypes = {"","Folder","Page","File","Tracker","Record"};
+			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record"));
+			
+			Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
+			if(customTypes!=null) {
+				System.out.println("found settings");
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					JsonNode trackerType = mapper.readTree(customTypes.getTextValue());
+					if(trackerType.isArray()) {
+						for(final JsonNode jnode : trackerType) {
+							objectTypes.add(jnode.get("name").asText());
+						}
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 			model.addAttribute("objectTypes",objectTypes);
 			return "tree/node/edit.html";
 		}
@@ -154,6 +184,37 @@ public class TreeController {
 			else if(searchType.equals("folder")) {
 				List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
 				model.addAttribute("nodes",nodes);
+			}
+			else {				
+				Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
+				if(customTypes!=null) {
+					System.out.println("found settings");
+					ObjectMapper mapper = new ObjectMapper();
+					try {
+						JsonNode trackerType = mapper.readTree(customTypes.getTextValue());
+						if(trackerType.isArray()) {
+							for(final JsonNode jnode : trackerType) {
+								System.out.println("testing json:" + jnode.toString());
+								String curname = jnode.get("name").asText().toLowerCase();
+								System.out.println("comparing:" + curname + " with:" + searchType);
+								if(searchType.equals(curname)) {
+									System.out.println("found type:" + curname);
+									model.addAttribute("object",jnode);
+									Tracker tracker = trackerService.getRepo().getOne((long) jnode.get("objectId").asInt());
+									DataSet dataset = trackerService.dataset(tracker,false);
+									System.out.println("datas:" + dataset.getDataRows().toString());
+									model.addAttribute("items",dataset.getDataRows());
+									model.addAttribute("title",jnode.get("title").asText());
+									model.addAttribute("detail",jnode.get("detail").asText());
+								}
+							}
+						}
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				searchType = "trackertype";
 			}
 			return "tree/node/object_search/" + searchType + ".html";
 		}

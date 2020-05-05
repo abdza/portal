@@ -49,6 +49,9 @@ public class SettingController {
 				}
 				Setting cursetting = new Setting();
 				cursetting.setType(type);
+				if(type.equals("json")) {
+					cursetting.setTextValue("[]");
+				}
 				model.addAttribute("setting",cursetting);
 			}
 			return "setting/form.html";
