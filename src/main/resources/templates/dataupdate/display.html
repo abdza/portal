@@ -5,6 +5,12 @@
 
 	<h1>Data Update</h1>
 	<a href="#" th:href="@{/dataupdates/runupdate/{id}(id=${dataupdate.id})}" class="btn btn-primary">Run Update</a>
+	<form method='post' th:action='@{/dataupdates/delete/{id}(id=${dataupdate.id})}' class="d-inline-block"
+                        th:object="${dataupdate}">
+        <input type='submit' class='btn btn-danger'
+            th:onClick='return confirm("Confirm delete dataupdate " + this.getAttribute("data-fname") + "?");'
+            th:attr="data-fname=${dataupdate.createdDate}" value='Delete' />
+    </form>
     <div class='columns'>
         <div class='column has-text-weight-bold'>Tracker:</div>
         <div class='column' th:text="${dataupdate.tracker.name}">module</div>

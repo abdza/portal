@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @Table(name = "portal_user")
-@NoArgsConstructor(access=AccessLevel.PRIVATE, force=true)
+@NoArgsConstructor(access=AccessLevel.PACKAGE, force=true)
 @RequiredArgsConstructor
 public class User extends Auditable<String> implements UserDetails {
 	

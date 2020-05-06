@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<section layout:fragment="content" class='user-content'>
+    <div class='content'>
+        <h1>Create user</h1>
+        <form method='post' th:action='@{/users/save}' th:object="${user}">
+            <input type='hidden' th:field='*{id}' />
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Username</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{username}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Staff ID</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{staffid}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Name</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{name}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Email</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{email}" />
+                </div>
+            </div>
+
+
+            <div class='form-group row'>
+                <div class="offset-md-3 col-md-9">
+                    <button class='btn btn-info' name='save'>Save</button>
+                    <button class='btn btn-secondary' name='cancel'>Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+</html>

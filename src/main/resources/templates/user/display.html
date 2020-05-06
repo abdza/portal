@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<section layout:fragment="content" class='user-content'>
+
+    <div class='columns'>
+        <div class='column has-text-weight-bold'>Username:</div>
+        <div class='column' th:text="${user.username}">module</div>
+        <div class='column has-text-weight-bold'>Name:</div>
+        <div class='column' th:text="${user.name}">slug</div>
+    </div>
+
+    <div class='columns'>
+        <div class='column has-text-weight-bold'>Staff Id:</div>
+        <div class='column' th:text="${user.staffid}">module</div>
+        <div class='column has-text-weight-bold'>Email:</div>
+        <div class='column' th:text="${user.email}">slug</div>
+    </div>
+
+</section>
+
+</html>
