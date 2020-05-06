@@ -145,7 +145,6 @@ public class TrackerController {
 			Tracker tracker = service.getRepo().getOne(id);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("trackerfield",new TrackerField());
-			Workbook workbook;
 			HashMap<String, String> fieldname = new HashMap<String, String>();
 			HashMap<String, String> fieldtype = new HashMap<String, String>();
 			String tmpfilepath = fileservice.SaveTmpFile(file);

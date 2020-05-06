@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.portalengine.portal.PoiExcel;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Tracker;
@@ -152,14 +153,31 @@ public class DataUpdateController {
 	@GetMapping("/runupdate/{id}")
 	public String runupdate(@PathVariable Long id, Model model) {		
 		DataUpdate dataupdate = service.getRepo().getOne(id);
-		service.runupdate(dataupdate,fileService);
+		service.runupdate(dataupdate);
 		return "redirect:/dataupdates/display/" + id.toString();
 	}
 	
 	@GetMapping("/setparam/{id}")
 	public String setparam(@PathVariable Long id, Model model) {
 		HashMap<Integer, String> columns = new HashMap<Integer, String>();
+		
 		DataUpdate dataupdate = service.getRepo().getOne(id);
+		PoiExcel poiExcel = new PoiExcel();
+		poiExcel.setLimits(dataupdate.getHeaderStart().intValue(), dataupdate.getHeaderEnd().intValue(), dataupdate.getHeaderEnd().intValue()+1);
+		
+		try {
+			List<Object> fields = poiExcel.getHeaders(dataupdate.getFilelink().getPath());
+			//HashMap<String, String> field = new HashMap<String, String>();
+			for(Object field: fields) {
+				HashMap<String, String> cfield = (HashMap<String, String>)field;
+				columns.put(Integer.parseInt(cfield.get("col")), cfield.get("text"));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/* 
 		try {
 			Workbook workbook = WorkbookFactory.create(fileService.getFile(dataupdate.getFilelink()));
 			Sheet sheet = workbook.getSheetAt(0);
@@ -191,7 +209,9 @@ public class DataUpdateController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} */
+		
+		
 		model.addAttribute("columns",columns);
 		model.addAttribute("dataupdate", dataupdate);
 		return "dataupdate/setparam.html";

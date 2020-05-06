@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -30,6 +31,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -40,13 +43,13 @@ public class DataUpdateService {
 	private DataUpdateRepository repo;
 	
 	@Autowired
-	private TrackerFieldRepository trackerfieldrepo;
+	private TrackerFieldRepository fieldRepo;
 	
 	@Autowired
 	private NamedParameterJdbcTemplate jdbctemplate;
 	
 	@Autowired
-	private FileLinkService fileLinkService;
+	private FileLinkService fileservice;
 	
 	@Autowired
 	public DataUpdateService() {
@@ -66,7 +69,7 @@ public class DataUpdateService {
 			Long linkId = update.getFilelink().getId();
 			repo.deleteById(update.getId());
 			if(linkId!=null) {
-				fileLinkService.deleteById(linkId);
+				fileservice.deleteById(linkId);
 			}			
 		}
 	}
@@ -78,14 +81,37 @@ public class DataUpdateService {
 		repo.deleteById(dataupdate.getId());
 	}
 	
-	public void runupdate(DataUpdate dataupdate,FileLinkService fileservice) {
-		Gson gson = new Gson();
+	public void runupdate(DataUpdate dataupdate) {
+		// Gson gson = new Gson();
+		// Type type = new TypeToken<HashMap<String,String>>(){}.getType();
+		// HashMap<String, String> savedfield = gson.fromJson(dataupdate.getSavedParams(), type);
+		
 		//System.out.println("Running update for " + dataupdate.getId().toString());
 		
-		Type type = new TypeToken<HashMap<String,String>>(){}.getType();
-		HashMap<String, String> savedfield = gson.fromJson(dataupdate.getSavedParams(), type);
-		ArrayList<String> fieldnames = new ArrayList<String>(); 
-		savedfield.forEach((field,column)->{
+		
+		
+		//ArrayList<String> fieldnames = new ArrayList<String>(); 
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode savefield;
+		try {
+			savefield = mapper.readTree(dataupdate.getSavedParams());
+			ArrayList<TrackerField> fields = new ArrayList<TrackerField>();
+			
+			if(savefield.isArray()) {
+				for(final JsonNode field : savefield) {
+					Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) field;
+					if(!entry.getValue().asText().equals("ignore")) {
+						fields.add(fieldRepo.findByTrackerAndName(dataupdate.getTracker(), entry.getKey()));
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/* savedfield.forEach((field,column)->{
 			//System.out.println("Got field: " + field + " using column:" + column);
 			if(!column.equals("ignore")) {
 				fieldnames.add(field);
@@ -182,6 +208,6 @@ public class DataUpdateService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 }
