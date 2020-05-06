@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.portalengine.portal.PoiExcel;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,67 +141,31 @@ public class TrackerController {
 		}
 		
 		@PostMapping("/{id}/exceltemplate")
-		public String submitexceltemplate(@RequestParam("file") MultipartFile file, @PathVariable Long id, Model model, HttpServletRequest request) {
+		public String submitexceltemplate(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile file, @PathVariable Long id, Model model, HttpServletRequest request) {
 			Tracker tracker = service.getRepo().getOne(id);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("trackerfield",new TrackerField());
 			Workbook workbook;
-			Map<String, String[]> postdata = request.getParameterMap();
 			HashMap<String, String> fieldname = new HashMap<String, String>();
 			HashMap<String, String> fieldtype = new HashMap<String, String>();
+			String tmpfilepath = fileservice.SaveTmpFile(file);
+			System.out.println("File saved to:" + tmpfilepath);
+			PoiExcel poiExcel = new PoiExcel();
+			poiExcel.setLimits(Integer.parseInt(postdata.get("headerstart")), Integer.parseInt(postdata.get("headerend")), Integer.parseInt(postdata.get("headerend"))+1);
 			try {
-				String tmpfilepath = fileservice.SaveTmpFile(file);
-				System.out.println("File saved to:" + tmpfilepath);
-				File tmpexcel = new File(tmpfilepath);
-				workbook = WorkbookFactory.create(tmpexcel);
-				Sheet sheet = workbook.getSheetAt(0);
-				Iterator<Row> rows = sheet.rowIterator();
-				Row drow;
-				Row datarow;
-				Boolean stoprow=false;
-				while(rows.hasNext() && !stoprow) {
-					System.out.println("Looping over excel " + postdata.get("headerend")[0].toString() + " until " + postdata.get("headerstart")[0].toString());
-					drow = rows.next();
-					System.out.println("Current row:" + String.valueOf(drow.getRowNum()));
-					datarow = sheet.getRow(drow.getRowNum()+1);
-					if(drow.getRowNum()<Integer.parseInt(postdata.get("headerend")[0])) {
-						if(drow.getRowNum()>=Integer.parseInt(postdata.get("headerstart")[0])-1) {
-							Iterator<Cell> cells = drow.cellIterator();					
-							Cell cell;
-							while(cells.hasNext()) {
-								cell = cells.next();
-								String cellval = cell.getStringCellValue();
-								System.out.println("Name contents:" + cell.getStringCellValue());
-								String cellkey = cellval.replace(" ", "_").replaceAll("[^A-Za-z0-9_]","").toLowerCase();
-								fieldname.put(cellkey, cellval);
-								Cell datacell = datarow.getCell(cell.getColumnIndex());
-								if(datacell == null) {
-									fieldtype.put(cellkey, "String");
-								}
-								else {
-									if(datacell.getCellType()==CellType.STRING) {
-										fieldtype.put(cellkey, "String");
-									}
-									else if(datacell.getCellType()==CellType.NUMERIC) {
-										fieldtype.put(cellkey, "Integer");
-									}
-								}
-							}
-						}
-					}
-					else {
-						stoprow = true;
-					}
+				List<Object> fields = poiExcel.getHeaders(tmpfilepath);
+				//HashMap<String, String> field = new HashMap<String, String>();
+				for(Object field: fields) {
+					HashMap<String, String> cfield = (HashMap<String, String>)field;
+					fieldname.put(cfield.get("name"), cfield.get("text"));
+					fieldtype.put(cfield.get("name"), cfield.get("type"));
 				}
-				model.addAttribute("fieldname",fieldname);
-				model.addAttribute("fieldtype",fieldtype);
-				workbook.close();
-				tmpexcel.delete();
-				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			model.addAttribute("fieldname",fieldname);
+			model.addAttribute("fieldtype",fieldtype);
 			
 			return "tracker/exceltype.html";
 		}
