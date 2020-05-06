@@ -306,11 +306,11 @@ public class PoiExcel {
 		}
 	}
 
-	/* public int loadData(String filename, List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) throws Exception {
+	/* public int loadData(String filename,Sql sql,JSONObject savedparams,List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) throws Exception {
 		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		sst = new ReadOnlySharedStringsTable(pkg);
-		fetchSheetParser(statementfields,filtertable,batchno,gotupdate);
+		fetchSheetParser(sql,savedparams,statementfields,filtertable,batchno,gotupdate);
 		InputStream sheet = r.getSheetsData().next();
 		InputSource sheetSource = new InputSource(sheet);
 		if(sheetSource!=null) {
@@ -326,9 +326,9 @@ public class PoiExcel {
 		return rowcount;
 	}
 
-	private void fetchSheetParser(List<Object> statementfields,String filtertable,Integer batchno,boolean gotupdate) throws SAXException, ParserConfigurationException {
+	private void fetchSheetParser(Sql sql, JSONObject savedparams,List<Object> statementfields,String filtertable,Integer batchno,boolean gotupdate) throws SAXException, ParserConfigurationException {
 		this.parser = XMLHelper.newXMLReader();
-		ContentHandler handler = new SheetHandler(statementfields,filtertable,batchno,gotupdate);
+		ContentHandler handler = new SheetHandler(sql,savedparams,statementfields,filtertable,batchno,gotupdate);
 		this.parser.setContentHandler(handler);
 	}
 
@@ -337,6 +337,8 @@ public class PoiExcel {
 		private boolean nextIsString;
 		private String dquery="";
 		private boolean firstRow = true;
+		private Sql sql;
+		private JSONObject savedparams;
 		private String filtertable;
 		private Integer batchno;
 		private boolean gotupdate;
@@ -346,7 +348,9 @@ public class PoiExcel {
 		HashMap<String, Object> qparam = new HashMap<String, Object>();
 		HashMap<Integer, Object> currow;
 
-		private SheetHandler(List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) {
+		private SheetHandler(Sql sql, JSONObject savedparams, List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) {
+			this.sql = sql;
+			this.savedparams = savedparams;
 			this.statementfields = statementfields;
 			this.filtertable = filtertable;
 			this.batchno = batchno;
@@ -405,7 +409,7 @@ public class PoiExcel {
 						for(Object field:statementfields) {
 							HashMap<String,Object> cfield = (HashMap<String,Object>) field;
 
-							//String datasource = this.savedparams.optString("datasource_" + String.valueOf(cfield.get("id")));
+							String datasource = this.savedparams.optString("datasource_" + String.valueOf(cfield.get("id")));
 
 							Object curdata;
 
