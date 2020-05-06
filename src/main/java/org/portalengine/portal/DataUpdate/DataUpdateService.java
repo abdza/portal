@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.portalengine.portal.PoiExcel;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.Field.TrackerField;
@@ -86,30 +88,49 @@ public class DataUpdateService {
 		// Type type = new TypeToken<HashMap<String,String>>(){}.getType();
 		// HashMap<String, String> savedfield = gson.fromJson(dataupdate.getSavedParams(), type);
 		
-		//System.out.println("Running update for " + dataupdate.getId().toString());
-		
+		System.out.println("Running update for " + dataupdate.getId().toString());
+		System.out.println("Current json is:" + dataupdate.getSavedParams());
 		
 		
 		//ArrayList<String> fieldnames = new ArrayList<String>(); 
 		
+		ArrayList<TrackerField> fields = new ArrayList<TrackerField>();
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode savefield;
 		try {
-			savefield = mapper.readTree(dataupdate.getSavedParams());
-			ArrayList<TrackerField> fields = new ArrayList<TrackerField>();
-			
-			if(savefield.isArray()) {
-				for(final JsonNode field : savefield) {
-					Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) field;
-					if(!entry.getValue().asText().equals("ignore")) {
-						fields.add(fieldRepo.findByTrackerAndName(dataupdate.getTracker(), entry.getKey()));
-					}
+			savefield = mapper.readTree(dataupdate.getSavedParams());			
+			System.out.println("savefield is:" + savefield.toString());
+			Iterator<Entry<String, JsonNode>> nodes = savefield.fields();
+			while (nodes.hasNext()) {
+				Map.Entry<String, JsonNode> field = (Map.Entry<String, JsonNode>) nodes.next();
+				System.out.println("Curnode:" + field.toString());
+				//Map.Entry<String, JsonNode> entry = (Map.Entry<String, JsonNode>) field;
+				if(!field.getValue().asText().equals("ignore")) {
+					TrackerField curfield = fieldRepo.findByTrackerAndName(dataupdate.getTracker(), field.getKey());
+					fields.add(curfield);
+					System.out.println("Adding field:" + curfield.getName());
 				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		PoiExcel poiExcel = new PoiExcel();
+		poiExcel.setLimits(dataupdate.getHeaderStart().intValue(), dataupdate.getHeaderEnd().intValue(), dataupdate.getHeaderEnd().intValue()+1);
+		JsonNode savedparams;
+		try {
+			savedparams = mapper.readTree(dataupdate.getSavedParams());
+			poiExcel.loadData(dataupdate.getFilelink().getPath(), jdbctemplate, savedparams, fields, dataupdate.getTracker().getDataTable(), dataupdate.getId().intValue(), false);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		/* savedfield.forEach((field,column)->{
 			//System.out.println("Got field: " + field + " using column:" + column);

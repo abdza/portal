@@ -43,6 +43,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -60,6 +61,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.sql.SQLException;
 
@@ -306,11 +309,12 @@ public class PoiExcel {
 		}
 	}
 
-	/* public int loadData(String filename,Sql sql,JSONObject savedparams,List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) throws Exception {
+	public int loadData(String filename,NamedParameterJdbcTemplate sql,JsonNode savedparams,ArrayList<TrackerField> fields2, String filtertable, Integer batchno, boolean gotupdate) throws Exception {
+		// System.out.println("Loading data");
 		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		sst = new ReadOnlySharedStringsTable(pkg);
-		fetchSheetParser(sql,savedparams,statementfields,filtertable,batchno,gotupdate);
+		fetchSheetParser(sql,savedparams,fields2,filtertable,batchno,gotupdate);
 		InputStream sheet = r.getSheetsData().next();
 		InputSource sheetSource = new InputSource(sheet);
 		if(sheetSource!=null) {
@@ -326,7 +330,7 @@ public class PoiExcel {
 		return rowcount;
 	}
 
-	private void fetchSheetParser(Sql sql, JSONObject savedparams,List<Object> statementfields,String filtertable,Integer batchno,boolean gotupdate) throws SAXException, ParserConfigurationException {
+	private void fetchSheetParser(NamedParameterJdbcTemplate sql, JsonNode savedparams,ArrayList<TrackerField> statementfields,String filtertable,Integer batchno,boolean gotupdate) throws SAXException, ParserConfigurationException {
 		this.parser = XMLHelper.newXMLReader();
 		ContentHandler handler = new SheetHandler(sql,savedparams,statementfields,filtertable,batchno,gotupdate);
 		this.parser.setContentHandler(handler);
@@ -337,18 +341,18 @@ public class PoiExcel {
 		private boolean nextIsString;
 		private String dquery="";
 		private boolean firstRow = true;
-		private Sql sql;
-		private JSONObject savedparams;
+		private NamedParameterJdbcTemplate sql;
+		private MapSqlParameterSource qparam = new MapSqlParameterSource();
+		private JsonNode savedparams;
 		private String filtertable;
 		private Integer batchno;
 		private boolean gotupdate;
 		private CellAddress cellAddress;
 
-		List<Object> statementfields;
-		HashMap<String, Object> qparam = new HashMap<String, Object>();
+		ArrayList<TrackerField> statementfields;
 		HashMap<Integer, Object> currow;
 
-		private SheetHandler(Sql sql, JSONObject savedparams, List<Object> statementfields, String filtertable, Integer batchno, boolean gotupdate) {
+		private SheetHandler(NamedParameterJdbcTemplate sql, JsonNode savedparams, ArrayList<TrackerField> statementfields, String filtertable, Integer batchno, boolean gotupdate) {
 			this.sql = sql;
 			this.savedparams = savedparams;
 			this.statementfields = statementfields;
@@ -375,7 +379,7 @@ public class PoiExcel {
 			}
 			if(name.equals("row")) {
 				currow = new HashMap<Integer, Object>();
-				qparam = new HashMap<String, Object>();
+				qparam = new MapSqlParameterSource();
 			}
 			// Clear contents cache
 			lastContents = "";
@@ -406,15 +410,16 @@ public class PoiExcel {
 						boolean firstcompare = true;
 						boolean nodata = true;
 						String torun = "select 1";
-						for(Object field:statementfields) {
-							HashMap<String,Object> cfield = (HashMap<String,Object>) field;
-
-							String datasource = this.savedparams.optString("datasource_" + String.valueOf(cfield.get("id")));
+						for(TrackerField field:statementfields) {
+							// System.out.println("sp:" + this.savedparams.toString());
+							String datasource = this.savedparams.get(field.getName()).asText();
 
 							Object curdata;
 
-							if(datasource.equals("custom")){
-								curdata = this.savedparams.getString("custom_" + String.valueOf(cfield.get("id")));
+							if(datasource.equals("manual")){
+								//not implemented yet
+								//curdata = this.savedparams.get("manual_" + field.getName()).asText();
+								curdata = "";
 							}
 							else{
 								Integer curpos = Integer.parseInt(datasource);
@@ -430,24 +435,26 @@ public class PoiExcel {
 									paramsqlfields += " , ";
 									updatefields += " , ";
 								}
-								sqlfields += cfield.get("name");
-								paramsqlfields += ":" + cfield.get("name");
-								updatefields += cfield.get("name") + "=:" + cfield.get("name");
+								sqlfields += field.getName();
+								paramsqlfields += ":" + field.getName();
+								updatefields += field.getName() + "=:" + field.getName();
 
-								String updatecheck = this.savedparams.optString("update_" + String.valueOf(cfield.get("id")));
-								if(updatecheck!=""){
-									if(!firstcompare){
-										comparefields += " and ";
+								if(this.savedparams.get("update_" + field.getName())!=null) {
+									String updatecheck = this.savedparams.get("update_" + field.getName()).asText();
+									if(updatecheck!=""){
+										if(!firstcompare){
+											comparefields += " and ";
+										}
+										comparefields += field.getName() + "=:" + field.getName();
+										firstcompare = false;
 									}
-									comparefields += cfield.get("name") + "=:" + cfield.get("name");
-									firstcompare = false;
 								}
 							
 								try {
-									if(cfield.get("type").equals("Date")){
+									if(field.getFieldType().equals("Date")){
 										try {
 											Timestamp curval = new Timestamp(DateUtil.getJavaDate(Double.parseDouble((String)curdata)).getTime());
-											qparam.put((String)cfield.get("name"),curval);
+											qparam.addValue(field.getName(),curval);
 										}
 										catch(NumberFormatException e){
 											String datedata = curdata.toString();
@@ -457,7 +464,7 @@ public class PoiExcel {
 													datedata = dateparts[2] + "-" + dateparts[1] + "-" + dateparts[0];
 												}
 												Date curval = Date.valueOf(datedata);
-												qparam.put((String)cfield.get("name"),curval);
+												qparam.addValue(field.getName(),curval);
 											}
 											else{
 												if(datedata.indexOf('/')>0){
@@ -465,21 +472,21 @@ public class PoiExcel {
 													datedata = dateparts[2] + "-" + dateparts[1] + "-" + dateparts[0];
 												}
 												Timestamp curval = Timestamp.valueOf(datedata);
-												qparam.put((String)cfield.get("name"),curval);
+												qparam.addValue(field.getName(),curval);
 											}
 										}
 									}
-									else if(cfield.get("type").equals("Number")){
+									else if(field.getFieldType().equals("Number")){
 										Double curval = Double.parseDouble((String)curdata);
-										qparam.put((String)cfield.get("name"),curval);
+										qparam.addValue(field.getName(),curval);
 									}
-									else if(cfield.get("type").equals("Bulat")){
+									else if(field.getFieldType().equals("Integer")){
 										Integer curval = Integer.parseInt((String)curdata);
-										qparam.put((String)cfield.get("name"),curval);
+										qparam.addValue(field.getName(),curval);
 									}
 									else{
 										String curval = (String)curdata;
-										qparam.put((String)cfield.get("name"),curval);
+										qparam.addValue(field.getName(),curval);
 									}
 								}
 								catch(Exception e){
@@ -488,29 +495,25 @@ public class PoiExcel {
 								firstone = false;
 							}
 						}
-						try {
-							if(!nodata){
-								qparam.put("batchno",batchno);
-								if(!gotupdate){
-									torun = "insert into " + this.filtertable + " (" + sqlfields + " , batchno) values (" + paramsqlfields + " , :batchno)";
-									sql.executeUpdate(qparam, torun);
-								}
-								else{
-									updatefields += " , batchno=:batchno";
-									torun = "update " + this.filtertable + " set " + updatefields + " where " + comparefields;
-									int updated = 0;
-									updated = sql.executeUpdate(qparam, torun);
-									if(updated==0){
-										torun = "insert into " + this.filtertable + " (" + sqlfields + " , batchno) values (" + paramsqlfields + " , :batchno)";
-										sql.executeUpdate(qparam, torun);
-									}
+						if(!nodata){
+							qparam.addValue("batchno",batchno);
+							if(!gotupdate){
+								torun = "insert into " + this.filtertable + " (" + sqlfields + " , DATAUPDATE_ID) values (" + paramsqlfields + " , :batchno)";
+								// System.out.println("running:" + torun);
+								sql.update(torun,qparam);
+							}
+							else{
+								updatefields += " , batchno=:batchno";
+								torun = "update " + this.filtertable + " set " + updatefields + " where " + comparefields;
+								int updated = 0;
+								updated = sql.update(torun, qparam);
+								// System.out.println("running:" + torun);
+								if(updated==0){
+									torun = "insert into " + this.filtertable + " (" + sqlfields + " , DATAUPDATE_ID) values (" + paramsqlfields + " , :batchno)";
+									sql.update(torun, qparam);
+									// System.out.println("running:" + torun);
 								}
 							}
-						}
-						catch(SQLException e){
-							System.out.println("SQL exception found:" + e.toString());
-							System.out.println("torun:" + torun);
-							System.out.println("qparam:" + qparam.toString());
 						}
 					}
 					firstRow = false;
@@ -680,5 +683,5 @@ public class PoiExcel {
 		public void characters(char[] ch, int start, int length) {
 			lastContents += new String(ch, start, length);
 		}
-	} */
+	}
 }

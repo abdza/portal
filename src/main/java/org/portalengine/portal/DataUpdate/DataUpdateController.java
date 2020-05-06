@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 @Controller
@@ -133,20 +135,29 @@ public class DataUpdateController {
 	
 	@PostMapping("/setparam/{id}")
 	public String saveparam(@PathVariable Long id, Model model) {
-		Gson gson = new Gson();
+		//Gson gson = new Gson();
 		DataUpdate dataupdate = service.getRepo().getOne(id);
 		Map<String, String[]> postdata = request.getParameterMap();
 		HashMap<String, String> savedfield = new HashMap<String, String>();
-		System.out.println("Request:" + gson.toJson(postdata));
+		//System.out.println("Request:" + gson.toJson(postdata));
+		
 		dataupdate.getTracker().getFields().forEach(field->{
 			if(postdata.get("col_" + field.getName())!=null) {
 				savedfield.put(field.getName(), postdata.get("col_" + field.getName())[0]);
 			}
 		});
-		dataupdate.setSavedParams(gson.toJson(savedfield));
+		//dataupdate.setSavedParams(gson.toJson(savedfield));
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			dataupdate.setSavedParams(mapper.writeValueAsString(savedfield));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		dataupdate.setUploadStatus((long)1);
 		service.getRepo().save(dataupdate);
-		System.out.println("Fields:" + gson.toJson(savedfield));
+		//System.out.println("Fields:" + gson.toJson(savedfield));
 		return "redirect:/dataupdates/runupdate/" + id.toString();
 	}
 	
