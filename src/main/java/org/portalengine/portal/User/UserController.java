@@ -73,8 +73,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/users/save")
-	public String save(@Valid User user,Model model) {
-		service.getRepo().save(user);
+	public String save(@Valid RegistrationForm userreg,Model model) {
+		service.getRepo().save(userreg.toUser(this.passwordEncoder));
 		return "redirect:/users";
 	}
 	
