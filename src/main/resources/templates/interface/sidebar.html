@@ -7,7 +7,7 @@
 
             <ul class="nav has-active-border" role="navigation" aria-label="main">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Home</a>
+                    <a class="nav-link" th:href="@{/p/}">Home</a>
                 </li>
                 <li class="nav-item" th:if='${pnode}'>
                     <a class="nav-link dropdown-toggle" href="#">
@@ -38,28 +38,28 @@
                 <li class="nav-item"  th:if='${pnode}'>
                     <a class="nav-link" th:href="@{/p/{fullpath}/delete(fullpath=${pnode.rootLessPath()})}">Delete</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/users}">Users</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/users/roles}">User Roles</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/pages}">Pages</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/files}">Files</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/settings}">Settings</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/trackers}">Trackers</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/trees}">Trees</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/dataupdates}">Data Updates</a>
                 </li>
             </ul>
