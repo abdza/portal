@@ -35,7 +35,7 @@ public class UserController {
 	
 	@PostMapping("/register")
 	public String register(@Valid RegistrationForm userreg, Model model) {
-		service.getRepo().save(userreg.toUser(this.passwordEncoder));
+		service.getRepo().save(userreg.toUser(this.passwordEncoder,service));
 		return "redirect:/";
 	}
 	
@@ -74,7 +74,7 @@ public class UserController {
 	
 	@PostMapping("/users/save")
 	public String save(@Valid RegistrationForm userreg,Model model) {
-		service.getRepo().save(userreg.toUser(this.passwordEncoder));
+		service.getRepo().save(userreg.toUser(this.passwordEncoder,service));
 		return "redirect:/users";
 	}
 	
