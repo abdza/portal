@@ -188,7 +188,7 @@ public class PortalController {
 			}
 			TreeNode parent = pnode.getParent();
 			treeService.deleteNode(pnode);
-			return "redirect:/p/" + parent.rootLessPath();
+			return "redirect:/p" + parent.rootLessPath();
 		}
 		return "tree/node/form/delete.html";
 	}
@@ -241,7 +241,7 @@ public class PortalController {
 			newnode.setObjectType("File");
 			newnode.setObjectId(newfile.getId());
 			treeService.getNodeRepo().save(newnode);
-			return "/p/" + newnode.rootLessPath();
+			return "/p" + newnode.rootLessPath();
 		}
 		return "whatsave";
 	}
@@ -272,10 +272,10 @@ public class PortalController {
 						newnode.setObjectType("Page");
 						newnode.setObjectId(newpage.getId());
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:/p/" + pnode.rootLessPath() + "/" + newnode.getSlug();
+						return "redirect:/p" + pnode.rootLessPath() + "/" + newnode.getSlug();
 					}
 					else {
-						return "redirect:/p/" + pnode.rootLessPath();
+						return "redirect:/p" + pnode.rootLessPath();
 					}
 				}
 				else if(postdata.get("objectType").equals("File")) {
@@ -303,7 +303,7 @@ public class PortalController {
 						newnode.setObjectId(newfile.getId());
 						treeService.getNodeRepo().save(newnode);
 					}
-					return "redirect:/p/" + pnode.rootLessPath();
+					return "redirect:/p" + pnode.rootLessPath();
 				}
 				else if(postdata.get("objectType").equals("Folder")) {
 					TreeNode cnode = new TreeNode();
@@ -318,12 +318,12 @@ public class PortalController {
 					}
 					if(createNewNode) {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
-						return "redirect:/p/" + newnode.rootLessPath();
+						return "redirect:/p" + newnode.rootLessPath();
 					}
 					else {
 						cnode.setName(postdata.get("name"));
 						treeService.getNodeRepo().save(cnode);
-						return "redirect:/p/" + cnode.rootLessPath();
+						return "redirect:/p" + cnode.rootLessPath();
 					}
 				}
 			}

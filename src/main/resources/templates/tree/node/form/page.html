@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Page</h1>
-        <form method='post' th:action='@{/p/{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${page}">
+        <form method='post' th:action='@{/p{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${page}">
             <input type='hidden' th:field='*{id}' />
             <input type='hidden' name='objectType' value='Page'/>
 

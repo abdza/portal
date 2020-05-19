@@ -20,23 +20,23 @@
                     <div class="submenu collapse">
 	                    <ul class="submenu-inner">
 	                    	<li class="nav-item">
-			                    <a class="nav-link" th:href="@{/p/{fullpath}/create?objectType=Folder(fullpath=${pnode.rootLessPath()})}">Folder</a>
+			                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=Folder(fullpath=${pnode.rootLessPath()})}">Folder</a>
 			                </li>
 		                    <li class="nav-item">
-			                    <a class="nav-link" th:href="@{/p/{fullpath}/create?objectType=Page(fullpath=${pnode.rootLessPath()})}">Page</a>
+			                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=Page(fullpath=${pnode.rootLessPath()})}">Page</a>
 			                </li>
 			                <li class="nav-item">
-			                    <a class="nav-link" th:href="@{/p/{fullpath}/create?objectType=File(fullpath=${pnode.rootLessPath()})}">File</a>
+			                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=File(fullpath=${pnode.rootLessPath()})}">File</a>
 			                </li>
 	                    </ul>
                     </div>
                     
                 </li>
                 <li class="nav-item"  th:if='${pnode}'>
-                    <a class="nav-link" th:href="@{/p/{fullpath}/edit(fullpath=${pnode.rootLessPath()})}">Edit</a>
+                    <a class="nav-link" th:href="@{/p{fullpath}/edit(fullpath=${pnode.rootLessPath()})}">Edit</a>
                 </li>
                 <li class="nav-item"  th:if='${pnode}'>
-                    <a class="nav-link" th:href="@{/p/{fullpath}/delete(fullpath=${pnode.rootLessPath()})}">Delete</a>
+                    <a class="nav-link" th:href="@{/p{fullpath}/delete(fullpath=${pnode.rootLessPath()})}">Delete</a>
                 </li>
                 <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/users}">Users</a>

@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Confirm Delete</h1>
-        <form th:if="${pnode}" method='post' th:action='@{/p/{fullpath}/delete(fullpath=${pnode.rootLessPath()})}'>
+        <form th:if="${pnode}" method='post' th:action='@{/p{fullpath}/delete(fullpath=${pnode.rootLessPath()})}'>
             <input type='hidden' name="id" th:value="${page.id}" th:if="${page}" />
             <input type='hidden' name="id" th:value="${fileLink.id}" th:if="${fileLink}" />
           	<input type='hidden' name='objectType' th:if="${page}" value='Page'/>
