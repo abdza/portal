@@ -37,10 +37,6 @@ public class User extends Auditable<String> implements UserDetails {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	@Autowired
-	@Transient
-	private PasswordEncoder passwordEncoder;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
