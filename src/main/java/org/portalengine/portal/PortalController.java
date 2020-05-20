@@ -1,7 +1,9 @@
 package org.portalengine.portal;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,11 +17,19 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
+import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +67,7 @@ public class PortalController {
 	
 	@GetMapping("/p/**")
 	public Object siteResponse(Model model) {
+		
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceFirst("/p/", "portal/");
 		if(pathuri.equals("portal/")) {
@@ -66,6 +77,29 @@ public class PortalController {
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
+			
+			
+			
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			
+			if (!(auth instanceof AnonymousAuthenticationToken)) {
+			        // userDetails = auth.getPrincipal()
+				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				System.out.println("not anon");
+				List<String> userRoles = treeService.userRoles((User)userDetails, pnode);
+				
+				if(userRoles.size()>0) {
+					System.out.println("user roles size:" + String.valueOf(userRoles.size()));
+					List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
+					for(final String crole:userRoles) {
+						updatedAuthorities.add(new SimpleGrantedAuthority(crole)); //add your role here [e.g., new SimpleGrantedAuthority("ROLE_NEW_ROLE")]
+					}
+					Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
+					SecurityContextHolder.getContext().setAuthentication(newAuth);
+				}
+			}
+			
+			
 			model.addAttribute("pnode",pnode);
 			model.addAttribute("breadcrumb",treeService.getPath(pnode));
 			System.out.println("pnode:" + pnode.getName() + " fullpath:" + pnode.getFullPath());

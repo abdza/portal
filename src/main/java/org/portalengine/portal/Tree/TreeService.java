@@ -4,16 +4,20 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Data;
 
@@ -43,6 +47,20 @@ public class TreeService {
 	
 	@Autowired
 	public TreeService() {
+	}
+	
+	public List<String> userRoles(User user,TreeNode node){
+		System.out.println("in service userroles");
+		List<TreeUser> foundUserRoles = userRepo.findRolesForNode(user,node);
+		//System.out.println("found:" + foundUserRoles.toString());
+		ArrayList<String> retroles = new ArrayList<String>();
+		for(final TreeUser ctu : foundUserRoles) {
+			String transform = "ROLE_NODE_" + ctu.getRole().toUpperCase();
+			System.out.println("looping once " + transform);
+			//System.out.println("loooing :" + ctu.toString());
+			retroles.add(transform);
+		}
+		return retroles;
 	}
 	
 	public void saveTree(Tree tree) {
