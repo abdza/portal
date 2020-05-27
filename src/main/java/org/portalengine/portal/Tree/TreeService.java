@@ -50,14 +50,10 @@ public class TreeService {
 	}
 	
 	public List<String> userRoles(User user,TreeNode node){
-		System.out.println("in service userroles");
 		List<TreeUser> foundUserRoles = userRepo.findRolesForNode(user,node);
-		//System.out.println("found:" + foundUserRoles.toString());
 		ArrayList<String> retroles = new ArrayList<String>();
 		for(final TreeUser ctu : foundUserRoles) {
 			String transform = "ROLE_NODE_" + ctu.getRole().toUpperCase();
-			System.out.println("looping once " + transform);
-			//System.out.println("loooing :" + ctu.toString());
 			retroles.add(transform);
 		}
 		return retroles;

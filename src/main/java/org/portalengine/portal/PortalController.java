@@ -74,7 +74,6 @@ public class PortalController {
 			pathuri = "portal";
 		}
 		
-		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			
@@ -85,12 +84,15 @@ public class PortalController {
 			if (!(auth instanceof AnonymousAuthenticationToken)) {
 			        // userDetails = auth.getPrincipal()
 				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				System.out.println("not anon");
 				List<String> userRoles = treeService.userRoles((User)userDetails, pnode);
 				List<GrantedAuthority> updatedAuthorities = new ArrayList<>();
-				
-				if(userRoles.size()>0) {
-					System.out.println("user roles size:" + String.valueOf(userRoles.size()));					
+				List<GrantedAuthority> currentAuthorities = new ArrayList<>(auth.getAuthorities());
+				for(final GrantedAuthority crole:currentAuthorities) {
+					if(!crole.getAuthority().contains("ROLE_NODE_")) {
+						updatedAuthorities.add(crole);
+					}
+				}
+				if(userRoles.size()>0) {			
 					for(final String crole:userRoles) {
 						updatedAuthorities.add(new SimpleGrantedAuthority(crole)); //add your role here [e.g., new SimpleGrantedAuthority("ROLE_NEW_ROLE")]
 					}
