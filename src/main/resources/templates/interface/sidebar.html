@@ -42,7 +42,6 @@
                 <li class="nav-item"  th:if='${pnode}'>
                     <a class="nav-link" th:href="@{/p{fullpath}/delete(fullpath=${pnode.rootLessPath()})}">Delete</a>
                 </li>
-                </th:block>
                 <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/users}">Users</a>
                 </li>
