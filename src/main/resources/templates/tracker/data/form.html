@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{formbase}">
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
@@ -12,3 +12,8 @@
     </div>
 
 </section>
+
+<th:block layout:fragment="page-javascript">
+<script th:inline="javascript" th:replace="tracker/trackerbase::dataformjs(tracker=${tracker},datas=${datas},transition=${transition})">
+</script>
+</th:block>

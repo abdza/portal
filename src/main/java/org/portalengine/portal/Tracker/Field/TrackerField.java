@@ -50,7 +50,7 @@ public class TrackerField extends Auditable<String> {
 	private Tracker tracker; 
 	
 	@Transient
-	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox"};
+	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User"};
 	
 	@Transient
 	public String[] widgetOptions = {"Default"};
@@ -59,7 +59,7 @@ public class TrackerField extends Auditable<String> {
 		if(fieldType.equals("String") || fieldType.equals("Text")) {
 			return datas.getString(name);
 		}
-		else if(fieldType.equals("Integer")) {
+		else if(fieldType.equals("Integer")||fieldType.equals("User")||fieldType.equals("TreeNode")||fieldType.equals("TrackerType")) {
 			return String.valueOf(datas.getInt(name));
 		}
 		else if(fieldType.equals("Number")) {
@@ -83,6 +83,9 @@ public class TrackerField extends Auditable<String> {
 			case "Text":
 				sqltype = "text";
 				break;
+			case "TrackerType":
+			case "TreeNode":
+			case "User":
 			case "Integer":
 				sqltype = "numeric(24,0)";
 				break;

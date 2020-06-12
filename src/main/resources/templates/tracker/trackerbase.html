@@ -27,10 +27,69 @@
 </form>
 </div>
 
+<script th:fragment="dataformjs(tracker,datas,transition)" th:inline="javascript">
+[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User'}"]
+$('#val_[(${field.name})]').select2({
+  ajax: {
+    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+    dataType: 'json',
+    processResults: function (data) {
+    	var dat = $.map(data.content, function(obj){
+    		var user = {id:obj.id,text:obj.name};
+    		return user;
+    	});
+        // Transforms the top-level key of the response object from 'items' to 'results'
+        return {results:dat};
+      }
+    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+  }
+});
+[/]
+
+[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
+$('#val_[(${field.name})]').select2({
+  ajax: {
+    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+    dataType: 'json',
+    processResults: function (data) {
+    	var dat = $.map(data.content, function(obj){
+    		var user = {id:obj.id,text:obj.name};
+    		return user;
+    	});
+        // Transforms the top-level key of the response object from 'items' to 'results'
+        return {results:dat};
+      }
+    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+  }
+});
+[/]
+	
+[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TreeNode'}"]
+$('#val_[(${field.name})]').select2({
+  ajax: {
+    url: /*[[@{/api/trees/nodequery}]]*/'/dummy/api/users',
+    dataType: 'json',
+    processResults: function (data) {
+    	var dat = $.map(data.content, function(obj){
+    		var node = {id:obj.id,text:obj.name};
+    		return node;
+    	});
+        // Transforms the top-level key of the response object from 'items' to 'results'
+        return {results:dat};
+      }
+    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+  }
+});
+[/]
+</script>
+
 <div th:fragment="dataformfield(tracker,datas,field)" class="dataform form-group row">
 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0' th:text="${field.label}">Module</label></div>
 <div class='col-sm-9'>
-<input class="form-control col-sm-8 col-md-6" type='text' th:name="${'val_' + field.name}" th:value="${datas?.get(field.name)?.toString()}"/>
+<select th:if="${field.fieldType=='TreeNode'}" class="form-control col-sm-8 col-md-6" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
+</select>
+<input th:if="${field.fieldType!='TreeNode'}" class="form-control col-sm-8 col-md-6" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${datas?.get(field.name)?.toString()}"/>
 </div>
 </div>
 

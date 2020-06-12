@@ -335,7 +335,10 @@ public class TrackerService {
 				case "Text":
 					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.VARCHAR);
 					break;
+				case "TrackerType":
+				case "TreeNode":
 				case "Integer":
+				case "User":
 					paramsource.addValue(tf.getName(), Integer.parseInt(postdata.get("val_" + tf.getName())[0]),Types.NUMERIC);
 					break;
 				case "Number":
@@ -395,6 +398,7 @@ public class TrackerService {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
 		System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString());
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder);
 		if(postdata.get("id")==null) {

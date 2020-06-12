@@ -35,6 +35,37 @@ public class TreeApiController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@GetMapping("/nodequery")
+	public Object nodequery(HttpServletRequest request, Model model) {
+		Map<String, Object> map = new HashMap<String,Object>();
+		int page = 0;
+		int size = 20;
+		if(request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
+			page = Integer.parseInt(request.getParameter("page")) - 1;
+		}
+		if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
+			size = Integer.parseInt(request.getParameter("size"));
+		}
+		String search = "";
+		Page<TreeNode> toreturn = null;
+		if(request.getParameter("q")!=null) {
+			search = "%" + request.getParameter("q").replace(" " , "%") + "%";		
+			Pageable pageable = PageRequest.of(page, size);
+			toreturn = service.getNodeRepo().apiquery(search,pageable);
+		}
+		else {
+			toreturn = service.getNodeRepo().findAll(PageRequest.of(page, size));
+		}
+		
+		ArrayList<TreeNode> nodelist = new ArrayList<TreeNode>();
+		for(int i=0;i<toreturn.getContent().size();i++) {
+			TreeNode cu = toreturn.getContent().get(i);
+			nodelist.add(cu);
+		}
+		map.put("content", nodelist);
+		return map;
+	}
 
 	@GetMapping
 	public Object list(HttpServletRequest request, Model model) {
