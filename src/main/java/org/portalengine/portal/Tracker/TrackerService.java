@@ -16,6 +16,8 @@ import java.util.StringJoiner;
 import javax.servlet.http.HttpServletRequest;
 
 import org.portalengine.portal.DataUpdate.DataUpdateService;
+import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.portalengine.portal.Tracker.Role.TrackerRoleRepository;
@@ -23,7 +25,9 @@ import org.portalengine.portal.Tracker.Status.TrackerStatus;
 import org.portalengine.portal.Tracker.Status.TrackerStatusRepository;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
+import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.User.User;
+import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -61,6 +65,9 @@ public class TrackerService {
 	private TrackerTransitionRepository transitionRepo;
 	
 	@Autowired
+	private PageService pageService;
+	
+	@Autowired
 	private NamedParameterJdbcTemplate namedjdbctemplate;
 	
 	@Autowired
@@ -75,6 +82,89 @@ public class TrackerService {
 	
 	public String slugify(String data) {
 		return data.replaceAll("[^A-Za-z0-9]", "_").toLowerCase();
+	}
+	
+	public String displayList(Model model, Tracker tracker) {
+		model.addAttribute("tracker", tracker);
+		String listtitle = tracker.getName();
+		model.addAttribute("listtitle",listtitle);
+		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
+		if(pp!=null) {
+			Map<String, Object> ctx2 = new HashMap<String, Object>();
+			ctx2.put("tracker", tracker);
+			ctx2.put("listtitle", listtitle);
+			String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
+			model.addAttribute("content", content);
+			pp.setContent(content);
+			return "page/plain.html";
+		}
+		return "tracker/data/list.html";
+	}
+	
+	public String displayData(Model model, Tracker tracker, Long id) {
+		if(tracker!=null) {
+			model.addAttribute("tracker", tracker);
+			HashMap<String,Object> datarow = datarow(tracker, id);
+			model.addAttribute("datas", datarow);
+			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
+			if(pp!=null) {
+				Map<String, Object> ctx2 = new HashMap<String, Object>();
+				ctx2.put("tracker", tracker);
+				ctx2.put("datas", datarow);
+				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
+				model.addAttribute("content", content);
+				pp.setContent(content);
+				return "page/plain.html";
+			}
+			return "tracker/data/display.html";
+		}
+		else {
+			return "404";
+		}
+	}
+	
+	public String editData(Model model, Tracker tracker, Long id) {
+		if(tracker!=null) {
+			model.addAttribute("tracker", tracker);
+			String formtitle = "Edit " + tracker.getName();
+			model.addAttribute("formtitle",formtitle);
+			HashMap<String,Object> datarow = this.datarow(tracker, id);
+			model.addAttribute("datas", datarow);
+			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
+			if(pp!=null) {
+				Map<String, Object> ctx2 = new HashMap<String, Object>();
+				ctx2.put("tracker", tracker);
+				ctx2.put("datas", datarow);
+				ctx2.put("formtitle", formtitle);
+				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
+				model.addAttribute("content", content);
+				pp.setContent(content);
+				return "page/plain.html";
+			}
+			return "tracker/data/form.html";
+		}
+		else {
+			return "404";
+		}
+	}
+	
+	public String saveData(Tracker tracker, User curuser, TreeNode pnode) {
+		if(tracker!=null) {
+			this.saveForm(tracker, curuser);
+			Map<String, String[]> postdata = request.getParameterMap();
+			if(postdata.get("transition_id")!=null) {
+				TrackerTransition transition = this.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
+			}
+			if(postdata.get("id")!=null) {
+				return "redirect:" + pnode.portalPath() + "/t/display/" + postdata.get("id")[0].toString();
+			}
+			else {			
+				return "redirect:" + pnode.portalPath();
+			}
+		}	
+		else {
+			return "404";
+		}
 	}
 	
 	public TrackerTransition create_transition(Tracker tracker) {

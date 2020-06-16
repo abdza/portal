@@ -28,13 +28,13 @@ public class SystemController {
 	private HttpServletRequest request;
 	
 	@Autowired
-	private PageService pageservice;
+	private PageService pageService;
 	
 	@Autowired
-	private FileLinkService fileservice;
+	private FileLinkService fileService;
 	
 	@Autowired
-	private TrackerService trackerservice;
+	private TrackerService trackerService;
 	
 	@Autowired
 	public SystemController() {
@@ -42,25 +42,25 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/transition/{transition_id}/{data_id}")
 	public String createdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long transition_id, @PathVariable Long data_id, Model model) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			TrackerTransition transition = trackerservice.getTransitionRepo().getOne(transition_id);
-			model.addAttribute("trackerservice",trackerservice);
+			TrackerTransition transition = trackerService.getTransitionRepo().getOne(transition_id);
+			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("transition",transition);
 			String formtitle = tracker.getName() + " " + transition.getName();
 			model.addAttribute("formtitle",formtitle);
-			HashMap<String,Object> datarow = trackerservice.datarow(tracker, data_id);
+			HashMap<String,Object> datarow = trackerService.datarow(tracker, data_id);
 			model.addAttribute("datas", datarow);
-			Page pp = pageservice.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerservice.slugify(transition.getName()));
+			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerService.slugify(transition.getName()));
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerservice);
+				ctx2.put("trackerservice",trackerService);
 				ctx2.put("tracker", tracker);
 				ctx2.put("datas", datarow);
 				ctx2.put("transition",transition);
 				ctx2.put("formtitle",formtitle);
-				String content = pageservice.getTemplateFromMap(pp.getContent(), ctx2);
+				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
 				model.addAttribute("content", content);
 				pp.setContent(content);
 				return "page/plain.html";
@@ -74,12 +74,12 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/create")
 	public String createdata(@PathVariable String module, @PathVariable String slug, Model model) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerservice);
+			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("formtitle","New " + tracker.getName());
-			model.addAttribute("transition",trackerservice.create_transition(tracker));
+			model.addAttribute("transition",trackerService.create_transition(tracker));
 			return "tracker/data/form.html";
 		}
 		else {
@@ -89,19 +89,19 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/display/{id}")
 	public String displaydata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerservice);
+			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
-			HashMap<String,Object> datarow = trackerservice.datarow(tracker, id);
+			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
-			Page pp = pageservice.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
+			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerservice);
+				ctx2.put("trackerservice",trackerService);
 				ctx2.put("tracker", tracker);
 				ctx2.put("datas", datarow);
-				String content = pageservice.getTemplateFromMap(pp.getContent(), ctx2);
+				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
 				model.addAttribute("content", content);
 				pp.setContent(content);
 				return "page/plain.html";
@@ -115,22 +115,22 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/edit/{id}")
 	public String editdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerservice);
+			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			String formtitle = "Edit " + tracker.getName();
 			model.addAttribute("formtitle",formtitle);
-			HashMap<String,Object> datarow = trackerservice.datarow(tracker, id);
+			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
-			Page pp = pageservice.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
+			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerservice);
+				ctx2.put("trackerservice",trackerService);
 				ctx2.put("tracker", tracker);
 				ctx2.put("datas", datarow);
 				ctx2.put("formtitle", formtitle);
-				String content = pageservice.getTemplateFromMap(pp.getContent(), ctx2);
+				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
 				model.addAttribute("content", content);
 				pp.setContent(content);
 				return "page/plain.html";
@@ -144,13 +144,13 @@ public class SystemController {
 	
 	@PostMapping("/{module}/{slug}/save")
 	public String save(@PathVariable String module, @PathVariable String slug, Model model,Authentication authentication) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			
-			trackerservice.saveForm(tracker,(User)authentication.getPrincipal());
+			trackerService.saveForm(tracker,(User)authentication.getPrincipal());
 			Map<String, String[]> postdata = request.getParameterMap();
 			if(postdata.get("transition_id")!=null) {
-				TrackerTransition transition = trackerservice.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
+				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}
 			if(postdata.get("id")!=null) {
 				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/display/" + postdata.get("id")[0].toString();
@@ -166,24 +166,9 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/list")
 	public String list(@PathVariable String module, @PathVariable String slug, Model model) {
-		Tracker tracker = trackerservice.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerservice);
-			model.addAttribute("tracker", tracker);
-			String listtitle = tracker.getName();
-			model.addAttribute("listtitle",listtitle);
-			Page pp = pageservice.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
-			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerservice);
-				ctx2.put("tracker", tracker);
-				ctx2.put("listtitle", listtitle);
-				String content = pageservice.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
-				return "page/plain.html";
-			}
-			return "tracker/data/list.html";
+			return trackerService.displayList(model, tracker);
 		}
 		else {
 			return "404";

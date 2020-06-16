@@ -85,4 +85,8 @@ public class TreeNode extends Auditable<String> {
 		System.out.println("toreturn:" + toreturn);
 		return toreturn;
 	}
+	
+	public String portalPath() {
+		return "/p" + this.rootLessPath();
+	}
 }

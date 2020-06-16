@@ -15,6 +15,7 @@ import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
+import org.portalengine.portal.Tracker.SystemController;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
@@ -65,10 +66,12 @@ public class PortalController {
 	public PortalController() {
 	}
 	
-	@GetMapping("/p/**")
-	public Object siteResponse(Model model) {
-		
-		String pathuri = request.getRequestURI();		
+	/* @GetMapping("/p/{**}/t/display/{id}")
+	public Object trackerResponse(Model model,@PathVariable Long id) {
+		//Long id=(long) 1768;
+		String pathuri = request.getRequestURI().substring(0, request.getRequestURI().indexOf("/t/display"));
+		model.addAttribute("pathuri",pathuri);
+		System.out.println("pathuri:" + pathuri);
 		pathuri = pathuri.replaceFirst("/p/", "portal/");
 		if(pathuri.equals("portal/")) {
 			pathuri = "portal";
@@ -76,8 +79,34 @@ public class PortalController {
 		
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
-			
-			
+			Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
+			if(curtracker==null) {
+				System.out.println("Tracker not found");
+			}
+			else {
+				return trackerService.displayData(model, curtracker,id);
+			}
+		}
+		return "Got error somewhere";
+	} */
+	
+	@GetMapping("/p/**")
+	public Object siteResponse(Model model) {
+		
+		String pathuri = request.getRequestURI();
+		String ops = "";
+		Integer cutoff = pathuri.indexOf("/t/");
+		if(cutoff>0) {
+			ops = pathuri.substring(cutoff);
+			pathuri = pathuri.substring(0,cutoff);
+		}
+		pathuri = pathuri.replaceFirst("/p/", "portal/");
+		if(pathuri.equals("portal/")) {
+			pathuri = "portal";
+		}
+		
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		if(pnode!=null) {
 			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
@@ -101,7 +130,6 @@ public class PortalController {
 				Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
 				SecurityContextHolder.getContext().setAuthentication(newAuth);
 			}
-			
 			
 			model.addAttribute("pnode",pnode);
 			model.addAttribute("breadcrumb",treeService.getPath(pnode));
@@ -127,6 +155,34 @@ public class PortalController {
 						Resource resfile = fileService.getResource(curfile);
 						return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 								"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
+					}
+				}
+				else if(pnode.getObjectType().equals("Tracker")) {
+					Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
+					if(curtracker==null) {
+						System.out.println("Tracker not found");
+					}
+					else {
+						Long id = (long) -1;
+						String operation = "list";
+						if(cutoff>0) {
+							System.out.println("ops:" + ops);
+							String[] tokens = ops.split("/");
+							System.out.println("tokens:" + tokens[0]);
+							System.out.println("tokens:" + tokens[1]);
+							System.out.println("tokens:" + tokens[2]);
+							operation = tokens[2];
+							id = Long.valueOf(tokens[3]);
+						}
+						if(operation.equals("display")) {
+							return trackerService.displayData(model, curtracker, id);
+						}
+						else if(operation.equals("edit")) {
+							return trackerService.editData(model, curtracker, id);
+						}
+						else {
+							return trackerService.displayList(model, curtracker);
+						}
 					}
 				}
 			}
@@ -284,7 +340,11 @@ public class PortalController {
 	}
 	
 	@PostMapping("/p/**/save")
-	public String saveResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") Optional<MultipartFile> file) {
+	public String saveResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") Optional<MultipartFile> file,Authentication authentication) {
+		User curuser = null;
+		if(authentication!=null) {
+			curuser = (User)authentication.getPrincipal();
+		}
 		String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
 		System.out.println("save uri:" + pathuri);
@@ -292,7 +352,16 @@ public class PortalController {
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());
-			if(postdata.get("objectType")!=null) {
+			if(pnode.getObjectType().equals("Tracker")) {
+				Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
+				if(curtracker==null) {
+					System.out.println("Tracker not found");
+				}
+				else {
+					return trackerService.saveData(curtracker, curuser, pnode);
+				}
+			}
+			else if(postdata.get("objectType")!=null) {
 				if(postdata.get("objectType").equals("Page")) {
 					Page newpage = new Page();
 					if(postdata.get("id")!=null && postdata.get("id")!="") {

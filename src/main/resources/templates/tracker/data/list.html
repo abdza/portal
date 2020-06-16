@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
 
-<section layout:fragment="content" class='page-content' th:with="dataset=${trackerservice.dataset(tracker)}">
+<section layout:fragment="content" class='page-content' th:with="dataset=${@trackerService.dataset(tracker)}">
 
     <div class='content'>
 
@@ -20,6 +20,6 @@
         </table>
     </div>
 
-    <nav th:replace="macros::navpagination(items=${dataset},url='/' + ${module} + '/' + ${slug} + '/list')"></nav>
+    <nav th:replace="macros::navpagination(items=${dataset},url=${#request.requestURI})"></nav>
 
 </section>

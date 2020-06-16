@@ -1,19 +1,19 @@
 <table th:fragment="datatable(tracker,dataset)" class="table">
 <tr><th>#</th>
-<th th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
+<th th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
-<td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="@{/{module}/{slug}/display/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')?.toString()})}" >2</a></td>
-<td th:each="field,iter: ${trackerservice.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
+<td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}" >2</a></td>
+<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
 </tr>
 </table>
 
 <div th:fragment="dataform(tracker,datas,transition)" class='dataform'>
-<form method='post' th:action='@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
+<form method='post' th:action='@{{portalPath}/save(portalPath=${pnode.portalPath()})}' th:object="${tracker}">
 <input type='hidden' name='id' th:value="${datas.get('id')?.toString()}" th:if="${datas?.get('id')!=null}"/>
 <input type='hidden' name='transition_id' th:value="${transition.id}" th:if="${transition!=null}"/>
 
-<div th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}">
+<div th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}">
 <div th:replace="tracker/trackerbase::dataformfield(tracker=${tracker},datas=${datas},field=${field})"></div>
 </div>
 
@@ -28,7 +28,7 @@
 </div>
 
 <script th:fragment="dataformjs(tracker,datas,transition)" th:inline="javascript">
-[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User'}"]
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
     url: /*[[@{/api/users}]]*/'/dummy/api/users',
@@ -46,7 +46,7 @@ $('#val_[(${field.name})]').select2({
 });
 [/]
 
-[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
     url: /*[[@{/api/users}]]*/'/dummy/api/users',
@@ -64,7 +64,7 @@ $('#val_[(${field.name})]').select2({
 });
 [/]
 	
-[# th:each="field,iter: ${trackerservice.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TreeNode'}"]
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TreeNode'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
     url: /*[[@{/api/trees/nodequery}]]*/'/dummy/api/users',
@@ -94,7 +94,7 @@ $('#val_[(${field.name})]').select2({
 </div>
 
 <div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
-<div th:each="field,iter: ${trackerservice.field_list(tracker,'display',null)}" class='columns'>
+<div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}" class='columns'>
 <div class='column is-one-quarter has-text-weight-bold' th:text="${field.label + ':'}">Form Fields:</div>
 <div class='column' th:text="${datas.get(field.name)?.toString()}" >data_table</div>
 </div>
