@@ -166,11 +166,11 @@ public class PortalController {
 						Long id = (long) -1;
 						String operation = "list";
 						if(cutoff>0) {
-							System.out.println("ops:" + ops);
+							// System.out.println("ops:" + ops);
 							String[] tokens = ops.split("/");
-							System.out.println("tokens:" + tokens[0]);
-							System.out.println("tokens:" + tokens[1]);
-							System.out.println("tokens:" + tokens[2]);
+							// System.out.println("tokens:" + tokens[0]);  // supposed to be empty
+							// System.out.println("tokens:" + tokens[1]);  // supposed to be t
+							// System.out.println("tokens:" + tokens[2]);  // supposed to be the action
 							operation = tokens[2];
 							id = Long.valueOf(tokens[3]);
 						}
@@ -179,6 +179,9 @@ public class PortalController {
 						}
 						else if(operation.equals("edit")) {
 							return trackerService.editData(model, curtracker, id);
+						}
+						else if(operation.equals("create")) {
+							return trackerService.createData(model, curtracker);
 						}
 						else {
 							return trackerService.displayList(model, curtracker);
@@ -196,10 +199,52 @@ public class PortalController {
 		return "what " + pathuri;
 	}
 	
+	@GetMapping("/p/**/t/create")
+	public String trackerCreateResponse(Model model) {
+		
+		String pathuri = request.getRequestURI();
+		String ops = "";
+		Integer cutoff = pathuri.indexOf("/t/");
+		if(cutoff>0) {
+			ops = pathuri.substring(cutoff);
+			pathuri = pathuri.substring(0,cutoff);
+		}
+		pathuri = pathuri.replaceFirst("/p/", "portal/");
+		if(pathuri.equals("portal/")) {
+			pathuri = "portal";
+		}
+		
+		// String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/create", "");
+		System.out.println("pathuri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		if(pnode!=null) {
+			Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
+			model.addAttribute("pnode",pnode);
+			return trackerService.createData(model, curtracker);
+		}
+		else {
+			return "404";
+		}
+	}
+	
 	@GetMapping("/p/**/create")
 	public String createResponse(@RequestParam String objectType, Model model) {
-		String pathuri = request.getRequestURI();		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/create", "");
+		
+		String pathuri = request.getRequestURI();
+		String ops = "";
+		Integer cutoff = pathuri.indexOf("/t/");
+		if(cutoff>0) {
+			ops = pathuri.substring(cutoff);
+			pathuri = pathuri.substring(0,cutoff);
+		}
+		pathuri = pathuri.replaceFirst("/p/", "portal/");
+		if(pathuri.equals("portal/")) {
+			pathuri = "portal";
+		}
+		
+		// String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/create", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {

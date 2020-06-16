@@ -167,6 +167,18 @@ public class TrackerService {
 		}
 	}
 	
+	public String createData(Model model, Tracker tracker) {
+		if(tracker!=null) {
+			model.addAttribute("tracker", tracker);
+			model.addAttribute("formtitle","New " + tracker.getName());
+			model.addAttribute("transition",this.create_transition(tracker));
+			return "tracker/data/form.html";
+		}
+		else {
+			return "404";
+		}
+	}
+	
 	public TrackerTransition create_transition(Tracker tracker) {
 		return transitionRepo.createTransition(tracker);
 	}
