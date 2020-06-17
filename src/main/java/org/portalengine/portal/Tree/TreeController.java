@@ -126,7 +126,7 @@ public class TreeController {
 		public String editNode(@PathVariable Long id, Model model) {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
 			model.addAttribute("curnode",curnode);
-			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record"));
+			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record","TreeNode"));
 			
 			Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
 			if(customTypes!=null) {
@@ -155,7 +155,15 @@ public class TreeController {
 			curnode.setName(postdata.get("name"));
 			curnode.setObjectType(postdata.get("objectType"));
 			if(postdata.get("objectId")!="") {
-				curnode.setObjectId(Long.parseLong(postdata.get("objectId")));
+				Long objectId = Long.parseLong(postdata.get("objectId"));
+				curnode.setObjectId(objectId);
+				if(postdata.get("objectType").equals("Tracker")) {
+					Tracker curtracker = trackerService.getRepo().getOne(objectId);
+					if(curtracker!=null) {
+						curtracker.setNodeId(objectId);
+						trackerService.getRepo().save(curtracker);
+					}
+				}
 			}
 			if(postdata.get("recordId")!="") {
 				curnode.setRecordId(Long.parseLong(postdata.get("recordId")));
@@ -173,6 +181,10 @@ public class TreeController {
 			if(searchType.equals("page")) {
 				List<Page> pages = pageService.getRepo().findAllByQ(tosearch);
 				model.addAttribute("pages",pages);
+			}
+			else if(searchType.equals("treenode")) {
+				List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
+				model.addAttribute("nodes",nodes);
 			}
 			else if(searchType.equals("file")) {
 				List<FileLink> files = fileLinkService.getRepo().findAllByQ(tosearch);

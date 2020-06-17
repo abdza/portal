@@ -49,6 +49,7 @@ public class Tracker extends Auditable<String> {
 	private String formFields;
 	private String displayFields;
 	private String initialStatus;
+	private Long nodeId;
 	
 	@OneToMany(
 			mappedBy = "tracker",
