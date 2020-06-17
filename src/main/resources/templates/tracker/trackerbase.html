@@ -3,13 +3,13 @@
 <th th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
-<td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}" >2</a></td>
+<td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="${pnode}?@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}:@{/{module}/{slug}/display/{id}(id=${datas.get('id')},module=${tracker.module},slug=${tracker.slug})}" >2</a></td>
 <td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
 </tr>
 </table>
 
 <div th:fragment="dataform(tracker,datas,transition)" class='dataform'>
-<form method='post' th:action='@{{portalPath}/save(portalPath=${pnode.portalPath()})}' th:object="${tracker}">
+<form method='post' th:action='${pnode}?@{{portalPath}/save(portalPath=${pnode.portalPath()})}:@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
 <input type='hidden' name='id' th:value="${datas.get('id')?.toString()}" th:if="${datas?.get('id')!=null}"/>
 <input type='hidden' name='transition_id' th:value="${transition.id}" th:if="${transition!=null}"/>
 

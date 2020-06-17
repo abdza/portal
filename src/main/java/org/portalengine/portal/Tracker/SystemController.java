@@ -146,8 +146,12 @@ public class SystemController {
 	public String save(@PathVariable String module, @PathVariable String slug, Model model,Authentication authentication) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
+			User curuser = null;
+			if(authentication!=null) {
+				curuser = (User)authentication.getPrincipal();
+			}
 			
-			trackerService.saveForm(tracker,(User)authentication.getPrincipal());
+			trackerService.saveForm(tracker,curuser);
 			Map<String, String[]> postdata = request.getParameterMap();
 			if(postdata.get("transition_id")!=null) {
 				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));

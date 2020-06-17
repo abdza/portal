@@ -5,6 +5,7 @@
     <div class='content'>
         <h1>Display Data</h1>
 
+		<th:block th:if="${pnode}">
         <a href="#" th:href="${pnode.portalPath()}"
             class="btn btn-primary">List</a>
         <a th:if="${@trackerService.editable(tracker,datas.get('id'))}" href="#"
@@ -13,6 +14,17 @@
         <a th:each="transition:${@trackerService.record_transitions(tracker,datas.get('id'))}" class="btn btn-primary"
             th:href="@{/{portalPath}/t/transition/{transition_id}/{id}(transition_id=${transition.id},portalPath=${pnode.portalPath()},id=${datas.get('id')})}"><span
                 th:text="${transition.name}">Transition</span> </a>
+        </th:block>
+        <th:block th:unless="${pnode}">
+        <a href="#" th:href="@{/{module}/{slug}/list(module=${tracker.module},slug=${tracker.slug})}"
+            class="btn btn-primary">List</a>
+        <a th:if="${@trackerService.editable(tracker,datas.get('id'))}" href="#"
+            th:href="@{/{module}/{slug}/edit/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}"
+            class="btn btn-primary">Edit</a>
+        <a th:each="transition:${@trackerService.record_transitions(tracker,datas.get('id'))}" class="btn btn-primary"
+            th:href="@{/{module}/{slug}/transition/{transition_id}/{id}(transition_id=${transition.id},module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}"><span
+                th:text="${transition.name}">Transition</span> </a>
+        </th:block>
         <div class='dataform' th:replace="tracker/trackerbase::datadisplay(tracker=${tracker},datas=${datas})">
         </div>
 
