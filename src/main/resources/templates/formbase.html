@@ -10,6 +10,7 @@
 <link rel="stylesheet" th:href="@{/libs/summernote/summernote-bs4.min.css}" />
 <link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
 <link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
+<link rel="stylesheet" th:href="@{/libs/datepicker/tempusdominus-bootstrap-4.min.css}" />
 </th:block>
 
 <div layout:fragment="body-container" class="body-container">
@@ -41,6 +42,8 @@
 <script type="text/javascript" th:src="@{/libs/select2/js/select2.full.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/summernote/summernote-bs4.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/moment/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/datepicker/tempusdominus-bootstrap-4.min.js}"></script>
 <script th:inline="javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
@@ -61,7 +64,15 @@ $(".tagiform").on("submit",function(){
 		}
 	});
 });
-
+$(".datepicker").datetimepicker({
+	format: 'DD/MM/YYYY',
+	icons: {
+        time: "fa fa-clock",
+        date: "fa fa-calendar",
+        up: "fa fa-arrow-up",
+        down: "fa fa-arrow-down"
+    }
+            });
 </script>
 </th:block>
 

@@ -74,6 +74,17 @@ public class TrackerField extends Auditable<String> {
 		return "";
 	}
 	
+	public String typeClass() {
+		String toreturn = "";
+		if(this.fieldType.equals("Date")) {
+			toreturn = " datepicker datetimepicker-input";
+		}
+		else if(this.fieldType.equals("DateTime")) {
+			toreturn = " datetimepicker datetimepicker-input ";
+		}
+		return toreturn;
+	}
+	
 	public void updateDb(JdbcTemplate jdbctemplate) {
 		String sqltype = "varchar(256)";
 		if(this.fieldType!=null) {
