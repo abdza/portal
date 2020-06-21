@@ -28,6 +28,34 @@
 </div>
 
 <script th:fragment="dataformjs(tracker,datas,transition)" th:inline="javascript">
+
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='DateTime'}"]
+$('#val_[(${field.name})]').datetimepicker({
+	[# th:if="${datas}"]date: moment('[(${field.display(datas)})]','DD/MM/YYYY HH:mm:ss'),[/]
+	format: 'DD/MM/YYYY HH:mm:ss',
+	icons: {
+        time: "fa fa-clock",
+        date: "fa fa-calendar",
+        up: "fa fa-arrow-up",
+        down: "fa fa-arrow-down"
+    },
+});
+[/]
+
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='Date'}"]
+$('#val_[(${field.name})]').datetimepicker({
+	[# th:if="${datas}"]date: moment('[(${field.display(datas)})]','DD/MM/YYYY'),[/]
+	format: 'DD/MM/YYYY',
+	icons: {
+        time: "fa fa-clock",
+        date: "fa fa-calendar",
+        up: "fa fa-arrow-up",
+        down: "fa fa-arrow-down"
+    },
+});
+[/]
+
+
 [# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
@@ -89,8 +117,8 @@ $('#val_[(${field.name})]').select2({
 <select th:if="${field.fieldType=='TreeNode'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
 	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
 </select>
-<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${datas?.get(field.name)?.toString()}"/>
-<input th:if="${field.fieldType=='Date'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}" th:value="${datas?.get(field.name)?.toString()}"/>
+<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
+<input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
 </div>
 </div>
 

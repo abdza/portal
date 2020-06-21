@@ -43,7 +43,7 @@
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/summernote/summernote-bs4.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/moment/moment.min.js}"></script>
-<script type="text/javascript" th:src="@{/libs/datepicker/tempusdominus-bootstrap-4.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/datepicker/tempusdominus-bootstrap-4.js}"></script>
 <script th:inline="javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
@@ -64,15 +64,6 @@ $(".tagiform").on("submit",function(){
 		}
 	});
 });
-$(".datepicker").datetimepicker({
-	format: 'DD/MM/YYYY',
-	icons: {
-        time: "fa fa-clock",
-        date: "fa fa-calendar",
-        up: "fa fa-arrow-up",
-        down: "fa fa-arrow-down"
-    }
-            });
 </script>
 </th:block>
 

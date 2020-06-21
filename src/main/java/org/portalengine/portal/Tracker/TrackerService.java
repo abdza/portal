@@ -453,7 +453,7 @@ public class TrackerService {
 						format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
 					}
 					else {
-						format = new SimpleDateFormat("dd/MM/yyyy HH:mm",Locale.ENGLISH);
+						format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
 					}
 					Date date;
 	

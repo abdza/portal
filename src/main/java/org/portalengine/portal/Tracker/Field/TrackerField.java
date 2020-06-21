@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import javax.persistence.Entity;
@@ -54,6 +55,27 @@ public class TrackerField extends Auditable<String> {
 	
 	@Transient
 	public String[] widgetOptions = {"Default"};
+	
+	public String display(HashMap<String,Object> datas) {
+		try {
+			if(fieldType.equals("Date") || fieldType.equals("DateTime")) {
+				DateFormat format;
+				if(fieldType.equals("Date")) {
+					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+				}
+				else {
+					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+				}
+				return format.format((Date)datas.get(name));
+			}
+			else {
+				return String.valueOf(datas.get(name));
+			}
+		}
+		catch(Exception exp) {
+			return null;
+		}
+	}
 	
 	public String display(SqlRowSet datas) {
 		if(fieldType.equals("String") || fieldType.equals("Text")) {
