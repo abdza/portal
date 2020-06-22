@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}">
 
+<th:block layout:fragment="head-end">
+<link rel="stylesheet" th:href="@{/libs/jsoneditor/jsoneditor.min.css}" />
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Field Tracker</h1>
-        <form method='post' th:action='@{/trackers/fields/{tracker_id}/save(tracker_id=${tracker.id})}'
+        <form method='post' id="fieldForm" th:action='@{/trackers/fields/{tracker_id}/save(tracker_id=${tracker.id})}'
             th:object="${tracker_field}">
             <input type='hidden' name='id' th:value='${tracker_field.id}' />
             <input type='hidden' name='tracker_id' th:value='${tracker.id}' />
@@ -47,6 +51,14 @@
                 </div>
             </div>
             <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Option Source</label></div>
+                <div class='col-sm-9'>
+                    <input type='hidden' th:field="*{optionSource}"/>
+                    <div class="form-control col-sm-8 col-md-6" style="width: 400px; height: 400px;" id="jsonEditor"></div>
+                </div>
+            </div>
+            <div class='form-group row'>
                 <div class='offset-md-3 col-md-9'>
                     <button class='btn btn-info' name='save'>Save</button>
                     <button class='btn btn-secondary' name='cancel'>Cancel</button>
@@ -57,3 +69,18 @@
 </section>
 
 </html>
+
+<th:block layout:fragment="page-javascript">
+<script type="text/javascript" th:src="@{/libs/jsoneditor/jsoneditor.min.js}"></script>
+<script>
+var container = document.getElementById('jsonEditor');
+var options = {
+		mode: 'tree'
+};
+var editor = new JSONEditor(container,options);
+editor.set(JSON.parse($('#optionSource').val()));
+$('#fieldForm').on('submit',function(){
+	$('#optionSource').val(JSON.stringify(editor.get()));
+});
+</script>
+</th:block>

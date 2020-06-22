@@ -46,6 +46,9 @@ public class TrackerField extends Auditable<String> {
 	private String fieldType;
 	private String fieldWidget;
 	
+	@org.hibernate.annotations.Type( type = "text" )
+	private String optionSource;
+	
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "tracker_id" )
 	private Tracker tracker; 
@@ -54,7 +57,7 @@ public class TrackerField extends Auditable<String> {
 	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User"};
 	
 	@Transient
-	public String[] widgetOptions = {"Default"};
+	public String[] widgetOptions = {"Default","DropDown"};
 	
 	public String display(HashMap<String,Object> datas) {
 		try {
