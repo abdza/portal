@@ -7,8 +7,8 @@
 <h1 th:text="${pnode.name}">Node Listing</h1>
 
 <ul class="list-group list-group-flush">
-<li class="list-group-item" th:each="cnode,iter: ${pnode.children}">
-<a th:href="@{/p{fullpath}(fullpath=${cnode.rootLessPath()})}"><b class="fa fa-file" th:if='${cnode.getObjectType()!=null && cnode.getObjectType().equals("File")}'></b><b class="fa fa-code" th:if='${cnode.getObjectType()!=null && cnode.getObjectType().equals("Page")}'></b><b class="fa fa-folder" th:if='${cnode.getObjectType()==null}'></b></a>
+<li class="list-group-item" th:each="cnode,iter: ${@treeService.publishedChildren(pnode)}">
+<a th:href="@{/p{fullpath}(fullpath=${cnode.rootLessPath()})}"><b class="fa fa-file" th:if='${cnode.getObjectType()!=null && cnode.getObjectType().equals("File")}'></b><b class="fa fa-code" th:if='${cnode.getObjectType()!=null && cnode.getObjectType().equals("Page")}'></b><b class="fa fa-folder" th:if='${cnode.getObjectType()==null || cnode.getObjectType()=="" || cnode.getObjectType()=="Folder"}'></b></a>
 &nbsp; &nbsp;
 <a th:href="@{/p{fullpath}(fullpath=${cnode.rootLessPath()})}" th:text="${cnode.name}">Child</a>
 </li>

@@ -187,4 +187,9 @@ public class TreeService {
 	public List<TreeNode> getPath(TreeNode node) {
 		return nodeRepo.getPath(node);
 	}
+	
+	public List<TreeNode> publishedChildren(TreeNode node) {
+		System.out.println("In published children");
+		return nodeRepo.publishedChildren(node);
+	}
 }

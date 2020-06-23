@@ -127,6 +127,7 @@ public class TreeController {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
 			model.addAttribute("curnode",curnode);
 			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record","TreeNode"));
+			ArrayList<String> nodeStatuses = new ArrayList<String>(Arrays.asList("Private","Published"));
 			
 			Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
 			if(customTypes!=null) {
@@ -144,7 +145,7 @@ public class TreeController {
 					e.printStackTrace();
 				}
 			}
-			
+			model.addAttribute("nodeStatuses",nodeStatuses);
 			model.addAttribute("objectTypes",objectTypes);
 			return "tree/node/edit.html";
 		}
@@ -168,6 +169,7 @@ public class TreeController {
 			if(postdata.get("recordId")!="") {
 				curnode.setRecordId(Long.parseLong(postdata.get("recordId")));
 			}
+			curnode.setStatus(postdata.get("status"));
 			service.getNodeRepo().save(curnode);
 			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
 		}

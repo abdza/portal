@@ -134,7 +134,8 @@ public class PortalController {
 			model.addAttribute("pnode",pnode);
 			model.addAttribute("breadcrumb",treeService.getPath(pnode));
 			System.out.println("pnode:" + pnode.getName() + " fullpath:" + pnode.getFullPath());
-			if(pnode.getObjectType()!=null) {				
+			if(pnode.getObjectType()!=null) {
+				System.out.println("object is not null -----" + String.valueOf(pnode.getObjectType()) + "------");
 				if(pnode.getObjectType().equals("Page")) {
 					Page curpage = pageService.getRepo().getOne(pnode.getObjectId());
 					if(curpage==null) {
@@ -156,6 +157,9 @@ public class PortalController {
 						return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 								"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
 					}
+				}
+				else if(pnode.getObjectType().equals("") || pnode.getObjectType().equals("Folder")) {
+					return "tree/node/listing.html";
 				}
 				else if(pnode.getObjectType().equals("Tracker")) {
 					Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
@@ -190,6 +194,7 @@ public class PortalController {
 				}
 			}
 			else {
+				System.out.println("Null is the object");
 				return "tree/node/listing.html";
 			}
 		}
@@ -422,6 +427,7 @@ public class PortalController {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("title"), "last");
 						newnode.setObjectType("Page");
 						newnode.setObjectId(newpage.getId());
+						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
 						return "redirect:/p" + pnode.rootLessPath() + "/" + newnode.getSlug();
 					}
@@ -452,6 +458,7 @@ public class PortalController {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
 						newnode.setObjectType("File");
 						newnode.setObjectId(newfile.getId());
+						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
 					}
 					return "redirect:/p" + pnode.rootLessPath();
@@ -469,6 +476,8 @@ public class PortalController {
 					}
 					if(createNewNode) {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
+						newnode.setStatus("Published");
+						treeService.getNodeRepo().save(newnode);
 						return "redirect:/p" + newnode.rootLessPath();
 					}
 					else {
