@@ -36,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 
 @Controller
 @RequestMapping("/dataupdates")
@@ -135,18 +134,15 @@ public class DataUpdateController {
 	
 	@PostMapping("/setparam/{id}")
 	public String saveparam(@PathVariable Long id, Model model) {
-		//Gson gson = new Gson();
 		DataUpdate dataupdate = service.getRepo().getOne(id);
 		Map<String, String[]> postdata = request.getParameterMap();
 		HashMap<String, String> savedfield = new HashMap<String, String>();
-		//System.out.println("Request:" + gson.toJson(postdata));
 		
 		dataupdate.getTracker().getFields().forEach(field->{
 			if(postdata.get("col_" + field.getName())!=null) {
 				savedfield.put(field.getName(), postdata.get("col_" + field.getName())[0]);
 			}
 		});
-		//dataupdate.setSavedParams(gson.toJson(savedfield));
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -157,7 +153,6 @@ public class DataUpdateController {
 		}
 		dataupdate.setUploadStatus((long)1);
 		service.getRepo().save(dataupdate);
-		//System.out.println("Fields:" + gson.toJson(savedfield));
 		return "redirect:/dataupdates/runupdate/" + id.toString();
 	}
 	
@@ -178,7 +173,6 @@ public class DataUpdateController {
 		
 		try {
 			List<Object> fields = poiExcel.getHeaders(dataupdate.getFilelink().getPath());
-			//HashMap<String, String> field = new HashMap<String, String>();
 			for(Object field: fields) {
 				HashMap<String, String> cfield = (HashMap<String, String>)field;
 				columns.put(Integer.parseInt(cfield.get("col")), cfield.get("text"));
@@ -187,41 +181,6 @@ public class DataUpdateController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		/* 
-		try {
-			Workbook workbook = WorkbookFactory.create(fileService.getFile(dataupdate.getFilelink()));
-			Sheet sheet = workbook.getSheetAt(0);
-			Iterator<Row> rows = sheet.rowIterator();
-			Row drow;
-			Boolean stoprow=false;
-			while(rows.hasNext() && !stoprow) {
-				drow = rows.next();
-				if(drow.getRowNum()<dataupdate.getHeaderEnd()) {
-					if(drow.getRowNum()>=dataupdate.getHeaderStart()-1) {
-						Iterator<Cell> cells = drow.cellIterator();					
-						Cell cell;
-						while(cells.hasNext()) {
-							cell = cells.next();
-							columns.put(cell.getColumnIndex(), cell.getStringCellValue());
-							System.out.println("Name contents:" + cell.getStringCellValue());						
-						}
-					}
-				}
-				else {
-					stoprow = true;
-				}
-			}
-			workbook.close();
-			
-		} catch (EncryptedDocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} */
-		
 		
 		model.addAttribute("columns",columns);
 		model.addAttribute("dataupdate", dataupdate);

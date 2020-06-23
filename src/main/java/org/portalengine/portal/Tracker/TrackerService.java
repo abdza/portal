@@ -1,5 +1,6 @@
 package org.portalengine.portal.Tracker;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -8,10 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,7 +41,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import lombok.Data;
 
@@ -273,6 +277,32 @@ public class TrackerService {
 			
 			repo.deleteById(id);
 		}
+	}
+	
+	public List<HashMap<String,String>> field_options(TrackerField field) {
+		ArrayList<HashMap<String,String>> toret = new ArrayList<HashMap<String,String>>();
+		if(field.getFieldWidget().equals("DropDown")) {			
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode savefield;
+			try {
+				savefield = mapper.readTree(field.getOptionSource());			
+				System.out.println("savefield is:" + savefield.toString());
+				if(savefield.isArray()) {
+					ArrayNode opts = (ArrayNode) savefield;
+					for(int i=0;i<opts.size();i++) {
+						HashMap<String,String> toin = new HashMap<String,String>();
+						toin.put("val", savefield.get(i).asText());
+						toin.put("label", savefield.get(i).asText());
+						toret.add(toin);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return toret;
 	}
 	
 	public HashMap<String,Object> datarow(Tracker tracker, Long id) {

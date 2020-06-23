@@ -114,11 +114,18 @@ $('#val_[(${field.name})]').select2({
 <div th:fragment="dataformfield(tracker,datas,field)" class="dataform form-group row">
 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0' th:text="${field.label}">Module</label></div>
 <div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
+<th:block th:if="${field.fieldWidget=='Default'}">
 <select th:if="${field.fieldType=='TreeNode'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
 	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
 </select>
 <input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
 <input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
+</th:block>
+<th:block th:if="${field.fieldWidget=='DropDown'}">
+<select th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+	<option th:each="val,iter: ${@trackerService.field_options(field)}" th:value="${val['val']}" th:text="${val['label']}" th:selected="${datas?.get(field.name)?.toString()==val['val']}">option</option>
+</select>
+</th:block>
 </div>
 </div>
 
