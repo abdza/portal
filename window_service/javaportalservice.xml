@@ -1,0 +1,9 @@
+<service>
+	<id>javaportal</id>
+	<name>Java Portal Service</name>
+	<description>Service to run Java Portal App</description>
+	<env name="portalhome" value="%BASE%"/>
+	<executable>java</executable>
+	<arguments>-Xmx1024m -jar "%BASE%\portal.jar"</arguments>
+	<logmode>rotate</logmode>
+</service>
