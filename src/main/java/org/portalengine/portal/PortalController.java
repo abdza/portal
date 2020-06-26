@@ -20,6 +20,7 @@ import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,6 +47,9 @@ import org.springframework.web.servlet.tags.Param;
 @Controller
 @RequestMapping("/")
 public class PortalController {
+	
+	@Value("${server.servlet.context-path}")
+	private String contextPath;
 	
 	@Autowired
 	private PageService pageService;
@@ -92,8 +96,7 @@ public class PortalController {
 	
 	@GetMapping("/p/**")
 	public Object siteResponse(Model model) {
-		
-		String pathuri = request.getRequestURI();
+		String pathuri = request.getRequestURI().replace(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
@@ -207,7 +210,7 @@ public class PortalController {
 	@GetMapping("/p/**/t/create")
 	public String trackerCreateResponse(Model model) {
 		
-		String pathuri = request.getRequestURI();
+		String pathuri = request.getRequestURI().replace(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
@@ -236,7 +239,7 @@ public class PortalController {
 	@GetMapping("/p/**/create")
 	public String createResponse(@RequestParam String objectType, Model model) {
 		
-		String pathuri = request.getRequestURI();
+		String pathuri = request.getRequestURI().replace(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
@@ -277,7 +280,7 @@ public class PortalController {
 	
 	@GetMapping("/p/**/delete")
 	public String deleteResponse(Model model) {
-		String pathuri = request.getRequestURI();		
+		String pathuri = request.getRequestURI().replace(contextPath, "");		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
@@ -306,7 +309,7 @@ public class PortalController {
 	
 	@PostMapping("/p/**/delete")
 	public String postDeleteResponse(Model model) {
-		String pathuri = request.getRequestURI();		
+		String pathuri = request.getRequestURI().replace(contextPath, "");		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
@@ -338,7 +341,7 @@ public class PortalController {
 	
 	@GetMapping("/p/**/edit")
 	public String editResponse(Model model) {
-		String pathuri = request.getRequestURI();		
+		String pathuri = request.getRequestURI().replace(contextPath, "");		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/edit", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
@@ -362,7 +365,7 @@ public class PortalController {
 	@PostMapping(value = "/p/**/saveimage")
 	@ResponseBody
 	public String saveImageResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile[] file) {
-		String pathuri = request.getRequestURI();		
+		String pathuri = request.getRequestURI().replace(contextPath, "");		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/saveimage", "");
 		System.out.println("save uri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
@@ -395,7 +398,7 @@ public class PortalController {
 		if(authentication!=null) {
 			curuser = (User)authentication.getPrincipal();
 		}
-		String pathuri = request.getRequestURI();		
+		String pathuri = request.getRequestURI().replace(contextPath, "");		
 		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
 		System.out.println("save uri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);

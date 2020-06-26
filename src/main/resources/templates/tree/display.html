@@ -96,10 +96,10 @@
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
 			},
 			activate : function(event,data) {
-				$("#addnode").attr("href","/trees/nodes/" + data.node.key + "/create");
-				$("#deletenode").attr("href","/api/trees/node/" + data.node.key + "/delete");
-				$("#editnode").attr("href","/trees/nodes/" + data.node.key + "/edit");
-				$("#viewnode").attr("href","/p/" + data.node.data.rootLessPath);
+				$("#addnode").attr("href",[[@{/trees/nodes/}]] + data.node.key + "/create");
+				$("#deletenode").attr("href",[[@{/api/trees/node/}]] + data.node.key + "/delete");
+				$("#editnode").attr("href",[[@{/trees/nodes/}]] + data.node.key + "/edit");
+				$("#viewnode").attr("href",[[@{/p/}]] + data.node.data.rootLessPath);
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);
 				$("#bodynodeslug").text(data.node.data.slug);

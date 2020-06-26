@@ -192,4 +192,8 @@ public class TreeService {
 		System.out.println("In published children");
 		return nodeRepo.publishedChildren(node);
 	}
+	
+	public void fixTree(Tree tree) {
+		
+	}
 }
