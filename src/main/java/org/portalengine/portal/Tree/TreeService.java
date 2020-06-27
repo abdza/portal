@@ -194,6 +194,11 @@ public class TreeService {
 	}
 	
 	public void fixTree(Tree tree) {
+		TreeNode root = this.nodeRepo.getRoot(tree);
+		this.fixChildren(root,1);		
+	}
+	
+	public void fixChildren(TreeNode node,Integer lft) {
 		
 	}
 }

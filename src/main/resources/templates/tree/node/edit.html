@@ -121,7 +121,7 @@ $("#objectSearchQ").on("keyup",function(){
 	        beforeSend: function(xhr) {
 				xhr.setRequestHeader(header,token);
 			},
-	        url: "/trees/objectSearch",
+	        url: "[[@{/trees/objectSearch}]]",
 	        method: "POST",
 	        success: function(data) {
 	            $('#objectSearchResults').html(data);
