@@ -76,6 +76,13 @@ public class TreeController {
 			return "tree/form.html";
 		}
 		
+		@GetMapping("/fixtree/{id}")
+		public String fixtree(@PathVariable Long id, Model model) {
+			Tree curtree = service.getTreeRepo().getOne(id);
+			service.fixTree(curtree);
+			return "redirect:/trees/display/" + String.valueOf(id);
+		}
+		
 		@GetMapping("/edit/{id}")
 		public String edit(@PathVariable Long id, Model model) {
 			Tree curtree = service.getTreeRepo().getOne(id);

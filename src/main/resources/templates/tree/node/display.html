@@ -19,6 +19,8 @@
 					<div class='row'>
 					<dt class="col-md-2">Name</dt>
 					<dd class="col-md-10" id='bodynodetitle' th:text="${curnode.name}">Name</dd>
+					<dt class="col-md-2">Lft/Rgt</dt>
+					<dd class="col-md-10" id='bodynodelftrgt' th:text="${curnode.lft.toString() + '/' + curnode.rgt.toString()}">Name</dd>
 					<dt class="col-md-2">Slug</dt>
 					<dd class="col-md-10" id='bodynodeslug' th:text="${curnode.slug}">Name</dd>
 					<dt class="col-md-2">Full Path</dt>

@@ -25,6 +25,9 @@
 				<a id="deletenode" th:href="@{/api/trees/node/{node_id}/delete(node_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-trash"></i>
 				</a>
+				<a id="fixtree" th:href="@{/trees/fixtree/{tree_id}(tree_id=${tree.id})}" href="#" class="card-toolbar-btn text-white">				
+				<i class="fa fa-wrench"></i>
+				</a>
 				</div>
 			</div>
 			<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
@@ -108,6 +111,7 @@
 				$("#bodynodeobjectid").text(data.node.data.objectId);
 				$("#bodynodestatus").text(data.node.data.status);
 				$("#bodynoderecordid").text(data.node.data.recordId);
+				$("#bodynodelftrgt").text(data.node.data.lftrgt);
 				$('#user_node_id').val(data.node.key);
 				$.ajax({
 					/*[+

@@ -195,10 +195,28 @@ public class TreeService {
 	
 	public void fixTree(Tree tree) {
 		TreeNode root = this.nodeRepo.getRoot(tree);
-		this.fixChildren(root,1);		
+		root.setLft((long)1);
+		root.setRgt(this.fixChildren(root,(long)1));
+		this.nodeRepo.save(root);		
 	}
 	
-	public void fixChildren(TreeNode node,Integer lft) {
-		
+	public Long fixChildren(TreeNode node,Long lft) {
+		List<TreeNode> childrens = this.nodeRepo.findChildren(node);
+		Long curlft = lft;
+		Long currgt = lft;
+		for(int i=0;i<childrens.size();i++) {
+			curlft = currgt + 1;
+			TreeNode curchild = childrens.get(i);
+			curchild.setLft(curlft);
+			if(this.nodeRepo.findChildren(curchild).size()>0) {
+				currgt = fixChildren(curchild,curlft);
+			}
+			else {
+				currgt = curlft + 1;
+			}
+			curchild.setRgt(currgt);
+			this.nodeRepo.save(curchild);
+		}
+		return currgt;
 	}
 }
