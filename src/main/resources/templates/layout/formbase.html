@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html layout:decorate="~{base}">
+<html layout:decorate="~{layout/base}">
+
+<th:block layout:fragment="head-meta">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</th:block>
+
 <th:block layout:fragment="head-end">
+<link rel="stylesheet" th:href="@{/libs/summernote/summernote-bs4.min.css}" />
 <link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
 <link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
-<link rel="stylesheet" th:href="@{/libs/fancytree/skin-lion/ui.fancytree.css}" />
-<style>
-@media screen and (max-width: 767px) {
-    .select2 {
-        width: 100% !important;
-    }
-}
-</style>
+<link rel="stylesheet" th:href="@{/libs/datepicker/tempusdominus-bootstrap-4.min.css}" />
 </th:block>
 
 <div layout:fragment="body-container" class="body-container">
@@ -39,24 +39,28 @@
 </div>
 
 <th:block layout:fragment="layout-javascript">
-<script type="text/javascript" th:src="@{/libs/fancytree/jquery.fancytree-all-deps.js}"></script>
-<script type="text/javascript" th:src="@{/libs/fancytree/modules/jquery.fancytree.dnd5.js}"></script>
 <script type="text/javascript" th:src="@{/libs/select2/js/select2.full.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
-<script type="text/javascript">
+<script type="text/javascript" th:src="@{/libs/summernote/summernote-bs4.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/moment/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/libs/datepicker/tempusdominus-bootstrap-4.js}"></script>
+<script th:inline="javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
+	console.log('tgi');
 	$(this).tagify({enforceWhitelist:true,whitelist:whitelist});
 });
 $(".tagiform").on("submit",function(){
-	$(".tagifinput").each(function(i,obj){
+	$(".tagifinput").each(function(j,obj){
 		if($(this).is("textarea")||$(this).is("input")){
-			var jsonval = JSON.parse($(this).val());
-			var jvalue = [];
-			for(var i=0; i<jsonval.length; i++){
-				jvalue.push(jsonval[i].value)
+			if($(this).val()){
+				var jsonval = JSON.parse($(this).val());
+				var jvalue = [];
+				for(var i=0; i<jsonval.length; i++){
+					jvalue.push(jsonval[i].value)
+				}
+				$(this).val(jvalue.join(","));
 			}
-			$(this).val(jvalue.join(","));
 		}
 	});
 });

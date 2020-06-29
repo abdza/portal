@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{layout/main}">
 
 <section layout:fragment="content" class='user-content'>
 	<div class='content'>
@@ -34,7 +34,7 @@
 		</table>
 	</div>
 
-	<nav th:replace="macros::navpagination(items=${users},url='/users')"></nav>
+	<nav th:replace="macros/portal::navpagination(items=${users},url='/users')"></nav>
 
 </section>
 </html>

@@ -94,6 +94,11 @@ public class PortalController {
 		return "Got error somewhere";
 	} */
 	
+	@GetMapping("/setup")
+	public String setupSite(Model model) {
+		return "page/setup.html";
+	}
+	
 	@GetMapping("/p/**")
 	public Object siteResponse(Model model) {
 		String pathuri = request.getRequestURI().replace(contextPath, "");
