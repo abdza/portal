@@ -11,7 +11,7 @@
                 </li>
                 <th:block sec:authorize="hasRole('ROLE_NODE_ADMIN')" >
                 <th:block th:if="${pnode}">
-                <li class="nav-item" th:if='${pnode.objectType==null || pnode.objectType=="Folder"}'>
+                <li class="nav-item" th:if='${pnode.objectType==null || pnode.objectType=="Folder" || pnode.objectType==""}'>
                     <a class="nav-link dropdown-toggle" href="#">
                     <span class="nav-text">
                     	<span>New</span>

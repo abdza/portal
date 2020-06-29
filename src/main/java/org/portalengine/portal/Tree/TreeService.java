@@ -49,8 +49,18 @@ public class TreeService {
 	public TreeService() {
 	}
 	
-	public List<String> userRoles(User user,TreeNode node){
-		List<TreeUser> foundUserRoles = userRepo.findRolesForNode(user,node);
+	public List<String> userRoles(User user,TreeNode node) {
+		return userRoles(user,node,true);
+	}
+	
+	public List<String> userRoles(User user,TreeNode node,Boolean fullPath){
+		List<TreeUser> foundUserRoles;
+		if(fullPath) {
+			foundUserRoles = userRepo.findRolesForFullNode(user,node);
+		}
+		else {
+			foundUserRoles = userRepo.findRolesForNode(user,node);
+		}
 		ArrayList<String> retroles = new ArrayList<String>();
 		for(final TreeUser ctu : foundUserRoles) {
 			String transform = "ROLE_NODE_" + ctu.getRole().toUpperCase();
