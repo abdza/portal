@@ -16,9 +16,11 @@ import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tracker.SystemController;
+import org.portalengine.portal.Tree.Tree;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -32,6 +34,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +65,12 @@ public class PortalController {
 	
 	@Autowired
 	private TreeService treeService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private HttpServletRequest request;
@@ -96,6 +105,35 @@ public class PortalController {
 	
 	@GetMapping("/setup")
 	public String setupSite(Model model) {
+		User admin = userService.getRepo().findByUsername("admin");
+		model.addAttribute("admin",admin);
+		Tree portaltree = treeService.getTreeRepo().findOneByModuleAndSlug("portal", "portal");
+		model.addAttribute("portaltree",portaltree);
+		return "page/setup.html";
+	}
+	
+	@PostMapping("/setup")
+	public String doSetupSite(Model model) {
+		User admin = userService.getRepo().findByUsername("admin");
+		model.addAttribute("admin",admin);
+		if(admin==null) {
+			admin = new User("admin", "admin", "Admin", "admin@portal.com", passwordEncoder.encode("admin123"), true);
+			userService.getRepo().save(admin);
+		}
+		else {
+			if(!admin.getIsAdmin()) {
+				admin.setIsAdmin(true);
+				userService.getRepo().save(admin);
+			}
+		}
+		Tree portaltree = treeService.getTreeRepo().findOneByModuleAndSlug("portal", "portal");
+		if(portaltree==null) {
+			portaltree = new Tree();
+			portaltree.setModule("portal");
+			portaltree.setSlug("portal");
+			portaltree.setName("Portal");
+			treeService.saveTree(portaltree);
+		}
 		return "page/setup.html";
 	}
 	

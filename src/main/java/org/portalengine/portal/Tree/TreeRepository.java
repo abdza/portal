@@ -1,6 +1,5 @@
 package org.portalengine.portal.Tree;
 
-import org.portalengine.portal.User.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +11,6 @@ public interface TreeRepository extends JpaRepository<Tree, Long> {
 	Page<Tree> apiquery(String search, Pageable pageable);
 	
 	Tree findByName(String name);
+	
+	Tree findOneByModuleAndSlug(String module,String slug);
 }
