@@ -58,7 +58,7 @@ function sendFile(file,editor) {
         beforeSend: function(xhr) {
 			xhr.setRequestHeader(header,token);
 		},
-        url: /*[[@{/p{fullpath}/saveimage(fullpath=${pnode.rootLessPath()})}]]*/'/dummy/api/users',
+        url: /*[[@{{prepend}/p{fullpath}/saveimage(fullpath=${pnode.rootLessPath()},prepend=${@environment.getProperty('server.servlet.context-path')})}]]*/'/dummy/api/users',
         cache: false,
         contentType: false,
         processData: false,

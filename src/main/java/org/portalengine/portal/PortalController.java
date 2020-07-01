@@ -430,7 +430,7 @@ public class PortalController {
 			newnode.setObjectType("File");
 			newnode.setObjectId(newfile.getId());
 			treeService.getNodeRepo().save(newnode);
-			return "/p" + newnode.rootLessPath();
+			return contextPath + "/p" + newnode.rootLessPath();
 		}
 		return "whatsave";
 	}
