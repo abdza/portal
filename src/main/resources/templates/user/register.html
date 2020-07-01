@@ -10,8 +10,7 @@
 			<a href="{{getPageLink 'dashboard'}}"><i
 				class="fa fa-leaf text-success-m2 text-200 mb-4"></i></a>
 			<h1 class="text-170">
-				<span class="text-blue-d1">Portal <span
-					class="text-80 text-dark-tp3">Engine</span></span>
+				<span class="text-blue-d1" th:text="${@environment.getProperty('spring.application.name')}">Portal</span>
 			</h1>
 
 			Register

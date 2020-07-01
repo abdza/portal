@@ -9,8 +9,7 @@
            
            <a class="navbar-brand text-white" href="#">
                <i class="fa fa-leaf"></i>
-               <span>Portal</span>
-               <span>Engine</span>
+               <span  th:text="${@environment.getProperty('spring.application.name')}">Portal</span>
            </a><!-- /.navbar-brand -->
            
            <button type="button" class="btn btn-burger mr-2 d-none d-xl-flex" data-toggle="sidebar" data-target="#sidebar" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle sidebar">
