@@ -21,6 +21,6 @@
         </table>
     </div>
 
-    <nav th:replace="macros::navpagination(items=${dataset},url=${#request.requestURI})"></nav>
+    <nav th:replace="interface/pagination::navpagination(items=${dataset},url=${#request.requestURI})"></nav>
 
 </section>

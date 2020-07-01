@@ -13,4 +13,5 @@ spring.servlet.multipart.max-file-size=1024MB
 spring.servlet.multipart.max-request-size=1024MB
 portal.uploadroot=portalfiles/upload
 server.port=6060
-# server.servlet.context-path=/portal
+server.servlet.context-path=/portal
+spring.application.name=Java Portal
