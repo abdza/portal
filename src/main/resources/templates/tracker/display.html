@@ -47,7 +47,9 @@
 
 		<div class='row'>
 			<div class='col-sm font-bold text-sm-right'>Initial Status:</div>
-			<div class='col-sm-9' th:text="${tracker.initialStatus}">dataTable</div>
+			<div class='col-sm' th:text="${tracker.initialStatus}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>Node:</div>
+			<div class='col-sm' th:text="${tracker.nodeId}">tail_table</div>
 		</div>
 
 		<div class='row'>

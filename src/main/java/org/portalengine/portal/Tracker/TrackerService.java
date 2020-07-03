@@ -23,6 +23,7 @@ import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
+import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Role.TrackerRoleRepository;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;
 import org.portalengine.portal.Tracker.Status.TrackerStatusRepository;
@@ -86,6 +87,27 @@ public class TrackerService {
 	
 	public String slugify(String data) {
 		return data.replaceAll("[^A-Za-z0-9]", "_").toLowerCase();
+	}
+	
+	public void copyTracker(Tracker source, Long destId) {
+		Tracker newtracker = source.copy(destId);
+		repo.save(newtracker);
+		for(TrackerField curfield : source.getFields()) {
+			TrackerField newfield = curfield.copy(newtracker);
+			fieldRepo.save(newfield);
+		}
+		for(TrackerRole currole : source.getRoles()) {
+			TrackerRole newrole = currole.copy(newtracker);
+			roleRepo.save(newrole);
+		}
+		for(TrackerStatus curstatus : source.getStatuses()) {
+			TrackerStatus newstatus = curstatus.copy(newtracker);
+			statusRepo.save(newstatus);			
+		}
+		for(TrackerTransition curtransition : source.getTransitions()) {
+			TrackerTransition newtransition = curtransition.copy(newtracker);
+			transitionRepo.save(newtransition);
+		}
 	}
 	
 	public String displayList(Model model, Tracker tracker) {

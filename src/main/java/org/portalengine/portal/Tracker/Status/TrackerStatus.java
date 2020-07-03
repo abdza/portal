@@ -37,4 +37,13 @@ public class TrackerStatus extends Auditable<String> {
 	
 	private String displayFields;
 
+	public TrackerStatus copy(Tracker destTracker) {
+		TrackerStatus newstatus = new TrackerStatus();
+		newstatus.name = this.name;
+		newstatus.attachable = this.attachable;
+		newstatus.updateable = this.updateable;
+		newstatus.displayFields = this.displayFields;
+		newstatus.tracker = destTracker;
+		return newstatus;
+	}
 }

@@ -37,4 +37,13 @@ public class TrackerRole extends Auditable<String> {
 	
 	private String roleType;
 	
+	public TrackerRole copy(Tracker destTracker) {
+		TrackerRole newrole = new TrackerRole();
+		newrole.tracker = destTracker;
+		newrole.name = this.name;
+		newrole.roleRule = this.roleRule;
+		newrole.roleType = this.roleType;
+		return newrole;
+	}
+	
 }

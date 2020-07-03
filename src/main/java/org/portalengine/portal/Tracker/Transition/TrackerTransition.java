@@ -54,4 +54,21 @@ public class TrackerTransition extends Auditable<String> {
 	private String nextStatus;
 	private String prevStatus;
 	private String allowedRoles;
+	
+	public TrackerTransition copy(Tracker destTracker) {
+		TrackerTransition newtransition = new TrackerTransition();
+		newtransition.tracker = destTracker;
+		newtransition.name = this.name;
+		newtransition.editFields = this.editFields;
+		newtransition.displayFields = this.displayFields;
+		newtransition.requiredFields = this.requiredFields;
+		newtransition.enabledCondition = this.enabledCondition;
+		newtransition.updateTrails = this.updateTrails;
+		newtransition.submitButtonText = this.submitButtonText;
+		newtransition.gotoPrevStatusList = this.gotoPrevStatusList;
+		newtransition.nextStatus = this.nextStatus;
+		newtransition.prevStatus = this.prevStatus;
+		newtransition.allowedRoles = this.allowedRoles;
+		return newtransition;
+	}
 }

@@ -74,6 +74,24 @@ public class Tracker extends Auditable<String> {
 	@Transient
 	public String[] typeOptions = {"Statement","Tracker","Trailed Tracker"};
 	
+	public Tracker copy(Long newNodeId) {
+		Tracker newtracker = new Tracker();
+		newtracker.module = this.module;
+		newtracker.slug = this.slug;
+		newtracker.name = this.name;
+		newtracker.trackerType = this.trackerType;
+		newtracker.listFields = this.listFields;
+		newtracker.formFields = this.formFields;
+		newtracker.displayFields = this.displayFields;
+		newtracker.initialStatus = this.initialStatus;
+		newtracker.dataTable = this.dataTable + "_" + newNodeId.toString();
+		if(this.updatesTable.length()>0) {
+			newtracker.updatesTable = this.updatesTable + "_" + newNodeId.toString();
+		}
+		newtracker.nodeId = newNodeId;
+		return newtracker;
+	}
+	
 	public void add(TrackerField field) {
 		fields.add(field);
 		field.setTracker(this);

@@ -59,6 +59,17 @@ public class TrackerField extends Auditable<String> {
 	@Transient
 	public String[] widgetOptions = {"Default","DropDown"};
 	
+	public TrackerField copy(Tracker destTracker) {
+		TrackerField newfield = new TrackerField();
+		newfield.name = this.name;
+		newfield.label = this.label;
+		newfield.fieldType = this.fieldType;
+		newfield.fieldWidget = this.fieldWidget;
+		newfield.optionSource = this.optionSource;
+		newfield.tracker = destTracker;
+		return newfield;
+	}
+	
 	public String display(HashMap<String,Object> datas) {
 		try {
 			if(fieldType.equals("Date") || fieldType.equals("DateTime")) {

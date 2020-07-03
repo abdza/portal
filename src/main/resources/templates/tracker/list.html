@@ -10,6 +10,7 @@
                 <th>Module</th>
                 <th>Slug</th>
                 <th>Name</th>
+                <th>Node</th>
             </tr>
             <tr th:each="tracker,iter: ${trackers}">
                 <td><a href='#' th:href='@{/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
@@ -18,6 +19,7 @@
                 <td><a href='#' th:href='@{/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug
                 </td>
                 <td th:text="${tracker.name}">title</td>
+                <td th:text="${tracker.nodeId}">Node id</td>
             </tr>
         </table>
     </div>
