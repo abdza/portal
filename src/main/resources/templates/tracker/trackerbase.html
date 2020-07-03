@@ -9,7 +9,7 @@
 </table>
 
 <div th:fragment="dataform(tracker,datas,transition)" class='dataform'>
-<form method='post' th:action='${pnode}?@{{portalPath}/save(portalPath=${pnode.portalPath()})}:@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
+<form method='post' th:action='${pnode}?@{/{portalPath}/save(portalPath=${pnode.portalPath()})}:@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
 <input type='hidden' name='id' th:value="${datas.get('id')?.toString()}" th:if="${datas?.get('id')!=null}"/>
 <input type='hidden' name='transition_id' th:value="${transition.id}" th:if="${transition!=null}"/>
 

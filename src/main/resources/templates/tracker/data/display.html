@@ -6,10 +6,10 @@
         <h1>Display Data</h1>
 
 		<th:block th:if="${pnode}">
-        <a href="#" th:href="${pnode.portalPath()}"
+        <a href="#" th:href="@{/{portalpath}(portalpath=${pnode.portalPath()})}"
             class="btn btn-primary">List</a>
         <a th:if="${@trackerService.editable(tracker,datas.get('id'))}" href="#"
-            th:href="@{{portalPath}/t/edit/{id}(portalPath=${pnode.portalPath()},id=${datas.get('id')})}"
+            th:href="@{/{portalPath}/t/edit/{id}(portalPath=${pnode.portalPath()},id=${datas.get('id')})}"
             class="btn btn-primary">Edit</a>
         <a th:each="transition:${@trackerService.record_transitions(tracker,datas.get('id'))}" class="btn btn-primary"
             th:href="@{/{portalPath}/t/transition/{transition_id}/{id}(transition_id=${transition.id},portalPath=${pnode.portalPath()},id=${datas.get('id')})}"><span

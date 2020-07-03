@@ -455,7 +455,20 @@ public class PortalController {
 					System.out.println("Tracker not found");
 				}
 				else {
-					return trackerService.saveData(curtracker, curuser, pnode);
+					Long fid = trackerService.saveForm(curtracker, curuser);
+					if(fid!=null) {
+						/* if(postdata.get("id")!=null) {
+							return "redirect:" + contextPath + "/" + pnode.portalPath() + "/t/display/" + postdata.get("id").toString();
+						}
+						else {			
+							return "redirect:" + contextPath + "/" + pnode.portalPath();
+						}	*/					
+						
+						return "redirect:/" + pnode.portalPath() + "/t/display/" + String.valueOf(fid);
+					}
+					else {
+						return "redirect:/" + pnode.portalPath();
+					}
 				}
 			}
 			else if(postdata.get("objectType")!=null) {
@@ -476,10 +489,10 @@ public class PortalController {
 						newnode.setObjectId(newpage.getId());
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:/p" + pnode.rootLessPath() + "/" + newnode.getSlug();
+						return "redirect:" + contextPath + "/p" + pnode.rootLessPath() + "/" + newnode.getSlug();
 					}
 					else {
-						return "redirect:/p" + pnode.rootLessPath();
+						return "redirect:" + contextPath + "/p" + pnode.rootLessPath();
 					}
 				}
 				else if(postdata.get("objectType").equals("File")) {
@@ -508,7 +521,7 @@ public class PortalController {
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
 					}
-					return "redirect:/p" + pnode.rootLessPath();
+					return "redirect:" + contextPath + "/p" + pnode.rootLessPath();
 				}
 				else if(postdata.get("objectType").equals("Folder")) {
 					TreeNode cnode = new TreeNode();
@@ -525,12 +538,12 @@ public class PortalController {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:/p" + newnode.rootLessPath();
+						return "redirect:" + contextPath + "/p" + newnode.rootLessPath();
 					}
 					else {
 						cnode.setName(postdata.get("name"));
 						treeService.getNodeRepo().save(cnode);
-						return "redirect:/p" + cnode.rootLessPath();
+						return "redirect:" + contextPath + "/p" + cnode.rootLessPath();
 					}
 				}
 			}

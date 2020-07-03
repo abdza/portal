@@ -92,20 +92,22 @@ public class TrackerField extends Auditable<String> {
 	}
 	
 	public String display(SqlRowSet datas) {
-		if(fieldType.equals("String") || fieldType.equals("Text")) {
-			return datas.getString(name);
-		}
-		else if(fieldType.equals("Integer")||fieldType.equals("User")||fieldType.equals("TreeNode")||fieldType.equals("TrackerType")) {
-			return String.valueOf(datas.getInt(name));
-		}
-		else if(fieldType.equals("Number")) {
-			return String.valueOf(datas.getDouble(name));
-		}
-		else if(fieldType.equals("Date")) {
-			return datas.getDate(name).toString();
-		}
-		else if(fieldType.equals("DateTime")) {
-			return datas.getDate(name).toString();
+		if(datas!=null) {
+			if(fieldType.equals("String") || fieldType.equals("Text")) {
+				return datas.getString(name);
+			}
+			else if(fieldType.equals("Integer")||fieldType.equals("User")||fieldType.equals("TreeNode")||fieldType.equals("TrackerType")) {
+				return String.valueOf(datas.getInt(name));
+			}
+			else if(fieldType.equals("Number")) {
+				return String.valueOf(datas.getDouble(name));
+			}
+			else if(fieldType.equals("Date")) {
+				return datas.getDate(name).toString();
+			}
+			else if(fieldType.equals("DateTime")) {
+				return datas.getDate(name).toString();
+			}
 		}
 		return "";
 	}

@@ -448,7 +448,7 @@ public class TrackerService {
 		return dataset;
 	}
 	
-	public boolean saveForm(Tracker tracker,User principal) {
+	public long saveForm(Tracker tracker,User principal) {
 		Map<String, String[]> postdata = request.getParameterMap();
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
@@ -585,6 +585,6 @@ public class TrackerService {
 			namedjdbctemplate.update(dquery, tparam);			
 		}
 		
-		return true;
+		return curid;
 	}
 }

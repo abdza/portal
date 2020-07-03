@@ -14,9 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.portalengine.portal.Auditable;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -89,6 +91,6 @@ public class TreeNode extends Auditable<String> {
 	}
 	
 	public String portalPath() {
-		return "/p" + this.rootLessPath();
+		return "p" + this.rootLessPath();
 	}
 }
