@@ -2,6 +2,7 @@ package org.portalengine.portal.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -176,7 +177,7 @@ public class Tracker extends Auditable<String> {
 			if(trythis.getInt("result")==0) {
 				// Data table does not exists yet, so please create
 				jdbctemplate.execute("create table " + this.dataTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1),"
-						+ "CONSTRAINT PK_" + this.dataTable.toUpperCase() + " PRIMARY KEY(ID))");
+						+ "CONSTRAINT PK_" + this.dataTable.toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
 			}
 			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
 					+ " TABLE_NAME = '" + this.dataTable.toUpperCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
@@ -206,7 +207,7 @@ public class Tracker extends Auditable<String> {
 						jdbctemplate.execute("create table " + this.updatesTable.toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
 								+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
 								+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
-								+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + this.updatesTable.toUpperCase() + " PRIMARY KEY(ID))");
+								+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + this.updatesTable.toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
 					}
 					}
 			}

@@ -288,12 +288,22 @@ public class TrackerService {
 			SqlRowSet trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
 					+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = '" + tracker.getDataTable()+ "'");
 			if(trytrails.next()) {
+				SqlRowSet intrytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
+						+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = 'deleted_" + tracker.getDataTable()+ "'");
+				if(intrytrails.next()) {
+					jdbctemplate.execute("drop table deleted_" + tracker.getDataTable());
+				}
 				jdbctemplate.execute("exec sp_rename '" + tracker.getDataTable() + "', 'deleted_" + tracker.getDataTable() + "'");
 			}
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				trytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
 						+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = '" + tracker.getUpdatesTable() + "'");
 				if(trytrails.next()) {
+					SqlRowSet intrytrails = jdbctemplate.queryForRowSet("select * from INFORMATION_SCHEMA.TABLES where "
+							+ "TABLE_SCHEMA = 'dbo' and TABLE_NAME = 'deleted_" + tracker.getUpdatesTable() + "'");
+					if(intrytrails.next()) {
+						jdbctemplate.execute("drop table deleted_" + tracker.getUpdatesTable());
+					}
 					jdbctemplate.execute("exec sp_rename '" + tracker.getUpdatesTable() + "', 'deleted_" + tracker.getUpdatesTable() + "'");
 				}
 			}			
