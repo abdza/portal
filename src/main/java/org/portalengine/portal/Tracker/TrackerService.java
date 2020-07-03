@@ -89,7 +89,7 @@ public class TrackerService {
 		return data.replaceAll("[^A-Za-z0-9]", "_").toLowerCase();
 	}
 	
-	public void copyTracker(Tracker source, Long destId) {
+	public Tracker copyTracker(Tracker source, Long destId) {
 		Tracker newtracker = source.copy(destId);
 		repo.save(newtracker);
 		for(TrackerField curfield : source.getFields()) {
@@ -108,6 +108,7 @@ public class TrackerService {
 			TrackerTransition newtransition = curtransition.copy(newtracker);
 			transitionRepo.save(newtransition);
 		}
+		return newtracker;
 	}
 	
 	public String displayList(Model model, Tracker tracker) {

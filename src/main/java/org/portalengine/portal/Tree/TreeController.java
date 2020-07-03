@@ -164,11 +164,15 @@ public class TreeController {
 			curnode.setObjectType(postdata.get("objectType"));
 			if(postdata.get("objectId")!="") {
 				Long objectId = Long.parseLong(postdata.get("objectId"));
-				curnode.setObjectId(objectId);
 				if(postdata.get("objectType").equals("Tracker")) {
 					Tracker curtracker = trackerService.getRepo().getOne(objectId);
-					if(curtracker!=null) {						
-						trackerService.copyTracker(curtracker, curnode.getId());
+					if(curtracker!=null) {	
+						if(curtracker.getNodeId()==null) {
+							curnode.setObjectId(trackerService.copyTracker(curtracker, curnode.getId()).getId());
+						}
+						else {
+							curnode.setObjectId(curtracker.getId());
+						}
 					}
 				}
 			}

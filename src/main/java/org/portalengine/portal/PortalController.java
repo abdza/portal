@@ -209,6 +209,7 @@ public class PortalController {
 				}
 				else if(pnode.getObjectType().equals("Tracker")) {
 					Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
+					System.out.println("tracker:" + pnode.getObjectId().toString());
 					if(curtracker==null) {
 						System.out.println("Tracker not found");
 					}
