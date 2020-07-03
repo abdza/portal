@@ -448,7 +448,7 @@ public class PortalController {
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());
-			if(pnode.getObjectType().equals("Tracker")) {
+			if(pnode.getObjectType()!=null && pnode.getObjectType().equals("Tracker")) {
 				Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
 				if(curtracker==null) {
 					System.out.println("Tracker not found");
