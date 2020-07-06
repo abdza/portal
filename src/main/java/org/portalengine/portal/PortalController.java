@@ -489,10 +489,10 @@ public class PortalController {
 						newnode.setObjectId(newpage.getId());
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:" + contextPath + "/p" + pnode.rootLessPath() + "/" + newnode.getSlug();
+						return "redirect:/" + pnode.portalPath() + "/" + newnode.getSlug();
 					}
 					else {
-						return "redirect:" + contextPath + "/p" + pnode.rootLessPath();
+						return "redirect:/" + pnode.portalPath();
 					}
 				}
 				else if(postdata.get("objectType").equals("File")) {
@@ -521,7 +521,7 @@ public class PortalController {
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
 					}
-					return "redirect:" + contextPath + "/p" + pnode.rootLessPath();
+					return "redirect:/" + pnode.portalPath();
 				}
 				else if(postdata.get("objectType").equals("Folder")) {
 					TreeNode cnode = new TreeNode();
@@ -538,12 +538,12 @@ public class PortalController {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:" + contextPath + "/p" + newnode.rootLessPath();
+						return "redirect:/" + newnode.portalPath();
 					}
 					else {
 						cnode.setName(postdata.get("name"));
 						treeService.getNodeRepo().save(cnode);
-						return "redirect:" + contextPath + "/p" + cnode.rootLessPath();
+						return "redirect:/" + cnode.portalPath();
 					}
 				}
 			}
