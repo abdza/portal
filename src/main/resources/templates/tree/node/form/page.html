@@ -40,6 +40,19 @@
 $(document).ready(function(){
 	$('.summernote').summernote({
         height: "500px",
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video','portal-links']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+          ],
+          portalLinks: {
+            listUrl: 'data.json',
+            title: 'List of websites'
+          },
         callbacks: {
             onImageUpload: function(files) {
               // upload image to server and create imgNode...
@@ -47,7 +60,35 @@ $(document).ready(function(){
             }
         }
     });
+	
+	$("#objectSearchQ").on("keyup",function(){
+		var curQ = $("#objectSearchQ").val();
+		if(curQ.length>2){
+		    var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+		    $.ajax({
+		        data: { source: "editpage", searchType: "treenode", q: curQ },
+		        beforeSend: function(xhr) {
+					xhr.setRequestHeader(header,token);
+				},
+		        url: [[@{/trees/objectSearch}]],
+		        method: "POST",
+		        success: function(data) {
+		            $('#objectSearchResults').html(data);
+		        }
+		    });
+		}
+	});
+	
+
 });
+
+function updateObjectId(selection){
+	var url = selection.children("p").text().substring(7);	
+	$('.note-link-url').val(url);
+	$('#objectSearchResults').html("");
+}
+
 function sendFile(file,editor) {
     data = new FormData();
     data.append("file", file);

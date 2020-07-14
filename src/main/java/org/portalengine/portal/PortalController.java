@@ -280,6 +280,48 @@ public class PortalController {
 		}
 	}
 	
+	@GetMapping("/p/**/searchResult")
+	public String searchResult(@RequestParam String objectType, Model model) {
+		
+		String pathuri = request.getRequestURI().replace(contextPath, "");
+		String ops = "";
+		Integer cutoff = pathuri.indexOf("/t/");
+		if(cutoff>0) {
+			ops = pathuri.substring(cutoff);
+			pathuri = pathuri.substring(0,cutoff);
+		}
+		pathuri = pathuri.replaceFirst("/p/", "portal/");
+		if(pathuri.equals("portal/")) {
+			pathuri = "portal";
+		}
+		
+		// String pathuri = request.getRequestURI();		
+		pathuri = pathuri.replaceAll("/searchResult", "");
+		System.out.println("pathuri:" + pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		if(pnode!=null) {
+			model.addAttribute("pnode",pnode);
+			System.out.println("pnode:" + pnode.getName());
+			
+			if(objectType.equals("Page")) {
+				Page page = new Page();
+				model.addAttribute("page",page);
+				return "tree/node/form/page.html";
+			}
+			else if(objectType.equals("File")) {
+				FileLink fileLink = new FileLink();
+				model.addAttribute("fileLink",fileLink);
+				return "tree/node/form/filelink.html";
+			}
+			else if(objectType.equals("Folder")) {
+				TreeNode cnode = new TreeNode();
+				model.addAttribute("cnode",cnode);
+				return "tree/node/form/folder.html";
+			}
+		}
+		return "whatcreate " + objectType ;
+	}
+	
 	@GetMapping("/p/**/create")
 	public String createResponse(@RequestParam String objectType, Model model) {
 		

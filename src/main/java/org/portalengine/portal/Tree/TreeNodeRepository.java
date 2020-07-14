@@ -26,6 +26,9 @@ public interface TreeNodeRepository extends JpaRepository<TreeNode, Long> {
 	@Query("from TreeNode pg where pg.name like :#{#search} or pg.fullPath like :#{#search} or pg.slug like :#{#search}")
 	List<TreeNode> findAllByQ(String search);
 	
+	@Query("from TreeNode pg where pg.status='Published' and (pg.name like :#{#search} or pg.fullPath like :#{#search} or pg.slug like :#{#search})")
+	List<TreeNode> findAllPublishedByQ(String search);
+	
 	@Query("from TreeNode pg where pg.name like :#{#search} or pg.fullPath like :#{#search} or pg.slug like :#{#search}")
 	Page<TreeNode> apiquery(String search, Pageable pageable);
 }

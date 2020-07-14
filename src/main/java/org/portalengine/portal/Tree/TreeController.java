@@ -195,7 +195,17 @@ public class TreeController {
 				model.addAttribute("pages",pages);
 			}
 			else if(searchType.equals("treenode")) {
-				List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
+				String source = "";
+				if(postdata.get("source")!=null) {
+					source = postdata.get("source");
+				}
+				List<TreeNode> nodes;
+				if(source.equals("editpage")) {
+					nodes = service.getNodeRepo().findAllPublishedByQ(tosearch);
+				}
+				else {
+					nodes = service.getNodeRepo().findAllByQ(tosearch);
+				}
 				model.addAttribute("nodes",nodes);
 			}
 			else if(searchType.equals("file")) {
