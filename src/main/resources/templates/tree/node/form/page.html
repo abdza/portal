@@ -84,7 +84,7 @@ $(document).ready(function(){
 });
 
 function updateObjectId(selection){
-	var url = selection.children("p").text().substring(7);	
+	var url = [[${@environment.getProperty('server.servlet.context-path')}]] + "/" + selection.children("p").data("path");	
 	$('.note-link-url').val(url);
 	$('#objectSearchResults').html("");
 }

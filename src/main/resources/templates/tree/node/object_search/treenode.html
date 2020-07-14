@@ -1,6 +1,6 @@
 <ul class="list-group">
 <li class="list-group-item objectItem" th:each="node,iter: ${nodes}" onclick="updateObjectId($(this));" th:attr="data-object-id=${node.id}">
 <h6 th:text="${node.name}">title</h6>
-<p th:text="${node.fullPath}">preview</p>
+<p th:attr="data-path=${node.portalPath()}" th:text="${node.fullPath}">preview</p>
 </li>
 </ul>

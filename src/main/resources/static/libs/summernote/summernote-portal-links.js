@@ -24,7 +24,7 @@
         </div>\
         <div class="form-group note-form-group">\
           <label class="note-form-label">Choose a portal node to link</label>\
-          <input id="objectSearchQ" class="note-link-url form-control note-form-control  note-input" type="text" />\
+          <input id="objectSearchQ" autocomplete="off" class="note-link-url form-control note-form-control  note-input" type="text" />\
         </div>\
         <div id="objectSearchResults" name="objectSearchResults">\
         </div>';
