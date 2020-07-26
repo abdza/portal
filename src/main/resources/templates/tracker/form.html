@@ -40,19 +40,19 @@
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
                 <div class='col-sm-9'>
-                <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{listFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                <textarea class="form-control col-sm-8 col-md-6 tokeninput fieldselection" th:field="*{listFields}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{formFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tokeninput fieldselection" th:field="*{formFields}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Display Fields</label></div>
                 <div class='col-sm-9'>
-                    <textarea class="form-control col-sm-8 col-md-6 tagifinput" th:field="*{displayFields}" th:attr="data-tagify-whitelist=${tracker.fieldsList()}"></textarea>
+                    <textarea class="form-control col-sm-8 col-md-6 tokeninput fieldselection" th:field="*{displayFields}"></textarea>
                 </div>
             </div>
             <div class='form-group row'>
@@ -86,5 +86,35 @@
         </form>
     </div>
 </section>
+<th:block layout:fragment="page-javascript">
+<script>
+function splitval(val) {
+	console.log(val);
+	var tokens = val.split(",");
+	var toreturn = [];
+	tokens.forEach(function(entry){
+		var currow = {id:entry,name:entry};
+		toreturn.push(currow);
+	});
+	return toreturn;
+};
 
+$(".fieldselection").each(function(){
+	var curval = $(this).val();
+	if(curval.length>0){
+		var pp = splitval(curval);	
+	}
+	else{
+		var pp = null;
+	}
+	$(this).tokenInput(
+			"[[@{/api/trackers/{tracker_id}/fields(tracker_id=${tracker.id})}]]",
+			{
+				prePopulate: pp,
+				preventDuplicates: true
+			}
+	);
+});
+</script>
+</th:block>
 </html>

@@ -22,7 +22,7 @@
                     <label class='mb-0'>Display Fields</label>
                 </div>
                 <div class='col-sm-9'>
-                    <textarea class='form-control col-sm-8 col-md-6 tagifinput' th:value="${tracker_status.displayFields}" name='displayFields' th:text="${tracker_status.displayFields}"  th:attr="data-tagify-whitelist=${tracker.fieldsList()}">
+                    <textarea class='form-control col-sm-8 col-md-6 tokeninput fieldselection' th:value="${tracker_status.displayFields}" name='displayFields' th:text="${tracker_status.displayFields}">
                     </textarea>
                 </div>
             </div>
@@ -54,5 +54,35 @@
         </form>
     </div>
 </section>
+<th:block layout:fragment="page-javascript">
+<script>
+function splitval(val) {
+	console.log(val);
+	var tokens = val.split(",");
+	var toreturn = [];
+	tokens.forEach(function(entry){
+		var currow = {id:entry,name:entry};
+		toreturn.push(currow);
+	});
+	return toreturn;
+};
 
+$(".fieldselection").each(function(){
+	var curval = $(this).val();
+	if(curval.length>0){
+		var pp = splitval(curval);	
+	}
+	else{
+		var pp = null;
+	}
+	$(this).tokenInput(
+			"[[@{/api/trackers/{tracker_id}/fields(tracker_id=${tracker.id})}]]",
+			{
+				prePopulate: pp,
+				preventDuplicates: true
+			}
+	);
+});
+</script>
+</th:block>
 </html>
