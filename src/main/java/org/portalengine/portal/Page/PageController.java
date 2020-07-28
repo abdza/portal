@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 @Controller
 @RequestMapping("/pages")
 public class PageController {
@@ -54,6 +57,19 @@ public class PageController {
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
 			Page curpage = service.getRepo().getOne(id);
+			model.addAttribute("page", curpage);
+			return "page/display.html";
+		}
+		
+		@GetMapping("/runpage/{id}")
+		public String runpage(@PathVariable Long id, Model model) {
+			Page curpage = service.getRepo().getOne(id);
+			
+			Binding binding = new Binding();		
+			GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+			binding.setVariable("service",service);
+			String content = (String) shell.evaluate(curpage.getContent());
+			
 			model.addAttribute("page", curpage);
 			return "page/display.html";
 		}

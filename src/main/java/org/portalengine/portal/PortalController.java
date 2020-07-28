@@ -47,6 +47,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.tags.Param;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 @Controller
 @RequestMapping("/")
 public class PortalController {
@@ -189,7 +192,7 @@ public class PortalController {
 					}
 					else {
 						model.addAttribute("page",curpage);
-						
+						model.addAttribute("layout","layout/special");
 						return "page/display.html";
 					}
 				}
@@ -521,6 +524,7 @@ public class PortalController {
 					}					
 					newpage.setTitle(postdata.get("title"));
 					newpage.setModule("content");
+					newpage.setLayout(postdata.get("layout"));
 					newpage.setContent(postdata.get("content"));
 					newpage.setSlug(treeService.slugify(postdata.get("title")));
 					pageService.getRepo().save(newpage);
