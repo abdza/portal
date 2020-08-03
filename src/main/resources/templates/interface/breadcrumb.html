@@ -2,7 +2,7 @@
 <nav aria-label="breadcrumb">
 <ol class="breadcrumb">
 <li class="breadcrumb-item active" aria-current="page" th:each="bnode,iter: ${breadcrumb}">
-<a  th:href="@{/p{fullpath}(fullpath=${bnode.rootLessPath()?:'/'})}" th:text="${bnode.name}">Home</a>
+<a  th:href="@{/p{fullpath}(fullpath=${@treeService.rootLessPath(bnode)?:'/'})}" th:text="${bnode.name}">Home</a>
 </li>
 </ol>
 </nav>

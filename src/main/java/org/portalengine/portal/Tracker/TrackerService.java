@@ -30,6 +30,7 @@ import org.portalengine.portal.Tracker.Status.TrackerStatusRepository;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
 import org.portalengine.portal.Tree.TreeNode;
+import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,9 @@ public class TrackerService {
 	
 	@Autowired
 	private TrackerRoleRepository roleRepo;
+	
+	@Autowired
+	private TreeService treeService;
 	
 	@Autowired
 	private TrackerTransitionRepository transitionRepo;
@@ -183,10 +187,10 @@ public class TrackerService {
 				TrackerTransition transition = this.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}
 			if(postdata.get("id")!=null) {
-				return "redirect:" + pnode.portalPath() + "/t/display/" + postdata.get("id")[0].toString();
+				return "redirect:" + treeService.portalPath(pnode) + "/t/display/" + postdata.get("id")[0].toString();
 			}
 			else {			
-				return "redirect:" + pnode.portalPath();
+				return "redirect:" + treeService.portalPath(pnode);
 			}
 		}	
 		else {

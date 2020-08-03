@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create File</h1>
-        <form method='post' th:action='@{/p{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${fileLink}" enctype="multipart/form-data">
+        <form method='post' th:action='@{/p{fullpath}/save(fullpath=${@treeService.rootLessPath(pnode)})}' th:object="${fileLink}" enctype="multipart/form-data">
             <input type='hidden' th:field='*{id}' />            
 			<input type='hidden' name='objectType' value='File'/>
 

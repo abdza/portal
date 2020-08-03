@@ -57,6 +57,9 @@ public class PortalController {
 	@Value("${server.servlet.context-path}")
 	private String contextPath;
 	
+	@Value("${rootnode}")
+	private String rootnode;
+	
 	@Autowired
 	private PageService pageService;
 	
@@ -134,7 +137,7 @@ public class PortalController {
 			portaltree = new Tree();
 			portaltree.setModule("portal");
 			portaltree.setSlug("portal");
-			portaltree.setName("Portal");
+			portaltree.setName(rootnode);
 			treeService.saveTree(portaltree);
 		}
 		return "page/setup.html";
@@ -142,18 +145,19 @@ public class PortalController {
 	
 	@GetMapping("/p/**")
 	public Object siteResponse(Model model) {
-		String pathuri = request.getRequestURI().replace(contextPath, "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
+		System.out.println("pathuri:" + pathuri);
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("/p/", "portal/");
-		if(pathuri.equals("portal/")) {
-			pathuri = "portal";
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		if(pathuri.equals(rootnode + "/")) {
+			pathuri = rootnode;
 		}
-		
+		System.out.println("finalpathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
 			
@@ -257,16 +261,16 @@ public class PortalController {
 	@GetMapping("/p/**/t/create")
 	public String trackerCreateResponse(Model model) {
 		
-		String pathuri = request.getRequestURI().replace(contextPath, "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("/p/", "portal/");
-		if(pathuri.equals("portal/")) {
-			pathuri = "portal";
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		if(pathuri.equals(rootnode + "/")) {
+			pathuri = rootnode;
 		}
 		
 		// String pathuri = request.getRequestURI();		
@@ -286,16 +290,16 @@ public class PortalController {
 	@GetMapping("/p/**/searchResult")
 	public String searchResult(@RequestParam String objectType, Model model) {
 		
-		String pathuri = request.getRequestURI().replace(contextPath, "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("/p/", "portal/");
-		if(pathuri.equals("portal/")) {
-			pathuri = "portal";
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		if(pathuri.equals(rootnode + "/")) {
+			pathuri = rootnode;
 		}
 		
 		// String pathuri = request.getRequestURI();		
@@ -328,16 +332,16 @@ public class PortalController {
 	@GetMapping("/p/**/create")
 	public String createResponse(@RequestParam String objectType, Model model) {
 		
-		String pathuri = request.getRequestURI().replace(contextPath, "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("/p/", "portal/");
-		if(pathuri.equals("portal/")) {
-			pathuri = "portal";
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		if(pathuri.equals(rootnode + "/")) {
+			pathuri = rootnode;
 		}
 		
 		// String pathuri = request.getRequestURI();		
@@ -369,8 +373,8 @@ public class PortalController {
 	
 	@GetMapping("/p/**/delete")
 	public String deleteResponse(Model model) {
-		String pathuri = request.getRequestURI().replace(contextPath, "");		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
@@ -398,8 +402,8 @@ public class PortalController {
 	
 	@PostMapping("/p/**/delete")
 	public String postDeleteResponse(Model model) {
-		String pathuri = request.getRequestURI().replace(contextPath, "");		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/delete", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
@@ -423,15 +427,15 @@ public class PortalController {
 			}
 			TreeNode parent = pnode.getParent();
 			treeService.deleteNode(pnode);
-			return "redirect:/p" + parent.rootLessPath();
+			return "redirect:/p" + treeService.rootLessPath(parent);
 		}
 		return "tree/node/form/delete.html";
 	}
 	
 	@GetMapping("/p/**/edit")
 	public String editResponse(Model model) {
-		String pathuri = request.getRequestURI().replace(contextPath, "");		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/edit", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/edit", "");
 		System.out.println("pathuri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
@@ -454,8 +458,8 @@ public class PortalController {
 	@PostMapping(value = "/p/**/saveimage")
 	@ResponseBody
 	public String saveImageResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile[] file) {
-		String pathuri = request.getRequestURI().replace(contextPath, "");		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/saveimage", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/saveimage", "");
 		System.out.println("save uri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
@@ -476,7 +480,7 @@ public class PortalController {
 			newnode.setObjectType("File");
 			newnode.setObjectId(newfile.getId());
 			treeService.getNodeRepo().save(newnode);
-			return contextPath + "/p" + newnode.rootLessPath();
+			return contextPath + "/p" + treeService.rootLessPath(newnode);
 		}
 		return "whatsave";
 	}
@@ -487,8 +491,8 @@ public class PortalController {
 		if(authentication!=null) {
 			curuser = (User)authentication.getPrincipal();
 		}
-		String pathuri = request.getRequestURI().replace(contextPath, "");		
-		pathuri = pathuri.replaceAll("/p/", "portal/").replaceAll("/save", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
+		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/save", "");
 		System.out.println("save uri:" + pathuri);
 		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
 		if(pnode!=null) {
@@ -509,10 +513,10 @@ public class PortalController {
 							return "redirect:" + contextPath + "/" + pnode.portalPath();
 						}	*/					
 						
-						return "redirect:/" + pnode.portalPath() + "/t/display/" + String.valueOf(fid);
+						return "redirect:/" + treeService.portalPath(pnode) + "/t/display/" + String.valueOf(fid);
 					}
 					else {
-						return "redirect:/" + pnode.portalPath();
+						return "redirect:/" + treeService.portalPath(pnode);
 					}
 				}
 			}
@@ -535,10 +539,10 @@ public class PortalController {
 						newnode.setObjectId(newpage.getId());
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:/" + pnode.portalPath() + "/" + newnode.getSlug();
+						return "redirect:/" + treeService.portalPath(pnode) + "/" + newnode.getSlug();
 					}
 					else {
-						return "redirect:/" + pnode.portalPath();
+						return "redirect:/" + treeService.portalPath(pnode);
 					}
 				}
 				else if(postdata.get("objectType").equals("File")) {
@@ -567,7 +571,7 @@ public class PortalController {
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
 					}
-					return "redirect:/" + pnode.portalPath();
+					return "redirect:/" + treeService.portalPath(pnode);
 				}
 				else if(postdata.get("objectType").equals("Folder")) {
 					TreeNode cnode = new TreeNode();
@@ -584,12 +588,12 @@ public class PortalController {
 						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
 						newnode.setStatus("Published");
 						treeService.getNodeRepo().save(newnode);
-						return "redirect:/" + newnode.portalPath();
+						return "redirect:/" + treeService.portalPath(newnode);
 					}
 					else {
 						cnode.setName(postdata.get("name"));
 						treeService.getNodeRepo().save(cnode);
-						return "redirect:/" + cnode.portalPath();
+						return "redirect:/" + treeService.portalPath(cnode);
 					}
 				}
 			}
