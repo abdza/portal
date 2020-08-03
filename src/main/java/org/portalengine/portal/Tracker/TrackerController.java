@@ -65,6 +65,7 @@ public class TrackerController {
 			if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
+			model.addAttribute("pageTitle","Tracker Listing");
 			model.addAttribute("trackers", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "tracker/list.html";
 		}
@@ -73,9 +74,11 @@ public class TrackerController {
 		public String form(@PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
 				Tracker tracker = service.getRepo().getOne(id);
+				model.addAttribute("pageTitle","Edit Tracker - " + tracker.getName());
 				model.addAttribute("tracker", tracker);
 			}
 			else {
+				model.addAttribute("pageTitle","Create Tracker");
 				model.addAttribute("tracker",new Tracker());
 			}
 			return "tracker/form.html";
@@ -104,6 +107,7 @@ public class TrackerController {
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
 			Tracker tracker = service.getRepo().getOne(id);
+			model.addAttribute("pageTitle","Tracker - " + tracker.getName());
 			model.addAttribute("tracker", tracker);
 			return "tracker/display.html";
 		}
@@ -111,6 +115,7 @@ public class TrackerController {
 		@GetMapping("/{id}/exceltemplate")
 		public String exceltemplate(@PathVariable Long id, Model model) {
 			Tracker tracker = service.getRepo().getOne(id);
+			model.addAttribute("pageTitle","Tracker Template - " + tracker.getName());
 			model.addAttribute("tracker", tracker);
 			return "tracker/exceltemplate.html";
 		}

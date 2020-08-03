@@ -40,6 +40,7 @@ public class FileLinkController {
 			if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
+			model.addAttribute("pageTitle","File Listing");
 			model.addAttribute("files", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "file/list.html";
 		}
@@ -48,9 +49,11 @@ public class FileLinkController {
 		public String form(@PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
 				FileLink curfile = service.getRepo().getOne(id);
+				model.addAttribute("pageTitle","Update File - " + curfile.getName());
 				model.addAttribute("filelink", curfile);
 			}
 			else {
+				model.addAttribute("pageTitle","Upload File");
 				model.addAttribute("filelink", new FileLink());
 			}
 			return "file/form.html";

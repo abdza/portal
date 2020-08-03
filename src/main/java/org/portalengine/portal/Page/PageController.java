@@ -37,6 +37,7 @@ public class PageController {
 			if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
+			model.addAttribute("pageTitle","Page Listing");
 			model.addAttribute("pages", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "page/list.html";
 		}
@@ -45,9 +46,11 @@ public class PageController {
 		public String edit(@PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
 				Page curpage = service.getRepo().getOne(id);
+				model.addAttribute("pageTitle","Edit Page - " + curpage.getTitle());
 				model.addAttribute("page", curpage);
 			}
 			else {
+				model.addAttribute("pageTitle","Create Page");
 				model.addAttribute("page", new Page());
 			}
 			
@@ -57,6 +60,7 @@ public class PageController {
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
 			Page curpage = service.getRepo().getOne(id);
+			model.addAttribute("pageTitle",curpage.getTitle());
 			model.addAttribute("page", curpage);
 			return "page/display.html";
 		}
@@ -72,6 +76,7 @@ public class PageController {
 				String content = (String) shell.evaluate(curpage.getContent());
 			
 			}
+			model.addAttribute("pageTitle","Running " + curpage.getTitle());
 			model.addAttribute("page", curpage);
 			return "page/display.html";
 		}
