@@ -64,12 +64,14 @@ public class PageController {
 		@GetMapping("/runpage/{id}")
 		public String runpage(@PathVariable Long id, Model model) {
 			Page curpage = service.getRepo().getOne(id);
+			if(curpage!=null && curpage.getRunable()) {
 			
-			Binding binding = new Binding();		
-			GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
-			binding.setVariable("service",service);
-			String content = (String) shell.evaluate(curpage.getContent());
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				binding.setVariable("service",service);
+				String content = (String) shell.evaluate(curpage.getContent());
 			
+			}
 			model.addAttribute("page", curpage);
 			return "page/display.html";
 		}

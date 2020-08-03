@@ -11,6 +11,7 @@
 				<th>Module</th>
 				<th>Slug</th>
 				<th>Title</th>
+				<th>Runable</th>
 				<th>Published</th>
 				<th>Date Created</th>
 				<th>Last Updated</th>
@@ -22,9 +23,10 @@
 					th:text="${iter.index + 1}">2</a></td>
 				<td th:text="${portalpage.module}">module</td>
 				<td><a href='#'
-					th:href='@{/pages/display/{id}(id=${portalpage.id})}'
+					th:href='${portalpage.runable} ? @{/pages/runpage/{id}(id=${portalpage.id})} : @{/pages/display/{id}(id=${portalpage.id})}'
 					th:text="${portalpage.slug}">slug</td>
 				<td th:text="${portalpage.title}">title</td>
+				<td th:text="${portalpage.runable}">Runable</td>
 				<td>published</td>
 				<td th:text="${portalpage.createdDate}">created</td>
 				<td>updated</td>
