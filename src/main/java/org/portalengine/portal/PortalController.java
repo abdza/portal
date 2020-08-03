@@ -109,6 +109,12 @@ public class PortalController {
 		return "Got error somewhere";
 	} */
 	
+	@GetMapping("/login")
+	public String login(Model model) {
+		model.addAttribute("pageTitle","Login");
+		return "user/login";
+	}
+	
 	@GetMapping("/setup")
 	public String setupSite(Model model) {
 		User admin = userService.getRepo().findByUsername("admin");

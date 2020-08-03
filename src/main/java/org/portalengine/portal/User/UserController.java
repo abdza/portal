@@ -30,6 +30,7 @@ public class UserController {
 	
 	@GetMapping("/register")
 	public String registerPage(Model model) {
+		model.addAttribute("pageTitle","New User Registration");
 		return "user/register.html";
 	}
 	
@@ -49,6 +50,7 @@ public class UserController {
 		if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
+		model.addAttribute("pageTitle","User Listing");
 		model.addAttribute("users", service.getRepo().findAll(PageRequest.of(page, size)));
 		return "user/list.html";
 	}
@@ -57,9 +59,11 @@ public class UserController {
 	public String form(@PathVariable(required=false) Long id, Model model) {
 		if(id!=null) {
 			User user = service.getRepo().getOne(id);
+			model.addAttribute("pageTitle","Edit User - " + user.getName());
 			model.addAttribute("user", user);
 		}
 		else {
+			model.addAttribute("pageTitle","Add User");
 			model.addAttribute("user",new User());
 		}
 		return "user/form.html";
@@ -68,6 +72,7 @@ public class UserController {
 	@GetMapping("/users/display/{id}")
 	public String display(@PathVariable Long id, Model model) {
 		User curuser = service.getRepo().getOne(id);
+		model.addAttribute("pageTitle","User - " + curuser.getName());
 		model.addAttribute("user", curuser);
 		return "user/display.html";
 	}
