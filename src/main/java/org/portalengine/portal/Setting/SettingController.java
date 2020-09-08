@@ -33,6 +33,7 @@ public class SettingController {
 			if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
+			model.addAttribute("pageTitle","Setting Listing");
 			model.addAttribute("settings", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "setting/list.html";
 		}
@@ -41,6 +42,7 @@ public class SettingController {
 		public String edit(@PathVariable(required=false) String type, @PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
 				Setting cursetting = service.getRepo().getOne(id);
+				model.addAttribute("pageTitle","Edit Setting - " + cursetting.getName());
 				model.addAttribute("setting", cursetting);
 			}
 			else {
@@ -52,6 +54,7 @@ public class SettingController {
 				if(type.equals("json")) {
 					cursetting.setTextValue("[]");
 				}
+				model.addAttribute("pageTitle","Create Setting");
 				model.addAttribute("setting",cursetting);
 			}
 			return "setting/form.html";
@@ -66,6 +69,7 @@ public class SettingController {
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
 			Setting cursetting = service.getRepo().getOne(id);
+			model.addAttribute("pageTitle","Setting - " + cursetting.getName());
 			model.addAttribute("setting", cursetting);
 			return "setting/display.html";
 		}

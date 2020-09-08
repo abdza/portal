@@ -3,7 +3,7 @@
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
-        <h1>Create Page</h1>
+        <h1 th:text="${pageTitle}">Create Page</h1>
         <form method='post' th:action='@{/pages/save}' th:object="${page}">
             <input type='hidden' th:field='*{id}' />
 
@@ -20,6 +20,14 @@
                     <label class='mb-0'>Slug</label></div>
                 <div class='col-sm-9'>
                     <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{slug}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Runable</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='checkbox' th:field="*{runable}" />
                 </div>
             </div>
 
@@ -47,7 +55,7 @@
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Content</label></div>
                 <div class='col-sm-9'>
-                    <textarea class='textarea col-sm-12' th:field="*{content}">
+                    <textarea class='textarea col-12' th:field="*{content}" rows="30">
                     </textarea>
                 </div>
             </div>

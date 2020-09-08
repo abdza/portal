@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Page</h1>
-        <form method='post' th:action='@{/p{fullpath}/save(fullpath=${pnode.rootLessPath()})}' th:object="${page}">
+        <form method='post' th:action='@{/p{fullpath}/save(fullpath=${@treeService.rootLessPath(pnode)})}' th:object="${page}">
             <input type='hidden' th:field='*{id}' />
             <input type='hidden' name='objectType' value='Page'/>
 
@@ -112,7 +112,7 @@ function sendFile(file,editor) {
         beforeSend: function(xhr) {
 			xhr.setRequestHeader(header,token);
 		},
-        url: /*[[@{{prepend}/p{fullpath}/saveimage(fullpath=${pnode.rootLessPath()},prepend=${@environment.getProperty('server.servlet.context-path')})}]]*/'/dummy/api/users',
+        url: /*[[@{{prepend}/p{fullpath}/saveimage(fullpath=${@treeService.rootLessPath(pnode)},prepend=${@environment.getProperty('server.servlet.context-path')})}]]*/'/dummy/api/users',
         cache: false,
         contentType: false,
         processData: false,

@@ -67,12 +67,22 @@ public class TreeController {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
 			model.addAttribute("trees", service.getTreeRepo().findAll(PageRequest.of(page, size)));
+			model.addAttribute("pageTitle","Tree Listing");
 			return "tree/list.html";
 		}
 		
-		@GetMapping("/create")
-		public String create(Model model) {
-			model.addAttribute("tree", new Tree());
+		@GetMapping(value={"/create","/edit/{id}"})
+		public String form(Model model,@PathVariable(required=false) Long id) {
+			if(id!=null) {
+				Tree curtree = service.getTreeRepo().getOne(id);
+				model.addAttribute("pageTitle","Edit Tree - " + curtree.getName());
+				model.addAttribute("tree", curtree);	
+			}
+			else {
+				model.addAttribute("pageTitle","Create Tree");
+				model.addAttribute("tree", new Tree());	
+			}
+			
 			return "tree/form.html";
 		}
 		
@@ -83,16 +93,10 @@ public class TreeController {
 			return "redirect:/trees/display/" + String.valueOf(id);
 		}
 		
-		@GetMapping("/edit/{id}")
-		public String edit(@PathVariable Long id, Model model) {
-			Tree curtree = service.getTreeRepo().getOne(id);
-			model.addAttribute("tree", curtree);
-			return "tree/form.html";
-		}
-		
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
 			Tree curtree = service.getTreeRepo().getOne(id);
+			model.addAttribute("pageTitle","Tree - " + curtree.getName());
 			model.addAttribute("tree", curtree);
 			TreeNode curnode = service.getRoot(curtree);
 			model.addAttribute("curnode",curnode);
@@ -123,6 +127,7 @@ public class TreeController {
 		public String createNode(@PathVariable Long id, Model model) {
 			TreeNode parentnode = service.getNodeRepo().getOne(id);
 			TreeNode newnode = new TreeNode();
+			model.addAttribute("pageTitle","Create Node - " + parentnode.getTree().getName());
 			newnode.setParent(parentnode);
 			newnode.setTree(parentnode.getTree());
 			model.addAttribute("newnode",newnode);
@@ -132,6 +137,7 @@ public class TreeController {
 		@GetMapping("/nodes/{id}/edit")
 		public String editNode(@PathVariable Long id, Model model) {
 			TreeNode curnode = service.getNodeRepo().getOne(id);
+			model.addAttribute("pageTitle","Edit Node - " + curnode.getName());
 			model.addAttribute("curnode",curnode);
 			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record","TreeNode"));
 			ArrayList<String> nodeStatuses = new ArrayList<String>(Arrays.asList("Private","Published"));

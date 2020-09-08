@@ -30,6 +30,7 @@ import org.portalengine.portal.Tracker.Status.TrackerStatusRepository;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
 import org.portalengine.portal.Tree.TreeNode;
+import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,9 @@ public class TrackerService {
 	
 	@Autowired
 	private TrackerRoleRepository roleRepo;
+	
+	@Autowired
+	private TreeService treeService;
 	
 	@Autowired
 	private TrackerTransitionRepository transitionRepo;
@@ -183,10 +187,10 @@ public class TrackerService {
 				TrackerTransition transition = this.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}
 			if(postdata.get("id")!=null) {
-				return "redirect:" + pnode.portalPath() + "/t/display/" + postdata.get("id")[0].toString();
+				return "redirect:" + treeService.portalPath(pnode) + "/t/display/" + postdata.get("id")[0].toString();
 			}
 			else {			
-				return "redirect:" + pnode.portalPath();
+				return "redirect:" + treeService.portalPath(pnode);
 			}
 		}	
 		else {
@@ -446,6 +450,95 @@ public class TrackerService {
 		dataset.setNumber(page);
 		dataset.setDataRows(rows.toArray());
 		return dataset;
+	}
+	
+	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
+		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
+		ArrayList<String> submittednames = new ArrayList<String>();
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();
+		HashMap<String,Object> curobject = null;
+		if(mapdata.get("id")!=null) {
+			curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
+		}
+		mapdata.forEach((fieldname,fieldval)->{
+			System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
+			TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,fieldname);
+			if(tfield!=null) {
+				System.out.println("tfield:" + tfield.getName());
+				submittedfields.add(tfield);
+			}
+		});
+		System.out.println("before submitted");
+		submittedfields.forEach(tf->{
+			try {
+				System.out.println("processing:" + tf.getName());
+				switch(tf.getFieldType()) {
+				case "String":
+				case "Text":
+					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.VARCHAR);
+					break;
+				case "TrackerType":
+				case "TreeNode":
+				case "Integer":
+				case "User":
+					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.NUMERIC);
+					break;
+				case "Number":
+					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.NUMERIC);
+					break;
+				case "Date":
+				case "DateTime":
+					DateFormat format;
+					if(tf.getFieldType().equals("Date")) {
+						format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+					}
+					else {
+						format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+					}
+					Date date;
+	
+					date = format.parse((String) mapdata.get(tf.getName()));
+					if(date!=null) {
+						if(tf.getFieldType().equals("Date")) {
+							paramsource.addValue(tf.getName(), date, Types.DATE);
+						}
+						else {
+							paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+						}
+					}
+	
+				}
+				submittednames.add(tf.getName());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}
+		});
+		System.out.println("after added paramsource");
+		String dquery;
+		Long curid = null;
+		if(mapdata.get("id")!=null) {
+			ArrayList<String> updatenames = new ArrayList<String>();
+			submittednames.forEach(sname->{
+				updatenames.add(sname + "=:" + sname);
+			});
+			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where id=:id";
+			curid = Long.parseLong((String) mapdata.get("id"));
+			paramsource.addValue("id", curid);
+		}
+		else {
+			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
+		}
+		System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString());
+		KeyHolder keyholder = new GeneratedKeyHolder();
+		namedjdbctemplate.update(dquery,paramsource,keyholder);
+		if(mapdata.get("id")==null) {
+			curid = keyholder.getKey().longValue();
+		}
+		return 1;
 	}
 	
 	public long saveForm(Tracker tracker,User principal) {

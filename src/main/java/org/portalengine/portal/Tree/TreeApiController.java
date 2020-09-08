@@ -155,7 +155,7 @@ public class TreeApiController {
 		map.put("objectType", current.getObjectType());
 		map.put("objectId", current.getObjectId());
 		map.put("recordId", current.getRecordId());
-		map.put("rootLessPath", current.rootLessPath());
+		map.put("rootLessPath", service.rootLessPath(current));
 		map.put("slug", current.getSlug());
 		map.put("fullPath", current.getFullPath());
 		map.put("status", current.getStatus());

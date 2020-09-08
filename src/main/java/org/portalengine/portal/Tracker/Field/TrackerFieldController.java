@@ -39,26 +39,26 @@ public class TrackerFieldController {
 	@GetMapping("/{tracker_id}")
 	public String fields_list(@PathVariable Long tracker_id, Model model) {
 		Tracker tracker = service.getRepo().getOne(tracker_id);
+		model.addAttribute("pageTitle","Field Listing - " + tracker.getName());
 		model.addAttribute("tracker", tracker);
 		return "tracker/field/list.html";
 	}
 
-	@GetMapping("/{tracker_id}/create")
-	public String create_field(@PathVariable Long tracker_id, Model model) {
+	@GetMapping(value= {"/{tracker_id}/create","/{tracker_id}/edit/{field_id}"})
+	public String form(@PathVariable Long tracker_id, Model model,@PathVariable(required=false) Long field_id) {
 		Tracker tracker = service.getRepo().getOne(tracker_id);
+		if(field_id!=null) {
+			TrackerField field = service.getFieldRepo().getOne(field_id);
+			model.addAttribute("pageTitle","Edit Field - " + field.getName());
+			model.addAttribute("tracker_field", field);
+		}
+		else {
+			model.addAttribute("pageTitle","Create Field - " + tracker.getName());
+			TrackerField tf = new TrackerField();
+			tf.setOptionSource("[]");
+			model.addAttribute("tracker_field", tf);
+		}		
 		model.addAttribute("tracker", tracker);
-		TrackerField tf = new TrackerField();
-		tf.setOptionSource("[]");
-		model.addAttribute("tracker_field", tf);
-		return "tracker/field/form.html";
-	}
-
-	@GetMapping("/{tracker_id}/edit/{field_id}")
-	public String create_field(@PathVariable Long tracker_id, @PathVariable Long field_id, Model model) {
-		Tracker tracker = service.getRepo().getOne(tracker_id);
-		TrackerField field = service.getFieldRepo().getOne(field_id);
-		model.addAttribute("tracker", tracker);
-		model.addAttribute("tracker_field", field);
 		return "tracker/field/form.html";
 	}
 

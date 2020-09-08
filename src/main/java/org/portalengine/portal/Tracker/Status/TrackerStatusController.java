@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
+import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
@@ -40,23 +41,24 @@ public class TrackerStatusController {
 	public String fields_list(@PathVariable Long tracker_id, Model model) {
 		Tracker tracker = service.getRepo().getOne(tracker_id);
 		model.addAttribute("tracker", tracker);
+		model.addAttribute("pageTitle","Status Listing - " + tracker.getName());
 		return "tracker/status/list.html";
 	}
 
-	@GetMapping("/{tracker_id}/create")
-	public String create_status(@PathVariable Long tracker_id, Model model) {
+	@GetMapping(value= {"/{tracker_id}/create","/{tracker_id}/edit/{status_id}"})
+	public String form(@PathVariable Long tracker_id, Model model,@PathVariable(required=false) Long status_id) {
 		Tracker tracker = service.getRepo().getOne(tracker_id);
+		if(status_id!=null) {
+			TrackerStatus status = service.getStatusRepo().getOne(status_id);
+			model.addAttribute("pageTitle","Edit Status - " + status.getName());
+			model.addAttribute("tracker_status", status);	
+		}
+		else {
+			model.addAttribute("pageTitle","Create Status - " + tracker.getName());
+			model.addAttribute("tracker_status", new TrackerStatus());	
+		}
 		model.addAttribute("tracker", tracker);
-		model.addAttribute("tracker_status", new TrackerStatus());
-		return "tracker/status/form.html";
-	}
-
-	@GetMapping("/{tracker_id}/edit/{field_id}")
-	public String create_status(@PathVariable Long tracker_id, @PathVariable Long field_id, Model model) {
-		Tracker tracker = service.getRepo().getOne(tracker_id);
-		TrackerStatus field = service.getStatusRepo().getOne(field_id);
-		model.addAttribute("tracker", tracker);
-		model.addAttribute("tracker_status", field);
+		
 		return "tracker/status/form.html";
 	}
 

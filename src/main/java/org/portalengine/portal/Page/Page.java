@@ -34,6 +34,8 @@ public class Page extends Auditable<String> {
 	
 	private String layout;
 	
+	private Boolean runable;
+	
 	@NotNull
 	@org.hibernate.annotations.Type( type = "text" )
 	private String content;	

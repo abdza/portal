@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import javax.validation.Valid;
 
 import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Tree.Tree;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -37,14 +38,23 @@ public class UserRoleController {
 		if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
+		model.addAttribute("pageTitle","User Role Listing");
 		model.addAttribute("user_roles", service.getRoleRepo().findAll(PageRequest.of(page, size)));
 		return "user/role/list.html";
 	}
-
-	@GetMapping("/create")
-	public String create(Model model) {
-		UserRole user_role = new UserRole();
-		model.addAttribute("user_role", user_role);
+	
+	@GetMapping(value={"/create","/edit/{id}"})
+	public String form(Model model,@PathVariable(required=false) Long id) {
+		if(id!=null) {
+			UserRole user_role = service.getRoleRepo().getOne(id);
+			model.addAttribute("pageTitle","Edit Role - " + user_role.getModule() + " " + user_role.getRole());
+			model.addAttribute("user_role", user_role);	
+		}
+		else {
+			model.addAttribute("pageTitle","Create Role");
+			model.addAttribute("user_role", new UserRole());	
+		}
+		
 		return "user/role/form.html";
 	}
 	
@@ -52,14 +62,8 @@ public class UserRoleController {
 	public String display(@PathVariable Long role_id, Model model) {
 		UserRole user_role = service.getRoleRepo().getOne(role_id);
 		model.addAttribute("user_role", user_role);
+		model.addAttribute("pageTitle","Role - " + user_role.getModule() + " " + user_role.getRole());
 		return "user/role/display.html";
-	}
-
-	@GetMapping("/edit/{role_id}")
-	public String create_status(@PathVariable Long role_id, Model model) {
-		UserRole user_role = service.getRoleRepo().getOne(role_id);
-		model.addAttribute("user_role", user_role);
-		return "user/role/form.html";
 	}
 
 	@PostMapping("/delete/{role_id}")

@@ -7,11 +7,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Transient;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -51,6 +53,29 @@ public class TreeService {
 	
 	public List<String> userRoles(User user,TreeNode node) {
 		return userRoles(user,node,true);
+	}
+	
+	@Value("${rootnode:'portal'}") String rootnode;
+	
+	public String rootLessPath(TreeNode tnode) {
+		System.out.println("fullpath:" + tnode.getFullPath());
+		System.out.println("rootnode:" + rootnode);
+		String toreturn = tnode.getFullPath().replaceFirst(rootnode + "/", "/");
+		if(tnode.getFullPath().equals(rootnode)) {
+			toreturn = "";
+		}
+		System.out.println("toreturn:" + toreturn);
+		return toreturn;
+	}
+	
+	public String portalPath(TreeNode tnode) {
+		String rlp = rootLessPath(tnode);
+		if(rlp.charAt(0)=='/') {
+			return "p" + rlp;
+		}
+		else {
+			return "p/" + rlp;
+		}
 	}
 	
 	public List<String> userRoles(User user,TreeNode node,Boolean fullPath){

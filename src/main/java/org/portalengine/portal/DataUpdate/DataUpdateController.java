@@ -73,6 +73,7 @@ public class DataUpdateController {
 		if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
+		model.addAttribute("pageTitle","Data Update Listing");
 		model.addAttribute("dataupdates", service.getRepo().findAll(PageRequest.of(page, size)));
 		return "dataupdate/list.html";
 	}
@@ -81,9 +82,11 @@ public class DataUpdateController {
 	public String form(@PathVariable(required=false) Long id, Model model) {
 		if(id!=null) {
 			DataUpdate dataupdate = service.getRepo().findById(id).orElse(null);
+			model.addAttribute("pageTitle","Edit Data Update - " + dataupdate.getTracker().getName());
 			model.addAttribute("dataupdate", dataupdate);
 		}
 		else {
+			model.addAttribute("pageTitle","Create Data Update");
 			model.addAttribute("dataupdate", new DataUpdate());
 		}
 		
@@ -103,6 +106,7 @@ public class DataUpdateController {
 	@GetMapping("/display/{id}")
 	public String display(@PathVariable Long id, Model model) {
 		DataUpdate dataupdate = service.getRepo().getOne(id);
+		model.addAttribute("pageTitle","Data Update - " + dataupdate.getTracker().getName());
 		model.addAttribute("dataupdate", dataupdate);
 		return "dataupdate/display.html";
 	}
@@ -182,6 +186,7 @@ public class DataUpdateController {
 			e.printStackTrace();
 		}
 		
+		model.addAttribute("pageTitle","Set Columns - " + dataupdate.getTracker().getName());
 		model.addAttribute("columns",columns);
 		model.addAttribute("dataupdate", dataupdate);
 		return "dataupdate/setparam.html";
