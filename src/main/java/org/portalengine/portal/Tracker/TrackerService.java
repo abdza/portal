@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,7 @@ import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -84,6 +86,9 @@ public class TrackerService {
 	
 	@Autowired
 	private DataUpdateService dataUpdateService;
+	
+	@Value("${spring.datasource.url}")
+    private String dataURL;
 	
 	@Autowired
 	public TrackerService() {
@@ -373,6 +378,7 @@ public class TrackerService {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
+		System.out.println("basequery:" + basequery);
 		String filterquery = " where 1=1 ";
 		if(search!=null) {
 			/*
@@ -428,6 +434,9 @@ public class TrackerService {
 		}
 		Integer offset = page * size;
 		String pagequery = " order by id offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";
+		if(dataURL.contains("jdbc:mysql")) {
+			pagequery = " order by id limit " + offset.toString() + "," + size.toString();
+		}
 		if(!pagelimit) {
 			pagequery = "";
 		}
@@ -679,5 +688,101 @@ public class TrackerService {
 		}
 		
 		return curid;
+	}
+	
+	public void trackerUpdateDb(Tracker tracker) {
+		
+		if(tracker.getDataTable().length()>0) {
+			System.out.println("Checking existance of table:" + tracker.getDataTable());
+			System.out.println("DC:" + dataURL);
+			// Check whether data table already exists
+			String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
+					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "'";
+			SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
+			trythis.next();
+			if(trythis.getInt("result")==0) {
+				// Data table does not exists yet, so please create
+				if(dataURL.contains("jdbc:mysql")) {
+					jdbctemplate.execute("create table " + tracker.getDataTable().toUpperCase() + " (ID INT NOT NULL AUTO_INCREMENT,"
+							+ " PRIMARY KEY(ID))");
+				}
+				else {
+					jdbctemplate.execute("create table " + tracker.getDataTable().toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1),"
+						+ "CONSTRAINT PK_" + tracker.getDataTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+				}
+			}
+			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
+			trythis.next();
+			if(trythis.getInt("result")==0) {
+				// Check to see if column record_status doesn't exist yet
+				if(!tracker.getTrackerType().equals("Statement")) {
+					// Please add record_status if type is a tracker (ie not a statement)
+					jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add RECORD_STATUS varchar(256) NULL");
+				}
+			}
+			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'");
+			trythis.next();
+			if(trythis.getInt("result")==0) {
+				jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
+			}
+			System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
+			if(tracker.getTrackerType().equals("Trailed Tracker")) {
+				// Need to check whether need to create updates table
+				if(tracker.getUpdatesTable().length()>0) {
+					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
+							+ " TABLE_NAME = '" + tracker.getUpdatesTable().toUpperCase() + "'");
+					trytrails.next();
+					if(trytrails.getInt("result")==0) {
+						// If updates table does not exists please create one
+						jdbctemplate.execute("create table " + tracker.getUpdatesTable().toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
+								+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
+								+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
+								+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+					}
+					}
+			}
+			for(TrackerField field: tracker.getFields()) {
+				fieldUpdateDb(field);
+			}
+		}
+	}
+	
+	public void fieldUpdateDb(TrackerField field) {
+		String sqltype = "varchar(256)";
+		if(field.getFieldType()!=null) {
+			switch(field.getFieldType()) {
+			case "String":			 
+				break;
+			case "Text":
+				sqltype = "text";
+				break;
+			case "TrackerType":
+			case "TreeNode":
+			case "User":
+			case "Integer":
+				sqltype = "numeric(24,0)";
+				break;
+			case "Number":
+				sqltype = "decimal(24,6)";
+				break;
+			case "Date":
+				sqltype = "date";
+				break;
+			case "DateTime":
+				sqltype = "datetime";
+				break;
+			case "Checkbox":
+				sqltype = "bit";
+				break;
+			}
+		}
+		SqlRowSet trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+				+ "TABLE_NAME = '" + field.getTracker().getDataTable().toUpperCase() + "' and COLUMN_NAME = '" + field.getName().toUpperCase() + "'");
+		trythis.next();
+		if(trythis.getInt("result")==0) {
+			jdbctemplate.execute("alter table " + field.getTracker().getDataTable().toUpperCase() + " add " + field.getName().toUpperCase() + " " + sqltype + " NULL");
+		}
 	}
 }
