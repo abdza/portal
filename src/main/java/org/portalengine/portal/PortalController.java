@@ -57,7 +57,7 @@ public class PortalController {
 	@Value("${server.servlet.context-path}")
 	private String contextPath;
 	
-	@Value("${rootnode}")
+	@Value("${rootnode:'portal'}")
 	private String rootnode;
 	
 	@Autowired
@@ -153,18 +153,23 @@ public class PortalController {
 	public Object siteResponse(Model model) {
 		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
 		System.out.println("pathuri:" + pathuri);
+		
+		/* Modify pathuri if tracker variables is embedded in the url */
 		String ops = "";
 		Integer cutoff = pathuri.indexOf("/t/");
 		if(cutoff>0) {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
 		if(pathuri.equals(rootnode + "/")) {
 			pathuri = rootnode;
 		}
 		System.out.println("finalpathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -274,7 +279,8 @@ public class PortalController {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
 		if(pathuri.equals(rootnode + "/")) {
 			pathuri = rootnode;
 		}
@@ -282,7 +288,9 @@ public class PortalController {
 		// String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/create", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
 			model.addAttribute("pnode",pnode);
@@ -303,7 +311,8 @@ public class PortalController {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
 		if(pathuri.equals(rootnode + "/")) {
 			pathuri = rootnode;
 		}
@@ -311,7 +320,9 @@ public class PortalController {
 		// String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/searchResult", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -345,7 +356,8 @@ public class PortalController {
 			ops = pathuri.substring(cutoff);
 			pathuri = pathuri.substring(0,cutoff);
 		}
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
 		if(pathuri.equals(rootnode + "/")) {
 			pathuri = rootnode;
 		}
@@ -353,7 +365,9 @@ public class PortalController {
 		// String pathuri = request.getRequestURI();		
 		pathuri = pathuri.replaceAll("/create", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -380,9 +394,12 @@ public class PortalController {
 	@GetMapping("/p/**/delete")
 	public String deleteResponse(Model model) {
 		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -409,9 +426,12 @@ public class PortalController {
 	@PostMapping("/p/**/delete")
 	public String postDeleteResponse(Model model) {
 		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			System.out.println("pnode:" + pnode.getName());
@@ -440,10 +460,13 @@ public class PortalController {
 	
 	@GetMapping("/p/**/edit")
 	public String editResponse(Model model) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/edit", "");
+		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/edit", "");
 		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			model.addAttribute("pnode",pnode);
 			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
@@ -465,9 +488,12 @@ public class PortalController {
 	@ResponseBody
 	public String saveImageResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile[] file) {
 		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/saveimage", "");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/saveimage", "");
 		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());
@@ -498,9 +524,12 @@ public class PortalController {
 			curuser = (User)authentication.getPrincipal();
 		}
 		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/save", "");
+		
+		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/save", "");
 		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
+		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
+		
+		TreeNode pnode = treeService.getNodeFromPath(pathuri);
 		if(pnode!=null) {
 			System.out.println("savedata:");
 			System.out.println(postdata.toString());

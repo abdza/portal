@@ -17,6 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,6 +63,49 @@ public class TreeService {
 	}
 	
 	@Value("${rootnode:'portal'}") String rootnode;
+	
+	public TreeNode getNodeFromPath(String path) {
+		TreeNode toreturn = null;
+		Tree portaltree = treeRepo.findOneByModuleAndSlug("portal", "portal");
+		if(portaltree!=null) {
+			String[] slugs = path.split("/");
+			
+			/* Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			
+			if (!(auth instanceof AnonymousAuthenticationToken)) {
+			        // userDetails = auth.getPrincipal()
+				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				List<String> userRoles = userRoles((User)userDetails, pnode);
+				List<GrantedAuthority> updatedAuthorities = new ArrayList<>();
+				List<GrantedAuthority> currentAuthorities = new ArrayList<>(auth.getAuthorities());
+				for(final GrantedAuthority crole:currentAuthorities) {
+					if(!crole.getAuthority().contains("ROLE_NODE_")) {
+						updatedAuthorities.add(crole);
+					}
+				}
+				if(userRoles.size()>0) {			
+					for(final String crole:userRoles) {
+						updatedAuthorities.add(new SimpleGrantedAuthority(crole)); //add your role here [e.g., new SimpleGrantedAuthority("ROLE_NEW_ROLE")]
+					}					
+				}
+				Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
+				SecurityContextHolder.getContext().setAuthentication(newAuth);
+			} */
+			
+			for(int i=0; i<slugs.length; i++) {
+				if(i==0) {
+					toreturn = nodeRepo.getRoot(portaltree);
+				}
+				else {
+					TreeNode curnode = nodeRepo.findBySlugAndParent(slugs[i], toreturn);
+					if(curnode!=null) {
+						toreturn = curnode;
+					}
+				}
+			}
+		}
+		return toreturn;
+	}
 	
 	public String rootLessPath(TreeNode tnode) {
 		System.out.println("fullpath:" + tnode.getFullPath());
@@ -175,14 +225,14 @@ public class TreeService {
 	
 	public String nextSlug(String curslug, TreeNode curnode) {
 		String validslug = slugify(curslug);
-		String validfull = curnode.getFullPath() + "/" + validslug;		
+		String validfull = curnode.getFullPath() + "/" + validslug;
 		TreeNode pnode = nodeRepo.findFirstByFullPath(validfull);
 		while(pnode!=null) {
 			validslug = validslug + "c";
 			validfull = pnode.getFullPath() + "c";
 			pnode = nodeRepo.findFirstByFullPath(validfull);
-		}	
-		return validslug;	
+		}
+		return validslug;
 	}
 	
 	public TreeNode addNode(TreeNode node, String name, String position) {
