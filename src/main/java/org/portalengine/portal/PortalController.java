@@ -176,6 +176,7 @@ public class PortalController {
 			
 			if (!(auth instanceof AnonymousAuthenticationToken)) {
 			        // userDetails = auth.getPrincipal()
+				System.out.println("In authenticated auth");
 				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				List<String> userRoles = treeService.userRoles((User)userDetails, pnode);
 				List<GrantedAuthority> updatedAuthorities = new ArrayList<>();
@@ -187,6 +188,7 @@ public class PortalController {
 				}
 				if(userRoles.size()>0) {			
 					for(final String crole:userRoles) {
+						System.out.println("Adding role " + crole);
 						updatedAuthorities.add(new SimpleGrantedAuthority(crole)); //add your role here [e.g., new SimpleGrantedAuthority("ROLE_NEW_ROLE")]
 					}
 					

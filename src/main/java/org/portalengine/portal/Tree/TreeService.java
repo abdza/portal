@@ -62,7 +62,7 @@ public class TreeService {
 		return userRoles(user,node,true);
 	}
 	
-	@Value("${rootnode:'portal'}") String rootnode;
+	@Value("${rootnode:portal}") String rootnode;
 	
 	public TreeNode getNodeFromPath(String path) {
 		TreeNode toreturn = null;
@@ -108,24 +108,28 @@ public class TreeService {
 	}
 	
 	public String rootLessPath(TreeNode tnode) {
-		System.out.println("fullpath:" + tnode.getFullPath());
-		System.out.println("rootnode:" + rootnode);
 		String toreturn = tnode.getFullPath().replaceFirst(rootnode + "/", "/");
 		if(tnode.getFullPath().equals(rootnode)) {
 			toreturn = "";
 		}
-		System.out.println("toreturn:" + toreturn);
 		return toreturn;
 	}
 	
 	public String portalPath(TreeNode tnode) {
+		String toreturn = "";
 		String rlp = rootLessPath(tnode);
-		if(rlp.charAt(0)=='/') {
-			return "p" + rlp;
+		if(rlp.length()>0 && rlp.charAt(0)=='/') {
+			toreturn = "p" + rlp;
 		}
 		else {
-			return "p/" + rlp;
+			if(rlp.length()>0) {
+				toreturn = "p/" + rlp;
+			}
+			else {
+				toreturn = "p";
+			}
 		}
+		return toreturn;
 	}
 	
 	public List<String> userRoles(User user,TreeNode node,Boolean fullPath){

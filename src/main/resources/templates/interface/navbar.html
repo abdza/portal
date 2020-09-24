@@ -57,8 +57,7 @@
                        <i class="caret fa fa-angle-left d-block d-lg-none"></i>
                    </a>
                    <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                       <div th:replace="~{interface/menudept}">                           
-                       </div>
+                       
                    </div>
                </li>
 			    
@@ -70,8 +69,7 @@
                        <i class="caret fa fa-angle-left d-block d-lg-none"></i>
                    </a>
                    <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                       <div th:replace="~{interface/menusys}">                           
-                       </div>
+                       
                    </div>
                </li>
    
@@ -167,30 +165,30 @@
                            </div>
                            <div class="dropdown-divider"></div>
                        </div>
-   
-   <form class="form-row p-2" th:action='@{/login}' method='post'>
-   
-                          <div class="form-group">
-                       <div
-					class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
-					<input type="text"
-						class="form-control form-control-lg shadow-none"
-						id="username" name="username" autocomplete="off" /> <i
-						class="fa fa-user text-grey-m2 ml-n4"></i> <label
-						class="floating-label text-grey-l1 text-100 ml-n3" for="username">Username</label>
-				</div>
-				</div>
+   					<form class="form-row p-2" th:action='@{/login}' method='post'>
+                         <div class="form-group">
+	                      	<div	class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
+								<input type="text"
+									class="form-control form-control-lg shadow-none"
+									id="username" name="username" autocomplete="off" /> 
+								<i class="fa fa-user text-grey-m2 ml-n4"></i> 
+								<label class="floating-label text-grey-l1 text-100 ml-n3" for="username">
+								Username
+								</label>
+							</div>
+						</div>
                        
                        <div class="form-group">
-				<div
-					class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
-					<input type="password"
-						class="form-control form-control-lg shadow-none"
-						id="password" name="password" autocomplete="off" /> <i
-						class="fa fa-key text-grey-m2 ml-n4"></i> <label
-						class="floating-label text-grey-l1 text-100 ml-n3" for="password">Password</label>
-				</div>
-			</div>
+							<div class="d-flex align-items-center input-floating-label text-blue-m1 brc-blue-m2">
+								<input type="password"
+									class="form-control form-control-lg shadow-none"
+									id="password" name="password" autocomplete="off" /> 
+								<i class="fa fa-key text-grey-m2 ml-n4"></i> 
+								<label class="floating-label text-grey-l1 text-100 ml-n3" for="password">
+								Password
+								</label>
+							</div>
+						</div>
    
                        <div class="dropdown-divider brc-primary-l2"></div>
    
@@ -202,7 +200,7 @@
 						th:href="@{/register}"> 
 						<i class="fa fa-address-card text-info-d1 text-105 mr-1"></i>
 						Register </a>
-                        </form>
+                    </form>
                    </div>
                </li><!-- /.nav-item:last -->
    
