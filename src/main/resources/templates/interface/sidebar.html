@@ -51,6 +51,9 @@
                     <a class="nav-link" th:href="@{/users/roles}">User Roles</a>
                 </li>
                 <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
+                    <a class="nav-link" th:href="@{/menus}">Menus</a>
+                </li>
+                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
                     <a class="nav-link" th:href="@{/pages}">Pages</a>
                 </li>
                 <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">

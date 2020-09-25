@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/main}">
+
+<section layout:fragment="content" class='menu-content'>
+    <div class='content'>
+        <h1 th:text="${PageTitle}">Create menu</h1>
+        <form method='post' th:action='@{/menus/save}' th:object="${menu}">
+            <input type='hidden' th:field='*{id}' />
+
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Title</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{title}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class="offset-md-3 col-md-9">
+                    <button class='btn btn-info' name='save'>Save</button>
+                    <button class='btn btn-secondary' name='cancel'>Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+</html>

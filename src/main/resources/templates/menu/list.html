@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/main}">
+
+<section layout:fragment="content" class='menu-content'>
+	<div class='content'>
+		<h1>Menu Listing</h1>
+		<a href="#" th:href="@{/menus/create}" class="btn btn-primary">Add</a>
+		<table class="table datatable">
+			<tr>
+				<th>#</th>
+				<th>Title</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr th:each="portalmenu,iter: ${menus}">
+				<td><a href='#'
+					th:href='@{/menus/display/{id}(id=${portalmenu.id})}'
+					th:text="${iter.index + 1}">2</a></td>
+				<td th:text="${portalmenu.title}">module</td>
+				<td>
+					<a th:href='@{/menus/edit/{id}(id=${portalmenu.id})}' class='btn btn-warning'>Edit</a>
+					<form method='post'
+						th:action='@{/menus/delete/{id}(id=${portalmenu.id})}'
+						th:object="${portalmenu}">
+						<input type='submit' class='btn btn-danger'
+							th:onClick='return confirm("Confirm delete menu " + this.getAttribute("data-fname") + "?");'
+							th:attr="data-fname=${portalmenu.title}" value='Delete' />
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<nav th:replace="interface/pagination::navpagination(items=${menus},url='/menus')"></nav>
+
+</section>
+</html>
