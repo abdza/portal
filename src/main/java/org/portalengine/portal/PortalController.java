@@ -115,6 +115,12 @@ public class PortalController {
 		return "user/login";
 	}
 	
+	@GetMapping("/search")
+	public String search(Model model) {
+		model.addAttribute("pageTitle","Search");
+		return "page/search";
+	}
+	
 	@GetMapping("/setup")
 	public String setupSite(Model model) {
 		User admin = userService.getRepo().findByUsername("admin");

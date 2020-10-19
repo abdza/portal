@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/main}">
+
+<section layout:fragment="content" class='page-content'>
+	<div class='content'>
+		<h1>Modules Listing</h1>
+		<a href="#" th:href="@{/modules/update}" class="btn btn-primary">Update</a>
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Module</th>
+				<th>&nbsp;</th>
+			</tr>
+			<tr th:each="portalpage,iter: ${modules}">
+				<td><a href='#'
+					th:href='@{/modules/edit/{id}(id=${portalpage.id})}'
+					th:text="${iter.index + 1}">2</a></td>
+				<td th:text="${portalpage.name}">module</td>				
+				<td>
+					<form method='post'
+						th:action='@{/modules/export/{id}(id=${portalpage.id})}'
+						th:object="${portalpage}">
+						<input type='submit' class='button danger'
+							th:onClick='return confirm("Confirm export module " + this.getAttribute("data-fname") + "?");'
+							th:attr="data-fname=${portalpage.name}" value='Export' />
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<nav th:replace="interface/pagination::navpagination(items=${modules},url='/modules')"></nav>
+
+</section>
+</html>

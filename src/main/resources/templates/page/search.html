@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/main}">
+
+<th:block layout:fragment="head-meta">
+<meta name="_csrf" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</th:block>
+
+<section layout:fragment="content" class='page-content'>
+<h1>Portal Search</h1>
+
+</section>
+
+</html>
