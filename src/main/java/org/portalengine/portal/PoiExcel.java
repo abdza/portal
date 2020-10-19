@@ -434,7 +434,7 @@ public class PoiExcel {
 									sqlfields += " , ";
 									paramsqlfields += " , ";
 									updatefields += " , ";
-								}
+								}								
 								sqlfields += field.getName();
 								paramsqlfields += ":" + field.getName();
 								updatefields += field.getName() + "=:" + field.getName();

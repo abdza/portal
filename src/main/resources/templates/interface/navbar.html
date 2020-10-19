@@ -57,7 +57,8 @@
                        <i class="caret fa fa-angle-left d-block d-lg-none"></i>
                    </a>
                    <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                       
+                       <div th:replace="${@pageService.renderPage('menu_department')}">
+                       </div>
                    </div>
                </li>
 			    
@@ -69,7 +70,8 @@
                        <i class="caret fa fa-angle-left d-block d-lg-none"></i>
                    </a>
                    <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                       
+                       <div th:replace="${@pageService.renderPage('menu_system')}">
+                       </div>
                    </div>
                </li>
    
