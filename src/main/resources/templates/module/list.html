@@ -11,18 +11,18 @@
 				<th>Module</th>
 				<th>&nbsp;</th>
 			</tr>
-			<tr th:each="portalpage,iter: ${modules}">
+			<tr th:each="module,iter: ${modules}">
 				<td><a href='#'
-					th:href='@{/modules/edit/{id}(id=${portalpage.id})}'
+					th:href='@{/modules/edit/{id}(id=${module.id})}'
 					th:text="${iter.index + 1}">2</a></td>
-				<td th:text="${portalpage.name}">module</td>				
+				<td th:text="${module.name}">module</td>				
 				<td>
 					<form method='post'
-						th:action='@{/modules/export/{id}(id=${portalpage.id})}'
-						th:object="${portalpage}">
+						th:action='@{/modules/export/{id}(id=${module.id})}'
+						th:object="${module}">
 						<input type='submit' class='button danger'
 							th:onClick='return confirm("Confirm export module " + this.getAttribute("data-fname") + "?");'
-							th:attr="data-fname=${portalpage.name}" value='Export' />
+							th:attr="data-fname=${module.name}" value='Export' />
 					</form>
 				</td>
 			</tr>

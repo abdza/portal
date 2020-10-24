@@ -1,5 +1,7 @@
 package org.portalengine.portal.Module;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -10,6 +12,8 @@ import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,13 +35,13 @@ public class ModuleController {
 		private TrackerService trackerService;
 		
 		@Autowired
-		private TreeService treeService;
-		
-		@Autowired
-		private UserService userService;
+		private TreeService treeService;		
 		
 		@Autowired
 		private FileLinkService fileService;
+
+		@Autowired
+		private JdbcTemplate jdbctemplate;
 		
 		@Autowired
 		public ModuleController() {
@@ -54,8 +58,15 @@ public class ModuleController {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
 			model.addAttribute("pageTitle","Module Listing");
-			model.addAttribute("pages", service.getRepo().findAll(PageRequest.of(page, size)));
+			model.addAttribute("modules", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "module/list.html";
+		}
+		
+		@GetMapping("/update")
+		public String update(Model model) {
+			System.out.println("Updating modules list");
+			service.updatelisting();
+			return "redirect:/modules";
 		}
 		
 		@PostMapping("/export/{id}")
