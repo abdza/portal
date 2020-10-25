@@ -24,6 +24,13 @@
 							th:onClick='return confirm("Confirm export module " + this.getAttribute("data-fname") + "?");'
 							th:attr="data-fname=${module.name}" value='Export' />
 					</form>
+					<form method='post'
+						th:action='@{/modules/import/{id}(id=${module.id})}'
+						th:object="${module}">
+						<input type='submit' class='button danger'
+							th:onClick='return confirm("Confirm import module " + this.getAttribute("data-fname") + "?");'
+							th:attr="data-fname=${module.name}" value='Import' />
+					</form>
 				</td>
 			</tr>
 		</table>

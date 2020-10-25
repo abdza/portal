@@ -12,4 +12,6 @@ public interface TrackerRepository extends JpaRepository<Tracker, Long> {
 	
 	@Query("from Tracker pg where pg.name like :#{#search} or pg.dataTable like :#{#search} or pg.slug like :#{#search}")
 	List<Tracker> findAllByQ(String search);
+	
+	List<Tracker> findAllByModule(String module);
 }

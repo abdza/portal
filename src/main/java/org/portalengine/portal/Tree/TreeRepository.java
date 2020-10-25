@@ -1,5 +1,7 @@
 package org.portalengine.portal.Tree;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +15,6 @@ public interface TreeRepository extends JpaRepository<Tree, Long> {
 	Tree findByName(String name);
 	
 	Tree findOneByModuleAndSlug(String module,String slug);
+	
+	List<Tree> findAllByModule(String module);
 }

@@ -13,4 +13,6 @@ public interface FileLinkRepository extends JpaRepository<FileLink, Long> {
 
 	@Query("from FileLink pg where pg.slug like :#{#search} or pg.name like :#{#search}")
 	List<FileLink> findAllByQ(String search);
+	
+	List<FileLink> findAllByModule(String module);
 }

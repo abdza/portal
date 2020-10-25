@@ -12,6 +12,7 @@ import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Controller;
@@ -30,18 +31,6 @@ public class ModuleController {
 	
 		@Autowired
 		private ModuleService service;
-		
-		@Autowired
-		private TrackerService trackerService;
-		
-		@Autowired
-		private TreeService treeService;		
-		
-		@Autowired
-		private FileLinkService fileService;
-
-		@Autowired
-		private JdbcTemplate jdbctemplate;
 		
 		@Autowired
 		public ModuleController() {
@@ -70,7 +59,16 @@ public class ModuleController {
 		}
 		
 		@PostMapping("/export/{id}")
-		public String export(@PathVariable Long id, Model model) {			
+		public String export(@PathVariable Long id, Model model) {
+			Module module = service.getRepo().getOne(id);
+			service.exportModule(module.getName());
+			return "redirect:/modules";
+		}
+		
+		@PostMapping("/import/{id}")
+		public String importModule(@PathVariable Long id, Model model) {
+			Module module = service.getRepo().getOne(id);
+			service.importModule(module.getName());
 			return "redirect:/modules";
 		}
 }
