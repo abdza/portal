@@ -21,6 +21,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
@@ -31,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @Table(name = "portal_user")
 @NoArgsConstructor(access=AccessLevel.PACKAGE, force=true)
+@JsonPropertyOrder({ "username", "staffid", "name", "email" })
 public class User extends Auditable<String> implements UserDetails {
 	
 	/**
@@ -46,8 +50,13 @@ public class User extends Auditable<String> implements UserDetails {
 	private String staffid;
 	private String name;
 	private String email;
+	
+	@JsonIgnore
 	private String password;
+	
+	@JsonIgnore
 	private Boolean isAdmin;
+	
 	private Date dateRegister;
 	
 	public User(String username, String staffid, String name, String email, String password, Boolean isAdmin) {
@@ -59,6 +68,7 @@ public class User extends Auditable<String> implements UserDetails {
 		this.isAdmin = isAdmin;
 	}
 	
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		System.out.println("In get authorities");
@@ -69,27 +79,35 @@ public class User extends Auditable<String> implements UserDetails {
 		return authorities;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;
 	}
 	
+	@JsonIgnore
 	@PrePersist
 	void dateRegister() {
 		this.dateRegister = new Date();

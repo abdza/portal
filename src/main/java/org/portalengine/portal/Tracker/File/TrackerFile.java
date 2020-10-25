@@ -12,6 +12,9 @@ import javax.persistence.Table;
 import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Tracker;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Data
@@ -30,6 +33,7 @@ public class TrackerFile extends Auditable<String> {
 	
 	private String type;
 	
+	@JsonIgnore
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "tracker_id" )
 	private Tracker tracker; 

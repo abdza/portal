@@ -35,9 +35,9 @@ public class TreeNode extends Auditable<String> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
+	@JsonIgnore
 	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "tree_id" )
-	@JsonBackReference
+	@JoinColumn( name = "tree_id" )	
 	private Tree tree; 
 	
 	@NotNull
@@ -60,19 +60,17 @@ public class TreeNode extends Auditable<String> {
 	@OneToMany(
 			mappedBy = "node",
 			orphanRemoval = true)
-	private List<TreeUser> users = new ArrayList<>();
+	private List<TreeUser> users = new ArrayList<>();	
 	
 	@OneToMany(
 			mappedBy = "parent",
 			orphanRemoval = true)
 	@OrderBy("lft ASC")
-	@JsonManagedReference
-	@JsonBackReference
-	private List<TreeNode> children = new ArrayList<>();
+	private List<TreeNode> children = new ArrayList<>();	
 	
-	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "parent_id" )
 	@JsonIgnore
+	@ManyToOne( fetch = FetchType.LAZY )
+	@JoinColumn( name = "parent_id" )	
 	private TreeNode parent;
 	
 	@NotNull

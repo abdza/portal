@@ -161,7 +161,7 @@ public class ModuleService {
 			e.printStackTrace();
 		}
 			
-		/* List<Tree> trees = null;
+		List<Tree> trees = null;
 		try {
 			trees = objectMapper.readValue(new File(mod_path + "trees.json"), new TypeReference<List<Tree>>() {});
 		} catch (JsonMappingException e1) {
@@ -173,7 +173,7 @@ public class ModuleService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	*/	
+		}
 	}
 	
 	public void exportModule(String module) {
@@ -216,7 +216,7 @@ public class ModuleService {
 		
 		List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "trackers.json"), files);
+			objectMapper.writeValue(new File(mod_path + "trackers.json"), trackers);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -230,7 +230,7 @@ public class ModuleService {
 		
 		List<Setting> settings = settingService.getRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "settings.json"), files);
+			objectMapper.writeValue(new File(mod_path + "settings.json"), settings);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,7 +244,7 @@ public class ModuleService {
 		
 		List<Tree> trees = treeService.getTreeRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "trees.json"), files);
+			objectMapper.writeValue(new File(mod_path + "trees.json"), trees);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

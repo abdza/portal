@@ -14,6 +14,8 @@ import org.portalengine.portal.Auditable;
 import org.portalengine.portal.User.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.Data;
 
@@ -26,9 +28,9 @@ public class TreeUser extends Auditable<String> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
+	@JsonIgnore
 	@ManyToOne( fetch = FetchType.EAGER )
 	@JoinColumn( name = "node_id" )
-	@JsonIgnore
 	private TreeNode node;
 	
 	@ManyToOne( fetch = FetchType.EAGER )

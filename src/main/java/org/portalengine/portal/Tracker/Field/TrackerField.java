@@ -26,6 +26,9 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Data
@@ -49,6 +52,7 @@ public class TrackerField extends Auditable<String> {
 	@org.hibernate.annotations.Type( type = "text" )
 	private String optionSource;
 	
+	@JsonIgnore
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "tracker_id" )
 	private Tracker tracker; 

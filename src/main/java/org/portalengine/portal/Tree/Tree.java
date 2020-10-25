@@ -46,7 +46,6 @@ public class Tree extends Auditable<String> {
 	@OneToMany(
 			mappedBy = "tree",
 			orphanRemoval = true)
-	@JsonManagedReference
 	private List<TreeNode> nodes = new ArrayList<>();
 	
 }

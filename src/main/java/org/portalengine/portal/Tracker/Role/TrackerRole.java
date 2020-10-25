@@ -14,6 +14,9 @@ import javax.validation.constraints.Size;
 import org.portalengine.portal.Auditable;
 import org.portalengine.portal.Tracker.Tracker;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.Data;
 
 @Data
@@ -25,6 +28,7 @@ public class TrackerRole extends Auditable<String> {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
+	@JsonIgnore
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "tracker_id" )
 	private Tracker tracker;
