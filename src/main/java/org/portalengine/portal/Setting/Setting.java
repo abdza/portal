@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import org.portalengine.portal.Auditable;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -35,6 +37,7 @@ public class Setting extends Auditable<String> {
 	
 	private Long numberValue;
 	
+	@JsonIgnore
 	public String getValue() {
 		if(this.type.equals("date")) {
 			return dateValue.toString();

@@ -14,6 +14,8 @@ public interface TreeNodeRepository extends JpaRepository<TreeNode, Long> {
 	
 	TreeNode findFirstByFullPath(String fullPath);
 	
+	TreeNode findFirstByFullPathAndTree(String fullPath, Tree tree);
+	
 	TreeNode findBySlugAndParent(String slug,TreeNode parent);
 	
 	@Query("from TreeNode tn where tn.tree.id=:#{#node.tree.id} and tn.lft<=:#{#node.lft} and tn.rgt>=:#{#node.rgt} order by tn.lft")
