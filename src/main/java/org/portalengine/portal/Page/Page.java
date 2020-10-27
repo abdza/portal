@@ -34,6 +34,8 @@ public class Page extends Auditable<String> {
 	
 	private String layout;
 	
+	private String page_type;
+	
 	private Boolean runable;
 	
 	@NotNull

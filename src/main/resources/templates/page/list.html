@@ -23,7 +23,7 @@
 					th:text="${iter.index + 1}">2</a></td>
 				<td th:text="${portalpage.module}">module</td>
 				<td><a href='#'
-					th:href='${portalpage.runable} ? @{/run/{module}/{slug}(module=${portalpage.module},slug=${portalpage.slug})} : @{/view/{module}/{slug}(module=${portalpage.module},slug=${portalpage.slug})}'
+					th:href='@{/view/{module}/{slug}(module=${portalpage.module},slug=${portalpage.slug})}'
 					th:text="${portalpage.slug}">slug</td>
 				<td th:text="${portalpage.title}">title</td>
 				<td th:text="${portalpage.runable}">Runable</td>

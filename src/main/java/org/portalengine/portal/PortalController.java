@@ -125,50 +125,83 @@ public class PortalController {
 			}
 		}
 		return "page/setup.html";
-	}	
+	}
+	
+	@GetMapping("/json/{module}/{slug}")
+	@ResponseBody
+	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model) {				
+		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		if(curpage!=null) {
+			if(curpage.getRunable()) {				
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				Object content = null;
+				try {
+					content = shell.evaluate(curpage.getContent());
+					System.out.println("Content:" + content);
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return content;				
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
 	
 	@GetMapping("/view/{module}/{slug}")
 	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
-			model.addAttribute("pageTitle",curpage.getTitle());
-			model.addAttribute("page", curpage);
-			return "page/display.html";
+			if(curpage.getRunable()) {
+				if(curpage.getPage_type().equals("JSON")) {
+					return "redirect:/json/" + module + "/" + slug;
+				}
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				String content = null;
+				try {
+					content = (String) shell.evaluate(curpage.getContent());					
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				if(curpage.getPage_type().equals("Template")) {
+					model.addAttribute("pageTitle","Running " + curpage.getTitle());
+					model.addAttribute("page", curpage);
+					return "page/display.html";	
+				}				
+				else {
+					// if wish to redirect then page should return a string beginning with "redirect:/" and target
+					return content;
+				}
+			}
+			else {
+				model.addAttribute("pageTitle",curpage.getTitle());
+				model.addAttribute("page", curpage);
+				return "page/display.html";
+			}
 		}
 		else {
 			return "error/404";
 		}
-	}
-	
-	@GetMapping("/run/{module}/{slug}")
-	public String runPage(@PathVariable String module, @PathVariable String slug, Model model) {
-		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
-		
-		if(curpage!=null && curpage.getRunable()) {
-			
-			Binding binding = new Binding();		
-			GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
-			binding.setVariable("pageService",pageService);
-			binding.setVariable("trackerService",trackerService);
-			binding.setVariable("treeService",treeService);
-			binding.setVariable("userService",userService);
-			binding.setVariable("fileService",fileService);
-			try {
-				String content = (String) shell.evaluate(curpage.getContent());
-			}
-			catch(Exception e) {
-				System.out.println("Error in page:" + e.toString());
-			}
-		
-			model.addAttribute("pageTitle","Running " + curpage.getTitle());
-			model.addAttribute("page", curpage);
-			return "page/display.html";
-		}
-		else {
-			return "error/404";
-		}
-	}
+	}	
 	
 	@GetMapping("/download/{module}/{slug}")
 	@ResponseBody
