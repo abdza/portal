@@ -21,7 +21,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
 @Controller
-@RequestMapping("/pages")
+@RequestMapping("/admin/pages")
 public class PageController {
 	
 		@Autowired
@@ -109,12 +109,12 @@ public class PageController {
 		@PostMapping("/save")
 		public String save(@Valid Page page,Model model) {
 			service.getRepo().save(page);
-			return "redirect:/pages/edit/" + page.getId().toString();
+			return "redirect:/admin/pages/edit/" + page.getId().toString();
 		}
 		
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
 			service.getRepo().deleteById(id);
-			return "redirect:/pages";
+			return "redirect:/admin/pages";
 		}
 }

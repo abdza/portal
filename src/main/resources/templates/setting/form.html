@@ -8,7 +8,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Setting</h1>
-        <form method='post' th:action='@{/settings/save}' th:object="${setting}" id='settingsForm'>
+        <form method='post' th:action='@{/admin/settings/save}' th:object="${setting}" id='settingsForm'>
             <input type='hidden' th:field='*{id}' />
             <input type='hidden' th:field='*{type}' />
             <div class='form-group row'>

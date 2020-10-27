@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Excel Type</h1>
-        <form method='post' th:action='@{/trackers/{tracker_id}/savetemplate(tracker_id=${tracker.id})}'>
+        <form method='post' th:action='@{/admin/trackers/{tracker_id}/savetemplate(tracker_id=${tracker.id})}'>
             <input type='hidden' name='id' th:value='${tracker.id}' />
 
             <table class='table'>

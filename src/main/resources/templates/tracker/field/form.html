@@ -8,7 +8,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Field Tracker</h1>
-        <form method='post' id="fieldForm" th:action='@{/trackers/fields/{tracker_id}/save(tracker_id=${tracker.id})}'
+        <form method='post' id="fieldForm" th:action='@{/admin/trackers/fields/{tracker_id}/save(tracker_id=${tracker.id})}'
             th:object="${tracker_field}">
             <input type='hidden' name='id' th:value='${tracker_field.id}' />
             <input type='hidden' name='tracker_id' th:value='${tracker.id}' />

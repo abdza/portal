@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/trackers/transitions")
+@RequestMapping("/admin/trackers/transitions")
 public class TrackerTransitionController {
 
 	@Autowired
@@ -71,7 +71,7 @@ public class TrackerTransitionController {
 			tracker.remove(field);
 			service.getTransitionRepo().deleteById(transition_id);
 		}
-		return "redirect:/trackers/transitions/" + tracker_id.toString();
+		return "redirect:/admin/trackers/transitions/" + tracker_id.toString();
 	}
 
 	@PostMapping("/{tracker_id}/save")
@@ -81,6 +81,6 @@ public class TrackerTransitionController {
 		tracker.add(tracker_transition);
 
 		service.getTransitionRepo().save(tracker_transition);
-		return "redirect:/trackers/transitions/" + tracker_id.toString();
+		return "redirect:/admin/trackers/transitions/" + tracker_id.toString();
 	}
 }

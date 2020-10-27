@@ -8,8 +8,6 @@
 
 <section layout:fragment="content" class='page-content'>
 <h1>Portal Setup Page</h1>
-<p th:if="${portaltree}">Portal Tree Available</p>
-<p th:unless="${portaltree}">Portal Tree Not Available</p>
 <div th:if="${admin}">
 <p>User admin found</p>
 <p th:if="${admin.isAdmin}">User admin is an admin</p>

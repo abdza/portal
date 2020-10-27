@@ -12,10 +12,10 @@
 	<div class='row m-1'>
 		<a href="#" th:href="@{/{module}/{slug}/list(module=${tracker.module},slug=${tracker.slug})}"
 			class="btn btn-primary mr-1">View</a>
-		<a href="#" th:href="@{/trackers/edit/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Edit</a>
-		<a href="#" th:href="@{/trackers/updatedb/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Update DB</a>
-		<a href="#" th:href="@{/trackers/fixstatus/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Fix Status</a>
-		<form method='post' th:action='@{/trackers/delete/{id}(id=${tracker.id})}' th:object="${tracker}"
+		<a href="#" th:href="@{/admin/trackers/edit/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Edit</a>
+		<a href="#" th:href="@{/admin/trackers/updatedb/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Update DB</a>
+		<a href="#" th:href="@{/admin/trackers/fixstatus/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Fix Status</a>
+		<form method='post' th:action='@{/admin/trackers/delete/{id}(id=${tracker.id})}' th:object="${tracker}"
 			class="form-inline">
 			<input type='submit' class="btn btn-warning"
 				th:onClick='return confirm("Confirm delete tracker " + this.getAttribute("data-fname") + "?");'

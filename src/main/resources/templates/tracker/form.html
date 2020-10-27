@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create Tracker</h1>
-        <form method='post' th:action='@{/trackers/save}' th:object="${tracker}" class="tagiform">
+        <form method='post' th:action='@{/admin/trackers/save}' th:object="${tracker}" class="tagiform">
             <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>

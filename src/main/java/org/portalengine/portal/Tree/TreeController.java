@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Controller
-@RequestMapping("/trees")
+@RequestMapping("/admin/trees")
 public class TreeController {
 	
 		@Autowired
@@ -90,7 +90,7 @@ public class TreeController {
 		public String fixtree(@PathVariable Long id, Model model) {
 			Tree curtree = service.getTreeRepo().getOne(id);
 			service.fixTree(curtree);
-			return "redirect:/trees/display/" + String.valueOf(id);
+			return "redirect:/admin/trees/display/" + String.valueOf(id);
 		}
 		
 		@GetMapping("/display/{id}")
@@ -106,13 +106,13 @@ public class TreeController {
 		@PostMapping("/save")
 		public String save(@Valid Tree tree,Model model) {
 			service.saveTree(tree);
-			return "redirect:/trees";
+			return "redirect:/admin/trees";
 		}
 		
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
 			service.getTreeRepo().deleteById(id);
-			return "redirect:/trees";
+			return "redirect:/admin/trees";
 		}
 		
 		@PostMapping("/nodes/save")
@@ -120,7 +120,7 @@ public class TreeController {
 			Map<String, String[]> postdata = request.getParameterMap();
 			TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
 			service.addNode(parentnode, postdata.get("name")[0], "last");
-			return "redirect:/trees/display/" + parentnode.getTree().getId().toString();
+			return "redirect:/admin/trees/display/" + parentnode.getTree().getId().toString();
 		}
 		
 		@GetMapping("/nodes/{id}/create")
@@ -187,7 +187,7 @@ public class TreeController {
 			}
 			curnode.setStatus(postdata.get("status"));
 			service.getNodeRepo().save(curnode);
-			return "redirect:/trees/display/" + curnode.getTree().getId().toString();
+			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString();
 		}
 		
 		@PostMapping("/objectSearch")

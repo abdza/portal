@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/trackers")
+@RequestMapping("/admin/trackers")
 public class TrackerController {
 	
 		@Autowired
@@ -87,21 +87,21 @@ public class TrackerController {
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
 			service.deleteById(id);
-			return "redirect:/trackers";
+			return "redirect:/admin/trackers";
 		}
 		
 		@GetMapping("/updatedb/{id}")
 		public String updateDb(@PathVariable Long id, Model model) {
 			Tracker tracker = service.getRepo().getOne(id);
 			service.trackerUpdateDb(tracker);
-			return "redirect:/trackers/display/" + id.toString();
+			return "redirect:/admin/trackers/display/" + id.toString();
 		}
 		
 		@GetMapping("/fixstatus/{id}")
 		public String fixstatus(@PathVariable Long id, Model model) {
 			Tracker tracker = service.getRepo().getOne(id);
 			service.FixStatus(tracker);
-			return "redirect:/trackers/display/" + id.toString();
+			return "redirect:/admin/trackers/display/" + id.toString();
 		}
 		
 		@GetMapping("/display/{id}")
@@ -140,7 +140,7 @@ public class TrackerController {
 					service.getFieldRepo().save(nfield);
 				}
 			}
-			return "redirect:/trackers/fields/" + id.toString();
+			return "redirect:/admin/trackers/fields/" + id.toString();
 		}
 		
 		@PostMapping("/{id}/exceltemplate")
@@ -175,7 +175,7 @@ public class TrackerController {
 		@PostMapping("/save")
 		public String save(@Valid Tracker tracker,Model model) {
 			service.getRepo().save(tracker);
-			return "redirect:/trackers/display/" + tracker.getId().toString();
+			return "redirect:/admin/trackers/display/" + tracker.getId().toString();
 		}
 		
 }

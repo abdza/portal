@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/trackers/status")
+@RequestMapping("/admin/trackers/status")
 public class TrackerStatusController {
 
 	@Autowired
@@ -70,7 +70,7 @@ public class TrackerStatusController {
 			tracker.remove(field);
 			service.getStatusRepo().deleteById(field_id);
 		}
-		return "redirect:/trackers/status/" + tracker_id.toString();
+		return "redirect:/admin/trackers/status/" + tracker_id.toString();
 	}
 
 	@PostMapping("/{tracker_id}/save")
@@ -80,6 +80,6 @@ public class TrackerStatusController {
 		tracker.add(tracker_status);
 
 		service.getStatusRepo().save(tracker_status);
-		return "redirect:/trackers/status/" + tracker_id.toString();
+		return "redirect:/admin/trackers/status/" + tracker_id.toString();
 	}
 }

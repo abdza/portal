@@ -29,7 +29,7 @@
 
     <div class='content'>
         <h1>Edit Node</h1>
-        <form method='post' th:action='@{/trees/nodes/{curnodeid}/update(curnodeid=${curnode.id})}' th:object="${curnode}">
+        <form method='post' th:action='@{/admin/trees/nodes/{curnodeid}/update(curnodeid=${curnode.id})}' th:object="${curnode}">
             <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>

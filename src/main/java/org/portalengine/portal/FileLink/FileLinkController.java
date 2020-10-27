@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/files")
+@RequestMapping("/admin/files")
 public class FileLinkController {
 	
 		@Autowired
@@ -75,12 +75,12 @@ public class FileLinkController {
 				filelink = service.SaveFile(file, filelink);
 			}
 			service.getRepo().save(filelink);
-			return "redirect:/files";
+			return "redirect:/admin/files";
 		}
 		
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
 			service.deleteById(id);
-			return "redirect:/files";
+			return "redirect:/admin/files";
 		}
 }

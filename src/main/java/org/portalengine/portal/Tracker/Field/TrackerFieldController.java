@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/trackers/fields")
+@RequestMapping("/admin/trackers/fields")
 public class TrackerFieldController {
 
 	@Autowired
@@ -70,7 +70,7 @@ public class TrackerFieldController {
 			tracker.remove(field);
 			service.getFieldRepo().deleteById(field_id);
 		}
-		return "redirect:/trackers/fields/" + tracker_id.toString();
+		return "redirect:/admin/trackers/fields/" + tracker_id.toString();
 	}
 
 	@PostMapping("/{tracker_id}/save")
@@ -80,6 +80,6 @@ public class TrackerFieldController {
 		tracker.add(tracker_field);
 
 		service.getFieldRepo().save(tracker_field);
-		return "redirect:/trackers/fields/" + tracker_id.toString();
+		return "redirect:/admin/trackers/fields/" + tracker_id.toString();
 	}
 }

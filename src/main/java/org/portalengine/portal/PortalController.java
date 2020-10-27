@@ -85,34 +85,16 @@ public class PortalController {
 	public PortalController() {
 	}
 	
-	/* @GetMapping("/p/{**}/t/display/{id}")
-	public Object trackerResponse(Model model,@PathVariable Long id) {
-		//Long id=(long) 1768;
-		String pathuri = request.getRequestURI().substring(0, request.getRequestURI().indexOf("/t/display"));
-		model.addAttribute("pathuri",pathuri);
-		System.out.println("pathuri:" + pathuri);
-		pathuri = pathuri.replaceFirst("/p/", "portal/");
-		if(pathuri.equals("portal/")) {
-			pathuri = "portal";
-		}
-		
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri);
-		if(pnode!=null) {
-			Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
-			if(curtracker==null) {
-				System.out.println("Tracker not found");
-			}
-			else {
-				return trackerService.displayData(model, curtracker,id);
-			}
-		}
-		return "Got error somewhere";
-	} */
-	
 	@GetMapping("/login")
 	public String login(Model model) {
 		model.addAttribute("pageTitle","Login");
 		return "user/login";
+	}
+	
+	@GetMapping("/")
+	public String home(Model model) {
+		model.addAttribute("pageTitle","Home");
+		return "page/home";
 	}
 	
 	@GetMapping("/search")
@@ -125,8 +107,6 @@ public class PortalController {
 	public String setupSite(Model model) {
 		User admin = userService.getRepo().findByUsername("admin");
 		model.addAttribute("admin",admin);
-		Tree portaltree = treeService.getTreeRepo().findOneByModuleAndSlug("portal", "portal");
-		model.addAttribute("portaltree",portaltree);
 		return "page/setup.html";
 	}
 	
@@ -144,504 +124,69 @@ public class PortalController {
 				userService.getRepo().save(admin);
 			}
 		}
-		Tree portaltree = treeService.getTreeRepo().findOneByModuleAndSlug("portal", "portal");
-		if(portaltree==null) {
-			portaltree = new Tree();
-			portaltree.setModule("portal");
-			portaltree.setSlug("portal");
-			portaltree.setName(rootnode);
-			treeService.saveTree(portaltree);
-		}
 		return "page/setup.html";
-	}
+	}	
 	
-	@GetMapping("/p/**")
-	public Object siteResponse(Model model) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
-		System.out.println("pathuri:" + pathuri);
-		
-		/* Modify pathuri if tracker variables is embedded in the url */
-		String ops = "";
-		Integer cutoff = pathuri.indexOf("/t/");
-		if(cutoff>0) {
-			ops = pathuri.substring(cutoff);
-			pathuri = pathuri.substring(0,cutoff);
-		}
-		
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
-		if(pathuri.equals(rootnode + "/")) {
-			pathuri = rootnode;
-		}
-		System.out.println("finalpathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			
-			if (!(auth instanceof AnonymousAuthenticationToken)) {
-			        // userDetails = auth.getPrincipal()
-				System.out.println("In authenticated auth");
-				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				List<String> userRoles = treeService.userRoles((User)userDetails, pnode);
-				List<GrantedAuthority> updatedAuthorities = new ArrayList<>();
-				List<GrantedAuthority> currentAuthorities = new ArrayList<>(auth.getAuthorities());
-				for(final GrantedAuthority crole:currentAuthorities) {
-					if(!crole.getAuthority().contains("ROLE_NODE_")) {
-						updatedAuthorities.add(crole);
-					}
-				}
-				if(userRoles.size()>0) {			
-					for(final String crole:userRoles) {
-						System.out.println("Adding role " + crole);
-						updatedAuthorities.add(new SimpleGrantedAuthority(crole)); //add your role here [e.g., new SimpleGrantedAuthority("ROLE_NEW_ROLE")]
-					}
-					
-				}
-				Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
-				SecurityContextHolder.getContext().setAuthentication(newAuth);
-			}
-			
-			model.addAttribute("pnode",pnode);
-			model.addAttribute("breadcrumb",treeService.getPath(pnode));
-			System.out.println("pnode:" + pnode.getName() + " fullpath:" + pnode.getFullPath());
-			if(pnode.getObjectType()!=null) {
-				System.out.println("object is not null -----" + String.valueOf(pnode.getObjectType()) + "------");
-				if(pnode.getObjectType().equals("Page")) {
-					Page curpage = pageService.getRepo().getOne(pnode.getObjectId());
-					if(curpage==null) {
-						System.out.println("Page not found");
-					}
-					else {
-						model.addAttribute("page",curpage);
-						model.addAttribute("layout","layout/special");
-						return "page/display.html";
-					}
-				}
-				else if(pnode.getObjectType().equals("File")) {
-					FileLink curfile = fileService.getRepo().getOne(pnode.getObjectId());
-					if(curfile==null) {
-						System.out.println("File not found");
-					}
-					else {
-						Resource resfile = fileService.getResource(curfile);
-						return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-								"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
-					}
-				}
-				else if(pnode.getObjectType().equals("") || pnode.getObjectType().equals("Folder")) {
-					return "tree/node/listing.html";
-				}
-				else if(pnode.getObjectType().equals("Tracker")) {
-					Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
-					System.out.println("tracker:" + pnode.getObjectId().toString());
-					if(curtracker==null) {
-						System.out.println("Tracker not found");
-					}
-					else {
-						Long id = (long) -1;
-						String operation = "list";
-						if(cutoff>0) {
-							// System.out.println("ops:" + ops);
-							String[] tokens = ops.split("/");
-							// System.out.println("tokens:" + tokens[0]);  // supposed to be empty
-							// System.out.println("tokens:" + tokens[1]);  // supposed to be t
-							// System.out.println("tokens:" + tokens[2]);  // supposed to be the action
-							operation = tokens[2];
-							id = Long.valueOf(tokens[3]);
-						}
-						if(operation.equals("display")) {
-							return trackerService.displayData(model, curtracker, id);
-						}
-						else if(operation.equals("edit")) {
-							return trackerService.editData(model, curtracker, id);
-						}
-						else if(operation.equals("create")) {
-							return trackerService.createData(model, curtracker);
-						}
-						else {
-							return trackerService.displayList(model, curtracker);
-						}
-					}
-				}
-			}
-			else {
-				System.out.println("Null is the object");
-				return "tree/node/listing.html";
-			}
+	@GetMapping("/view/{module}/{slug}")
+	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model) {				
+		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
+				
+		if(curpage!=null) {
+			model.addAttribute("pageTitle",curpage.getTitle());
+			model.addAttribute("page", curpage);
+			return "page/display.html";
 		}
 		else {
-			System.out.println("node not found");
+			return "error/404";
 		}
-		return "what " + pathuri;
 	}
 	
-	@GetMapping("/p/**/t/create")
-	public String trackerCreateResponse(Model model) {
+	@GetMapping("/run/{module}/{slug}")
+	public String runPage(@PathVariable String module, @PathVariable String slug, Model model) {
+		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 		
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
-		String ops = "";
-		Integer cutoff = pathuri.indexOf("/t/");
-		if(cutoff>0) {
-			ops = pathuri.substring(cutoff);
-			pathuri = pathuri.substring(0,cutoff);
-		}
+		if(curpage!=null && curpage.getRunable()) {
+			
+			Binding binding = new Binding();		
+			GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+			binding.setVariable("pageService",pageService);
+			binding.setVariable("trackerService",trackerService);
+			binding.setVariable("treeService",treeService);
+			binding.setVariable("userService",userService);
+			binding.setVariable("fileService",fileService);
+			try {
+				String content = (String) shell.evaluate(curpage.getContent());
+			}
+			catch(Exception e) {
+				System.out.println("Error in page:" + e.toString());
+			}
 		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
-		if(pathuri.equals(rootnode + "/")) {
-			pathuri = rootnode;
-		}
-		
-		// String pathuri = request.getRequestURI();		
-		pathuri = pathuri.replaceAll("/create", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
-			model.addAttribute("pnode",pnode);
-			return trackerService.createData(model, curtracker);
+			model.addAttribute("pageTitle","Running " + curpage.getTitle());
+			model.addAttribute("page", curpage);
+			return "page/display.html";
 		}
 		else {
-			return "404";
+			return "error/404";
 		}
 	}
 	
-	@GetMapping("/p/**/searchResult")
-	public String searchResult(@RequestParam String objectType, Model model) {
-		
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
-		String ops = "";
-		Integer cutoff = pathuri.indexOf("/t/");
-		if(cutoff>0) {
-			ops = pathuri.substring(cutoff);
-			pathuri = pathuri.substring(0,cutoff);
-		}
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
-		if(pathuri.equals(rootnode + "/")) {
-			pathuri = rootnode;
-		}
-		
-		// String pathuri = request.getRequestURI();		
-		pathuri = pathuri.replaceAll("/searchResult", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			model.addAttribute("pnode",pnode);
-			System.out.println("pnode:" + pnode.getName());
-			
-			if(objectType.equals("Page")) {
-				Page page = new Page();
-				model.addAttribute("page",page);
-				return "tree/node/form/page.html";
-			}
-			else if(objectType.equals("File")) {
-				FileLink fileLink = new FileLink();
-				model.addAttribute("fileLink",fileLink);
-				return "tree/node/form/filelink.html";
-			}
-			else if(objectType.equals("Folder")) {
-				TreeNode cnode = new TreeNode();
-				model.addAttribute("cnode",cnode);
-				return "tree/node/form/folder.html";
-			}
-		}
-		return "whatcreate " + objectType ;
-	}
-	
-	@GetMapping("/p/**/create")
-	public String createResponse(@RequestParam String objectType, Model model) {
-		
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
-		String ops = "";
-		Integer cutoff = pathuri.indexOf("/t/");
-		if(cutoff>0) {
-			ops = pathuri.substring(cutoff);
-			pathuri = pathuri.substring(0,cutoff);
-		}
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/");
-		if(pathuri.equals(rootnode + "/")) {
-			pathuri = rootnode;
-		}
-		
-		// String pathuri = request.getRequestURI();		
-		pathuri = pathuri.replaceAll("/create", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			model.addAttribute("pnode",pnode);
-			System.out.println("pnode:" + pnode.getName());
-			
-			if(objectType.equals("Page")) {
-				Page page = new Page();
-				model.addAttribute("page",page);
-				return "tree/node/form/page.html";
-			}
-			else if(objectType.equals("File")) {
-				FileLink fileLink = new FileLink();
-				model.addAttribute("fileLink",fileLink);
-				return "tree/node/form/filelink.html";
-			}
-			else if(objectType.equals("Folder")) {
-				TreeNode cnode = new TreeNode();
-				model.addAttribute("cnode",cnode);
-				return "tree/node/form/folder.html";
-			}
-		}
-		return "whatcreate " + objectType ;
-	}
-	
-	@GetMapping("/p/**/delete")
-	public String deleteResponse(Model model) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			model.addAttribute("pnode",pnode);
-			System.out.println("pnode:" + pnode.getName());
-			boolean gotobject = false;
-			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
-				if(pnode.getObjectType().equals("Page")) {
-					Page page = pageService.getRepo().getOne(pnode.getObjectId());
-					model.addAttribute("page",page);
-					gotobject = true;
-				}
-				else if(pnode.getObjectType().equals("File")) {
-					FileLink fileLink = fileService.getRepo().getOne(pnode.getObjectId());
-					model.addAttribute("fileLink",fileLink);
-					gotobject = true;
-				}
-			}
-			if(!gotobject) {
-				model.addAttribute("folder",pnode);
-			}
-		}
-		return "tree/node/form/delete.html";
-	}
-	
-	@PostMapping("/p/**/delete")
-	public String postDeleteResponse(Model model) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/delete", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			model.addAttribute("pnode",pnode);
-			System.out.println("pnode:" + pnode.getName());
-			boolean gotobject = false;
-			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
-				if(pnode.getObjectType().equals("Page")) {
-					Page page = pageService.getRepo().getOne(pnode.getObjectId());
-					model.addAttribute("page",page);
-					gotobject = true;
-				}
-				else if(pnode.getObjectType().equals("File")) {
-					FileLink fileLink = fileService.getRepo().getOne(pnode.getObjectId());
-					model.addAttribute("fileLink",fileLink);
-					gotobject = true;
-				}
-			}
-			if(!gotobject) {
-				model.addAttribute("folder",pnode);
-			}
-			TreeNode parent = pnode.getParent();
-			treeService.deleteNode(pnode);
-			return "redirect:/p" + treeService.rootLessPath(parent);
-		}
-		return "tree/node/form/delete.html";
-	}
-	
-	@GetMapping("/p/**/edit")
-	public String editResponse(Model model) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/edit", "");
-		System.out.println("pathuri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			model.addAttribute("pnode",pnode);
-			if(pnode.getObjectType()!=null && pnode.getObjectType()!="") {
-				if(pnode.getObjectType().equals("Page")) {
-					Page page = pageService.getRepo().getOne(pnode.getObjectId());
-					model.addAttribute("page",page);
-					return "tree/node/form/page.html";
-				}
-			}
-			else {
-				model.addAttribute("cnode",pnode);
-				return "tree/node/form/folder.html";
-			}
-		}
-		return "whatedit";
-	}
-	
-	@PostMapping(value = "/p/**/saveimage")
+	@GetMapping("/download/{module}/{slug}")
 	@ResponseBody
-	public String saveImageResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") MultipartFile[] file) {
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/saveimage", "");
-		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			System.out.println("savedata:");
-			System.out.println(postdata.toString());
-			TreeNode pnodeparent = pnode.getParent();
-
-			FileLink newfile = new FileLink();
-			newfile.setName(file[0].getOriginalFilename());
-			newfile.setModule("content");
-			newfile.setSlug(treeService.slugify(file[0].getOriginalFilename()));
-			if(file != null) {
-				newfile.setType("user");
-				newfile = fileService.SaveFile(file[0], newfile);
-				fileService.getRepo().save(newfile);
+	public ResponseEntity<Resource> downloadFile(@PathVariable String module, @PathVariable String slug, Model model) {
+		FileLink curfile = fileService.getRepo().findOneByModuleAndSlug(module, slug);
+		if(curfile!=null) {
+			Resource resfile = fileService.getResource(curfile);
+			if(resfile!=null) {
+				return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);		
 			}
-			TreeNode newnode = treeService.addNode(pnodeparent, file[0].getOriginalFilename(), "last");
-			newnode.setObjectType("File");
-			newnode.setObjectId(newfile.getId());
-			treeService.getNodeRepo().save(newnode);
-			return contextPath + "/p" + treeService.rootLessPath(newnode);
+			else {
+				return ResponseEntity.notFound().build();
+			}
 		}
-		return "whatsave";
-	}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+	}	
 	
-	@PostMapping("/p/**/save")
-	public String saveResponse(@RequestParam Map<String,String> postdata, @RequestParam("file") Optional<MultipartFile> file,Authentication authentication) {
-		User curuser = null;
-		if(authentication!=null) {
-			curuser = (User)authentication.getPrincipal();
-		}
-		String pathuri = request.getRequestURI().replaceFirst(contextPath, "");		
-		
-		/* pathuri = pathuri.replaceFirst("p/", rootnode + "/").replaceAll("/save", "");
-		System.out.println("save uri:" + pathuri);
-		TreeNode pnode = treeService.getNodeRepo().findFirstByFullPath(pathuri); */
-		
-		TreeNode pnode = treeService.getNodeFromPath(pathuri);
-		if(pnode!=null) {
-			System.out.println("savedata:");
-			System.out.println(postdata.toString());
-			if(pnode.getObjectType()!=null && pnode.getObjectType().equals("Tracker")) {
-				Tracker curtracker = trackerService.getRepo().getOne(pnode.getObjectId());
-				if(curtracker==null) {
-					System.out.println("Tracker not found");
-				}
-				else {
-					Long fid = trackerService.saveForm(curtracker, curuser);
-					if(fid!=null) {
-						/* if(postdata.get("id")!=null) {
-							return "redirect:" + contextPath + "/" + pnode.portalPath() + "/t/display/" + postdata.get("id").toString();
-						}
-						else {			
-							return "redirect:" + contextPath + "/" + pnode.portalPath();
-						}	*/					
-						
-						return "redirect:/" + treeService.portalPath(pnode) + "/t/display/" + String.valueOf(fid);
-					}
-					else {
-						return "redirect:/" + treeService.portalPath(pnode);
-					}
-				}
-			}
-			else if(postdata.get("objectType")!=null) {
-				if(postdata.get("objectType").equals("Page")) {
-					Page newpage = new Page();
-					if(postdata.get("id")!=null && postdata.get("id")!="") {
-						newpage = pageService.getRepo().getOne(Long.parseLong(postdata.get("id")));
-					}					
-					newpage.setTitle(postdata.get("title"));
-					newpage.setModule("content");
-					newpage.setLayout(postdata.get("layout"));
-					newpage.setContent(postdata.get("content"));
-					newpage.setSlug(treeService.slugify(postdata.get("title")));
-					pageService.getRepo().save(newpage);
-					
-					if(postdata.get("id")==null || postdata.get("id")=="") {
-						TreeNode newnode = treeService.addNode(pnode, postdata.get("title"), "last");
-						newnode.setObjectType("Page");
-						newnode.setObjectId(newpage.getId());
-						newnode.setStatus("Published");
-						treeService.getNodeRepo().save(newnode);
-						return "redirect:/" + treeService.portalPath(pnode) + "/" + newnode.getSlug();
-					}
-					else {
-						return "redirect:/" + treeService.portalPath(pnode);
-					}
-				}
-				else if(postdata.get("objectType").equals("File")) {
-					FileLink newfile = new FileLink();
-					boolean createNewNode = true;
-					try {
-						Long curid = Long.parseLong(postdata.get("id"));
-						newfile = fileService.getRepo().getOne(curid);
-						createNewNode = false;
-					}
-					catch(Exception e) {
-						System.out.println("Id not found");
-					}
-					newfile.setName(postdata.get("name"));
-					newfile.setModule("content");
-					newfile.setSlug(treeService.slugify(postdata.get("name")));
-					if(file != null) {
-						newfile.setType("user");
-						newfile = fileService.SaveFile(file.get(), newfile);
-						fileService.getRepo().save(newfile);
-					}
-					if(createNewNode) {
-						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
-						newnode.setObjectType("File");
-						newnode.setObjectId(newfile.getId());
-						newnode.setStatus("Published");
-						treeService.getNodeRepo().save(newnode);
-					}
-					return "redirect:/" + treeService.portalPath(pnode);
-				}
-				else if(postdata.get("objectType").equals("Folder")) {
-					TreeNode cnode = new TreeNode();
-					boolean createNewNode = true;
-					try {
-						Long curid = Long.parseLong(postdata.get("id"));
-						cnode = treeService.getNodeRepo().getOne(curid);
-						createNewNode = false;
-					}
-					catch(Exception e) {
-						System.out.println("Id not found");
-					}
-					if(createNewNode) {
-						TreeNode newnode = treeService.addNode(pnode, postdata.get("name"), "last");
-						newnode.setStatus("Published");
-						treeService.getNodeRepo().save(newnode);
-						return "redirect:/" + treeService.portalPath(newnode);
-					}
-					else {
-						cnode.setName(postdata.get("name"));
-						treeService.getNodeRepo().save(cnode);
-						return "redirect:/" + treeService.portalPath(cnode);
-					}
-				}
-			}
-		}
-		return "whatsave";
-	}
-
 }

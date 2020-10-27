@@ -4,10 +4,10 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Setting Listing</h1>
-        <a href="#" th:href="@{/settings/create/string}" class="btn btn-primary">String</a>
-        <a href="#" th:href="@{/settings/create/date}" class="btn btn-primary">Date</a>
-        <a href="#" th:href="@{/settings/create/number}" class="btn btn-primary">Number</a>
-        <a href="#" th:href="@{/settings/create/json}" class="btn btn-primary">JSON</a>
+        <a href="#" th:href="@{/admin/settings/create/string}" class="btn btn-primary">String</a>
+        <a href="#" th:href="@{/admin/settings/create/date}" class="btn btn-primary">Date</a>
+        <a href="#" th:href="@{/admin/settings/create/number}" class="btn btn-primary">Number</a>
+        <a href="#" th:href="@{/admin/settings/create/json}" class="btn btn-primary">JSON</a>
         <table class="table">
             <tr>
                 <th>#</th>
@@ -17,13 +17,13 @@
                 <th>&nbsp;</th>
             </tr>
             <tr th:each="setting,iter: ${settings}">
-                <td><a href='#' th:href='@{/settings/edit/{id}(id=${setting.id})}' th:text="${iter.index + 1}">2</a>
+                <td><a href='#' th:href='@{/admin/settings/edit/{id}(id=${setting.id})}' th:text="${iter.index + 1}">2</a>
                 </td>
                 <td th:text="${setting.module}">module</td>
                 <td th:text="${setting.name}">title</td>
                 <td th:text="${setting.getValue()}">val</td>
                 <td>
-                    <form method='post' th:action='@{/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">
+                    <form method='post' th:action='@{/admin/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">
                         <input type='submit' class='button danger'
                             th:onClick='return confirm("Confirm delete setting " + this.getAttribute("data-fname") + "?");'
                             th:attr="data-fname=${setting.name}" value='Delete' />
@@ -33,7 +33,7 @@
         </table>
     </div>
 
-    <nav th:replace="interface/pagination::navpagination(items=${settings},url='/settings')"></nav>
+    <nav th:replace="interface/pagination::navpagination(items=${settings},url='/admin/settings')"></nav>
 
 </section>
 </html>

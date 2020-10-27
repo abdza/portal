@@ -19,13 +19,13 @@
 			<div class="card-header bgc-default-d2">
 				<h3 th:text="${tree.name}" class="card-title text-130 text-white"></h3>
 				<div class="card-toolbar">
-				<a id="addnode" th:href="@{/trees/nodes/{parent_id}/create(parent_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
+				<a id="addnode" th:href="@{/admin/trees/nodes/{parent_id}/create(parent_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-plus"></i>
 				</a>
 				<a id="deletenode" th:href="@{/api/trees/node/{node_id}/delete(node_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-trash"></i>
 				</a>
-				<a id="fixtree" th:href="@{/trees/fixtree/{tree_id}(tree_id=${tree.id})}" href="#" class="card-toolbar-btn text-white">				
+				<a id="fixtree" th:href="@{/admin/trees/fixtree/{tree_id}(tree_id=${tree.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-wrench"></i>
 				</a>
 				</div>
@@ -99,9 +99,9 @@
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
 			},
 			activate : function(event,data) {
-				$("#addnode").attr("href",[[@{/trees/nodes/}]] + data.node.key + "/create");
+				$("#addnode").attr("href",[[@{/admin/trees/nodes/}]] + data.node.key + "/create");
 				$("#deletenode").attr("href",[[@{/api/trees/node/}]] + data.node.key + "/delete");
-				$("#editnode").attr("href",[[@{/trees/nodes/}]] + data.node.key + "/edit");
+				$("#editnode").attr("href",[[@{/admin/trees/nodes/}]] + data.node.key + "/edit");
 				$("#viewnode").attr("href",[[@{/p/}]] + data.node.data.rootLessPath);
 				$("#nodetitle").text(data.node.title);
 				$("#bodynodetitle").text(data.node.title);

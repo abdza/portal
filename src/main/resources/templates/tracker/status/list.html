@@ -9,7 +9,7 @@
 
     </div>
 
-    <a href="#" th:href="@{/trackers/status/{id}/create(id=${tracker.id})}" class="btn btn-primary">Add</a>
+    <a href="#" th:href="@{/admin/trackers/status/{id}/create(id=${tracker.id})}" class="btn btn-primary">Add</a>
 
     <div class='table-container'>
         <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
@@ -21,13 +21,13 @@
             </tr>
             <tr th:each="status,iter: ${tracker.statuses}">
                 <td><a href='#'
-                        th:href='@{/trackers/status/{tracker_id}/edit/{status_id}(tracker_id=${tracker.id},status_id=${status.id})}'
+                        th:href='@{/admin/trackers/status/{tracker_id}/edit/{status_id}(tracker_id=${tracker.id},status_id=${status.id})}'
                         th:text="${iter.index + 1}">2</a></td>
                 <td th:text="${status.name}">name</td>
                 <td th:text="${status.displayFields}">name</td>
                 <td>
                     <form method='post'
-                        th:action='@{/trackers/status/{tracker_id}/delete/{status_id}(tracker_id=${tracker.id},status_id=${status.id})}'
+                        th:action='@{/admin/trackers/status/{tracker_id}/delete/{status_id}(tracker_id=${tracker.id},status_id=${status.id})}'
                         th:object="${status}">
                         <input type='submit' class='button danger'
                             th:onClick='return confirm("Confirm delete status " + this.getAttribute("data-fname") + "?");'

@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Create File</h1>
-        <form method='post' th:action='@{/files/save}' th:object="${filelink}" enctype="multipart/form-data">
+        <form method='post' th:action='@{/admin/files/save}' th:object="${filelink}" enctype="multipart/form-data">
             <input type='hidden' name='id' th:value='*{id}' />
 
             <div class='form-group row'>

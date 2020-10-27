@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
 	<div class='content'>
 		<h1>Page Listing</h1>
-		<a href="#" th:href="@{/pages/create}" class="btn btn-primary">Add</a>
+		<a href="#" th:href="@{/admin/pages/create}" class="btn btn-primary">Add</a>
 		<table class="table">
 			<tr>
 				<th>#</th>
@@ -19,11 +19,11 @@
 			</tr>
 			<tr th:each="portalpage,iter: ${pages}">
 				<td><a href='#'
-					th:href='@{/pages/edit/{id}(id=${portalpage.id})}'
+					th:href='@{/admin/pages/edit/{id}(id=${portalpage.id})}'
 					th:text="${iter.index + 1}">2</a></td>
 				<td th:text="${portalpage.module}">module</td>
 				<td><a href='#'
-					th:href='${portalpage.runable} ? @{/pages/runpage/{id}(id=${portalpage.id})} : @{/pages/display/{id}(id=${portalpage.id})}'
+					th:href='${portalpage.runable} ? @{/run/{module}/{slug}(module=${portalpage.module},slug=${portalpage.slug})} : @{/view/{module}/{slug}(module=${portalpage.module},slug=${portalpage.slug})}'
 					th:text="${portalpage.slug}">slug</td>
 				<td th:text="${portalpage.title}">title</td>
 				<td th:text="${portalpage.runable}">Runable</td>
@@ -32,7 +32,7 @@
 				<td>updated</td>
 				<td>
 					<form method='post'
-						th:action='@{/pages/delete/{id}(id=${portalpage.id})}'
+						th:action='@{/admin/pages/delete/{id}(id=${portalpage.id})}'
 						th:object="${portalpage}">
 						<input type='submit' class='button danger'
 							th:onClick='return confirm("Confirm delete page " + this.getAttribute("data-fname") + "?");'
@@ -43,7 +43,7 @@
 		</table>
 	</div>
 
-	<nav th:replace="interface/pagination::navpagination(items=${pages},url='/pages')"></nav>
+	<nav th:replace="interface/pagination::navpagination(items=${pages},url='/admin/pages')"></nav>
 
 </section>
 </html>

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/settings")
+@RequestMapping("/admin/settings")
 public class SettingController {
 	
 		@Autowired
@@ -63,7 +63,7 @@ public class SettingController {
 		@PostMapping("/delete/{id}")
 		public String delete(@PathVariable Long id, Model model) {
 			service.getRepo().deleteById(id);
-			return "redirect:/settings";
+			return "redirect:/admin/settings";
 		}
 		
 		@GetMapping("/display/{id}")
@@ -77,6 +77,6 @@ public class SettingController {
 		@PostMapping("/save")
 		public String save(@Valid Setting setting,Model model) {
 			service.getRepo().save(setting);
-			return "redirect:/settings";
+			return "redirect:/admin/settings";
 		}
 }

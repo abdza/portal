@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1 th:text="${pageTitle}">Create Page</h1>
-        <form method='post' th:action='@{/pages/save}' th:object="${page}">
+        <form method='post' th:action='@{/admin/pages/save}' th:object="${page}">
             <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>

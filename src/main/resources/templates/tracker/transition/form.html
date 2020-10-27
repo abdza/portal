@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Transition Tracker</h1>
-        <form method='post' th:action='@{/trackers/transitions/{tracker_id}/save(tracker_id=${tracker.id})}'
+        <form method='post' th:action='@{/admin/trackers/transitions/{tracker_id}/save(tracker_id=${tracker.id})}'
             th:object="${tracker_transition}" class="tagiform">
             <input type='hidden' th:field="*{id}" />
             <input type='hidden' th:name="tracker_id" th:value="${tracker.id}" />

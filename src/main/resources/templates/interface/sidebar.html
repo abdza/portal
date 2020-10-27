@@ -7,48 +7,10 @@
 
             <ul class="nav has-active-border" role="navigation" aria-label="main">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/p/}">Home</a>
+                    <a class="nav-link" th:href="@{/}">Home</a>
                 </li>
                 
                 <th:block sec:authorize="isAuthenticated()">
-                
-	                <th:block sec:authorize="hasRole('ROLE_NODE_ADMIN')" >
-	                
-		                <th:block th:if="${pnode}">
-			                <li class="nav-item" th:if='${pnode.objectType==null || pnode.objectType=="Folder" || pnode.objectType==""}'>
-			                    <a class="nav-link dropdown-toggle" href="#">
-			                    <span class="nav-text">
-			                    	<span>New</span>
-			                    </span>
-			                    <b class="caret fa fa-angle-left rt-n90"></b>
-			                    </a>
-			                    
-			                    <div class="submenu collapse">
-				                    <ul class="submenu-inner">
-				                    	<li class="nav-item">
-						                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=Folder(fullpath=${@treeService.rootLessPath(pnode)})}">Folder</a>
-						                </li>
-					                    <li class="nav-item">
-						                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=Page(fullpath=${@treeService.rootLessPath(pnode)})}">Page</a>
-						                </li>
-						                <li class="nav-item">
-						                    <a class="nav-link" th:href="@{/p{fullpath}/create?objectType=File(fullpath=${@treeService.rootLessPath(pnode)})}">File</a>
-						                </li>
-				                    </ul>
-			                    </div>
-			                    
-			                </li>
-			                
-			                <li class="nav-item"  th:if='${pnode}'>
-	                    		<a class="nav-link" th:href="@{/p{fullpath}/edit(fullpath=${@treeService.rootLessPath(pnode)})}">Edit</a>
-	                		</li>
-	                		<li class="nav-item"  th:if='${pnode}'>
-	                    		<a class="nav-link" th:href="@{/p{fullpath}/delete(fullpath=${@treeService.rootLessPath(pnode)})}">Delete</a>
-	                		</li>
-	                
-	                	</th:block>
-	               	</th:block>                
-                
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
 	                    <a class="nav-link" th:href="@{/users}">Users</a>
 	                </li>
@@ -56,22 +18,22 @@
 	                    <a class="nav-link" th:href="@{/users/roles}">User Roles</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/modules}">Modules</a>
+	                    <a class="nav-link" th:href="@{/admin/modules}">Modules</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/pages}">Pages</a>
+	                    <a class="nav-link" th:href="@{/admin/pages}">Pages</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/files}">Files</a>
+	                    <a class="nav-link" th:href="@{/admin/files}">Files</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/settings}">Settings</a>
+	                    <a class="nav-link" th:href="@{/admin/settings}">Settings</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/trackers}">Trackers</a>
+	                    <a class="nav-link" th:href="@{/admin/trackers}">Trackers</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/trees}">Trees</a>
+	                    <a class="nav-link" th:href="@{/admin/trees}">Trees</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
 	                    <a class="nav-link" th:href="@{/dataupdates}">Data Updates</a>

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/trackers/roles")
+@RequestMapping("/admin/trackers/roles")
 public class TrackerRoleController {
 
 	@Autowired
@@ -69,7 +69,7 @@ public class TrackerRoleController {
 			tracker.remove(field);
 			service.getRoleRepo().deleteById(role_id);
 		}
-		return "redirect:/trackers/roles/" + tracker_id.toString();
+		return "redirect:/admin/trackers/roles/" + tracker_id.toString();
 	}
 
 	@PostMapping("/{tracker_id}/save")
@@ -79,6 +79,6 @@ public class TrackerRoleController {
 		tracker.add(tracker_role);
 
 		service.getRoleRepo().save(tracker_role);
-		return "redirect:/trackers/roles/" + tracker_id.toString();
+		return "redirect:/admin/trackers/roles/" + tracker_id.toString();
 	}
 }

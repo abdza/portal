@@ -3,7 +3,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Tracker Listing</h1>
-        <a href="#" th:href="@{/trackers/create}" class="btn btn-primary">Add</a>
+        <a href="#" th:href="@{/admin/trackers/create}" class="btn btn-primary">Add</a>
         <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
             <tr>
                 <th>#</th>
@@ -13,10 +13,10 @@
                 <th>Node</th>
             </tr>
             <tr th:each="tracker,iter: ${trackers}">
-                <td><a href='#' th:href='@{/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
+                <td><a href='#' th:href='@{/admin/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
                 </td>
                 <td th:text="${tracker.module}">module</td>
-                <td><a href='#' th:href='@{/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug
+                <td><a href='#' th:href='@{/admin/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug
                 </td>
                 <td th:text="${tracker.name}">title</td>
                 <td th:text="${tracker.nodeId}">Node id</td>
@@ -24,7 +24,7 @@
         </table>
     </div>
 
-    <nav th:replace="interface/pagination::navpagination(items=${trackers},url='/trackers')"></nav>
+    <nav th:replace="interface/pagination::navpagination(items=${trackers},url='/admin/trackers')"></nav>
 
 </section>
 </html>

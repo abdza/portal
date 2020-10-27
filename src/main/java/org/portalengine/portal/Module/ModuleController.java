@@ -26,7 +26,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
 @Controller
-@RequestMapping("/modules")
+@RequestMapping("/admin/modules")
 public class ModuleController {
 	
 		@Autowired
@@ -55,20 +55,20 @@ public class ModuleController {
 		public String update(Model model) {
 			System.out.println("Updating modules list");
 			service.updatelisting();
-			return "redirect:/modules";
+			return "redirect:/admin/modules";
 		}
 		
 		@PostMapping("/export/{id}")
 		public String export(@PathVariable Long id, Model model) {
 			Module module = service.getRepo().getOne(id);
 			service.exportModule(module.getName());
-			return "redirect:/modules";
+			return "redirect:/admin/modules";
 		}
 		
 		@PostMapping("/import/{id}")
 		public String importModule(@PathVariable Long id, Model model) {
 			Module module = service.getRepo().getOne(id);
 			service.importModule(module.getName());
-			return "redirect:/modules";
+			return "redirect:/admin/modules";
 		}
 }

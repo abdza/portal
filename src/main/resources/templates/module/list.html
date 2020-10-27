@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
 	<div class='content'>
 		<h1>Modules Listing</h1>
-		<a href="#" th:href="@{/modules/update}" class="btn btn-primary">Update</a>
+		<a href="#" th:href="@{/admin/modules/update}" class="btn btn-primary">Update</a>
 		<table class="table">
 			<tr>
 				<th>#</th>
@@ -13,19 +13,19 @@
 			</tr>
 			<tr th:each="module,iter: ${modules}">
 				<td><a href='#'
-					th:href='@{/modules/edit/{id}(id=${module.id})}'
+					th:href='@{/admin/modules/edit/{id}(id=${module.id})}'
 					th:text="${iter.index + 1}">2</a></td>
 				<td th:text="${module.name}">module</td>				
 				<td>
 					<form method='post'
-						th:action='@{/modules/export/{id}(id=${module.id})}'
+						th:action='@{/admin/modules/export/{id}(id=${module.id})}'
 						th:object="${module}">
 						<input type='submit' class='button danger'
 							th:onClick='return confirm("Confirm export module " + this.getAttribute("data-fname") + "?");'
 							th:attr="data-fname=${module.name}" value='Export' />
 					</form>
 					<form method='post'
-						th:action='@{/modules/import/{id}(id=${module.id})}'
+						th:action='@{/admin/modules/import/{id}(id=${module.id})}'
 						th:object="${module}">
 						<input type='submit' class='button danger'
 							th:onClick='return confirm("Confirm import module " + this.getAttribute("data-fname") + "?");'
@@ -36,7 +36,7 @@
 		</table>
 	</div>
 
-	<nav th:replace="interface/pagination::navpagination(items=${modules},url='/modules')"></nav>
+	<nav th:replace="interface/pagination::navpagination(items=${modules},url='/admin/modules')"></nav>
 
 </section>
 </html>
