@@ -186,7 +186,7 @@ public class PortalController {
 				if(curpage.getPage_type().equals("Template")) {
 					model.addAttribute("pageTitle","Running " + curpage.getTitle());
 					model.addAttribute("page", curpage);
-					return "page/display.html";	
+					return "page/plain.html";	
 				}				
 				else {
 					// if wish to redirect then page should return a string beginning with "redirect:/" and target
@@ -196,7 +196,8 @@ public class PortalController {
 			else {
 				model.addAttribute("pageTitle",curpage.getTitle());
 				model.addAttribute("page", curpage);
-				return "page/display.html";
+				model.addAttribute("content", curpage.getContent());
+				return "page/plain.html";
 			}
 		}
 		else {
