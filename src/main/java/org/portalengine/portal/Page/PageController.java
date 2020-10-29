@@ -82,39 +82,6 @@ public class PageController {
 			return "page/form.html";
 		}
 		
-		@GetMapping("/display/{id}")
-		public String display(@PathVariable Long id, Model model) {
-			Page curpage = service.getRepo().getOne(id);
-			model.addAttribute("pageTitle",curpage.getTitle());
-			model.addAttribute("page", curpage);
-			return "page/display.html";
-		}
-		
-		@GetMapping("/runpage/{id}")
-		public String runpage(@PathVariable Long id, Model model) {
-			Page curpage = service.getRepo().getOne(id);
-			if(curpage!=null && curpage.getRunable()) {
-			
-				Binding binding = new Binding();		
-				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
-				binding.setVariable("pageService",service);
-				binding.setVariable("trackerService",trackerService);
-				binding.setVariable("treeService",treeService);
-				binding.setVariable("userService",userService);
-				binding.setVariable("fileService",fileService);
-				try {
-					String content = (String) shell.evaluate(curpage.getContent());
-				}
-				catch(Exception e) {
-					System.out.println("Error in page:" + e.toString());
-				}
-			
-			}
-			model.addAttribute("pageTitle","Running " + curpage.getTitle());
-			model.addAttribute("page", curpage);
-			return "page/display.html";
-		}
-		
 		@PostMapping("/save")
 		public String save(@Valid Page page,Model model,HttpServletRequest request) {			
 			Map<String, String[]> postdata = request.getParameterMap();

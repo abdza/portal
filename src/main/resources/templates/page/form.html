@@ -53,18 +53,6 @@
             
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
-                    <label class='mb-0'>Layout</label></div>
-                <div class='col-sm-9'>
-                    <select th:field="*{layout}">
-                    <option value="layout/main">Main</option>
-                    <option value="layout/special">Special</option>
-                    <option value="layout/formbase">Form</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class='form-group row'>
-                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Content</label></div>
                 <div class='col-sm-9'>
                     <textarea class='textarea col-12' th:field="*{content}" rows="30">
@@ -79,6 +67,17 @@
                 </div>
             </div>
         </form>
+    </div>
+    
+    <div>
+    <h2>Templates To Copy</h2>
+    &lt;!DOCTYPE html&gt;<br/>
+	&lt;html layout:decorate="~{layout/main}"&gt;<br/>
+	&lt;section layout:fragment="content" class='page-content'&gt;<br/>
+	&lt;/section&gt;<br/>
+	&lt;th:block layout:fragment="head-end"&gt;&lt;/th:block&gt;<br/>
+	&lt;th:block layout:fragment="javascript"&gt;&lt;/th:block&gt;<br/>
+	&lt;/html&gt;
     </div>
 </section>
 
