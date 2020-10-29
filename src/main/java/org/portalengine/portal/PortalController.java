@@ -79,9 +79,6 @@ public class PortalController {
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private HttpServletRequest request;
-	
-	@Autowired
 	public PortalController() {
 	}
 	
@@ -127,15 +124,17 @@ public class PortalController {
 		return "page/setup.html";
 	}
 	
-	@GetMapping("/json/{module}/{slug}")
+	@RequestMapping(path="/json/{module}/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model) {				
+	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
 				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
@@ -159,8 +158,8 @@ public class PortalController {
 		}
 	}
 	
-	@GetMapping("/view/{module}/{slug}")
-	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model) {				
+	@RequestMapping(path="/view/{module}/{slug}")
+	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
@@ -170,7 +169,9 @@ public class PortalController {
 				}
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
 				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);				
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
@@ -205,7 +206,7 @@ public class PortalController {
 	
 	@GetMapping("/download/{module}/{slug}")
 	@ResponseBody
-	public ResponseEntity<Resource> downloadFile(@PathVariable String module, @PathVariable String slug, Model model) {
+	public ResponseEntity<Resource> downloadFile(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {
 		FileLink curfile = fileService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(curfile!=null) {
 			Resource resfile = fileService.getResource(curfile);

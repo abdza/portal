@@ -1,6 +1,11 @@
 package org.portalengine.portal.Page;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -16,6 +21,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -107,9 +116,15 @@ public class PageController {
 		}
 		
 		@PostMapping("/save")
-		public String save(@Valid Page page,Model model) {
+		public String save(@Valid Page page,Model model,HttpServletRequest request) {			
+			Map<String, String[]> postdata = request.getParameterMap();
 			service.getRepo().save(page);
-			return "redirect:/admin/pages/edit/" + page.getId().toString();
+			if(postdata.containsKey("update")) {
+				return "redirect:/admin/pages/edit/" + page.getId().toString();
+			}
+			else {
+				return "redirect:/admin/pages";	
+			}
 		}
 		
 		@PostMapping("/delete/{id}")

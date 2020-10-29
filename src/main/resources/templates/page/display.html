@@ -2,7 +2,7 @@
 <html layout:decorate="${page.layout} ? ${page.layout} : 'layout/main'">
 
 <section layout:fragment="content" class='page-content'>
-    <div class='content' th:utext='${page.content}'>
+    <div class='content' th:replace="${@pageService.getTemplateFromMap(page.content,null)}">
     </div>
 </section>
 

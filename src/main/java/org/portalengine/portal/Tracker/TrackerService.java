@@ -1,6 +1,7 @@
 package org.portalengine.portal.Tracker;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.Principal;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -459,6 +460,29 @@ public class TrackerService {
 		dataset.setNumber(page);
 		dataset.setDataRows(rows.toArray());
 		return dataset;
+	}
+	
+	public int saveMap(String module, String slug,Map<String, Object> mapdata) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		if(tracker!=null) {
+			return saveMap(tracker,mapdata);
+		}
+		else {
+			return -1;
+		}
+	}
+	
+	public Map<String,Object> flattenMap(Map<String,Object> mapdata) {
+		HashMap<String,Object> curobject = new HashMap<String,Object>();
+		mapdata.forEach((fieldname,fieldval)->{
+			if(fieldval.getClass().isArray()) {
+				curobject.put(fieldname, Array.get(fieldval,0));
+			}
+			else {
+				curobject.put(fieldname, fieldval);
+			}
+		});
+		return curobject;
 	}
 	
 	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
