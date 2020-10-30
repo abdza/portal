@@ -399,12 +399,9 @@ public class TrackerService {
 	public DataSet dataset(Tracker tracker, String json) {
 		ObjectMapper mapper = new ObjectMapper();
 	    JsonNode qjson = null;
-	    System.out.println("Transforming json");
 	    if(json!=null) {
-			try {
-				System.out.println("Transforming string to json:" + json);
-				qjson = mapper.readTree(json);
-				System.out.println("Got:" + qjson.toPrettyString());
+			try {				
+				qjson = mapper.readTree(json.replace('`', '"'));				
 			} catch (JsonMappingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -438,16 +435,14 @@ public class TrackerService {
 			 */
 			System.out.println("Got search node");
 			ArrayList<String> squery = new ArrayList<String>();
-			String qstring = "";
+			String qstring = null;
 			System.out.println("Did it reach here dddd");
-			/*if(request.getParameter("q")!=null) {
-				System.out.println("Got 1");
+			if(request.getParameter("q")!=null) {				
 				qstring = request.getParameter("q");
 			}			
-			else if(search.get("q").asText()!=null) {
-				System.out.println("Got 2");
+			else if(search.get("q")!=null) {				
 				qstring = search.get("q").asText();
-			}*/		
+			}		
 			System.out.println("Got here already");
 			if(qstring!=null) {
 				System.out.println("Searching: " + qstring);
