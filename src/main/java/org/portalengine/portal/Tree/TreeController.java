@@ -243,7 +243,7 @@ public class TreeController {
 									System.out.println("found type:" + curname);
 									model.addAttribute("object",jnode);
 									Tracker tracker = trackerService.getRepo().getOne((long) jnode.get("objectId").asInt());
-									DataSet dataset = trackerService.dataset(tracker,false,search);
+									DataSet dataset = trackerService.dataset(tracker,search,false);
 									System.out.println("datas:" + dataset.getDataRows().toString());
 									model.addAttribute("items",dataset.getDataRows());
 									model.addAttribute("title",jnode.get("title").asText());

@@ -45,6 +45,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -348,6 +350,16 @@ public class TrackerService {
 		return toret;
 	}
 	
+	public HashMap<String,Object> datarow(String module, String slug, Long id) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		if(tracker!=null) {
+			return datarow(tracker,id);
+		}
+		else {
+			return null;
+		}
+	}
+	
 	public HashMap<String,Object> datarow(Tracker tracker, Long id) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
@@ -372,10 +384,44 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
-		return dataset(tracker, true, null);
+		return dataset(tracker, null, true);
 	}
 	
-	public DataSet dataset(Tracker tracker, boolean pagelimit, JsonNode search) {
+	public DataSet dataset(String module, String slug) {
+		return dataset(module, slug, null);
+	}
+	
+	public DataSet dataset(String module, String slug, String json) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return dataset(tracker, json);
+	}
+	
+	public DataSet dataset(Tracker tracker, String json) {
+		ObjectMapper mapper = new ObjectMapper();
+	    JsonNode qjson = null;
+	    System.out.println("Transforming json");
+	    if(json!=null) {
+			try {
+				System.out.println("Transforming string to json:" + json);
+				qjson = mapper.readTree(json);
+				System.out.println("Got:" + qjson.toPrettyString());
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+		if(qjson!=null) {
+			return dataset(tracker, qjson, false);
+		}
+		else {
+			return dataset(tracker,null,false);
+		}
+	}
+	
+	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
@@ -393,30 +439,52 @@ public class TrackerService {
 			System.out.println("Got search node");
 			ArrayList<String> squery = new ArrayList<String>();
 			String qstring = "";
-			if(request.getParameter("q")!=null) {
+			System.out.println("Did it reach here dddd");
+			/*if(request.getParameter("q")!=null) {
+				System.out.println("Got 1");
 				qstring = request.getParameter("q");
-			}
+			}			
 			else if(search.get("q").asText()!=null) {
+				System.out.println("Got 2");
 				qstring = search.get("q").asText();
+			}*/		
+			System.out.println("Got here already");
+			if(qstring!=null) {
+				System.out.println("Searching: " + qstring);
 			}
-			System.out.println("Searching: " + qstring);
+			else {
+				System.out.println("qstirng is null");
+			}
 			if(search.get("like")!=null) {
-				if(search.get("like").isArray()) {
+				System.out.println("Got a like");
+				if(search.get("like").isArray()) {					
 					qstring = "%" + qstring + "%";
-					for(final JsonNode jfield : search.get("like")) {
-						System.out.println("jfield:" + jfield.toString());
+					for(final JsonNode jfield : search.get("like")) {						
 						squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
 						paramsource.addValue(jfield.asText(), qstring);
 					}
 				}
+				else if(search.get("like").isObject()) {					
+					Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
+					svals.forEachRemaining( node -> {						
+						squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
+						paramsource.addValue(node.getKey(),node.getValue().asText());
+					});
+				}
 			}
 			if(search.get("equal")!=null) {
 				if(search.get("equal").isArray()) {
-					for(final JsonNode jfield : search.get("equal")) {
-						System.out.println("jfield:" + jfield.toString());
+					for(final JsonNode jfield : search.get("equal")) {						
 						squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
 						paramsource.addValue(jfield.asText(), qstring);
 					}
+				}
+				else if(search.get("equal").isObject()) {						
+					Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
+					svals.forEachRemaining( node -> {						
+						squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
+						paramsource.addValue(node.getKey(),node.getValue().asText());
+					});
 				}
 			}
 			if(squery.size()>0) {
