@@ -418,12 +418,98 @@ public class TrackerService {
 		}
 	}
 	
+	public HashMap<String,Object> jsonquery(JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
+		HashMap<String,Object> curquery = new HashMap<String,Object>();
+		HashMap<String,Object> subquery = new HashMap<String,Object>();
+		
+		ArrayList<String> squery = new ArrayList<String>();
+		String filterquery = null;
+		String qstring = null;		
+		
+		if(search.get("and") != null) {
+			subquery = jsonquery(search.get("and"), filterquery, paramsource,"and");
+			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+			filterquery = (String) subquery.get("filterquery");
+		}
+		if(search.get("or") != null) {
+			subquery = jsonquery(search.get("or"), filterquery, paramsource,"or");
+			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+			filterquery = (String) subquery.get("filterquery");
+		}				
+		if(combinor==null) {
+			combinor = "or";
+		}
+		
+		if(search.get("q")!=null) {				
+			qstring = search.get("q").asText();
+		}		
+		if(search.get("like")!=null) {
+			System.out.println("Got a like");
+			if(search.get("like").isArray()) {					
+				qstring = "%" + qstring + "%";
+				for(final JsonNode jfield : search.get("like")) {						
+					squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
+					paramsource.addValue(jfield.asText(), qstring);
+				}
+			}
+			else if(search.get("like").isObject()) {					
+				Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
+				while(svals.hasNext()) {
+					Entry<String, JsonNode> node = svals.next();
+					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
+					paramsource.addValue(node.getKey(),node.getValue().asText());
+				}
+				/* svals.forEachRemaining( node -> {						
+					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
+					paramsource.addValue(node.getKey(),node.getValue().asText());
+				});*/
+			}
+		}
+		if(search.get("equal")!=null) {
+			if(search.get("equal").isArray()) {
+				for(final JsonNode jfield : search.get("equal")) {						
+					squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
+					paramsource.addValue(jfield.asText(), qstring);
+				}
+			}
+			else if(search.get("equal").isObject()) {						
+				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
+				while(svals.hasNext()) {
+					Entry<String, JsonNode> node = svals.next();
+					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
+					paramsource.addValue(node.getKey(),node.getValue().asText());
+				}
+				/* svals.forEachRemaining( node -> {						
+					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
+					paramsource.addValue(node.getKey(),node.getValue().asText());
+				}); */
+			}
+		}
+		if(squery.size()>0) {
+			String newfilterquery = "(" + String.join(" " + combinor + " ", squery) + ")";
+			if(filterquery!=null) {
+				filterquery = filterquery + " " + combinor + " " + newfilterquery;
+			}
+			else {
+				filterquery = newfilterquery;
+			}
+		}
+		if(prependfilter!=null) {
+			filterquery = prependfilter + " " + combinor + " " + filterquery;
+		}
+		
+		curquery.put("filterquery", filterquery);
+		curquery.put("paramsource", paramsource);
+		
+		return curquery;
+	}
+	
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
 		System.out.println("basequery:" + basequery);
-		String filterquery = " where 1=1 ";
+		String filterquery = "";
 		if(search!=null) {
 			/*
 			 * search is a JsonNode with the following children
@@ -432,8 +518,38 @@ public class TrackerService {
 			 * equals - array node of fields to search for using the equals query
 			 * 
 			 * All of it would be or
+			 * 
+			 * Example of valid json
+			 * 
+			 * {"q":"ahmad","like":["name","description"]}
+			 * 
+			 * The above would generate the following where query
+			 * 
+			 * where name like '%ahmad%' or description like '%ahmad%'
+			 * 
+			 * {"q":"ahmad","equal":["name"]}
+			 * 
+			 * The above would generate the following
+			 * 
+			 * where name='ahmad'
+			 * 
+			 * {"like":{"name":"ahmad","description":"balik"}}
+			 * 
+			 * The above would generate
+			 * 
+			 * where name like '%ahmad%' or description like '%balik%'
+			 * 
+			 * {"equal":{"name":"ahmad","description":"siap"}}
+			 * 
+			 * The above would generate the following
+			 * 
+			 * where name='ahmad' or description='siap' 
+			 * 
+			 * 
 			 */
-			System.out.println("Got search node");
+			
+			
+			/* System.out.println("Got search node");
 			ArrayList<String> squery = new ArrayList<String>();
 			String qstring = null;
 			System.out.println("Did it reach here dddd");
@@ -484,7 +600,12 @@ public class TrackerService {
 			}
 			if(squery.size()>0) {
 				filterquery += " and (" + String.join(" or ", squery) + ")";
-			}
+			} */
+			
+			HashMap<String,Object> curquery = new HashMap<String,Object>();
+			curquery = jsonquery(search, null, paramsource,"or");
+			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");
+			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
 			System.out.println("filterquery:" + filterquery);
 		}
 		Integer size = 10;
