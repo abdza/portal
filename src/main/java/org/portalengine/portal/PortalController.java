@@ -124,9 +124,9 @@ public class PortalController {
 		return "page/setup.html";
 	}
 	
-	@RequestMapping(path="/json/{module}/{slug}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path={"/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {				
+	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
@@ -139,6 +139,11 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
@@ -158,8 +163,8 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path="/view/{module}/{slug}")
-	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {				
+	@RequestMapping(path={"/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"})
+	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
@@ -176,6 +181,11 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
 				String content = null;
 				try {
 					content = (String) shell.evaluate(curpage.getContent());					
@@ -186,6 +196,11 @@ public class PortalController {
 				if(curpage.getPage_type().equals("Template")) {
 					model.addAttribute("pageTitle","Running " + curpage.getTitle());
 					model.addAttribute("page", curpage);
+					model.addAttribute("arg1",arg1);
+					model.addAttribute("arg2",arg2);
+					model.addAttribute("arg3",arg3);
+					model.addAttribute("arg4",arg4);
+					model.addAttribute("arg5",arg5);
 					return "page/plain.html";	
 				}				
 				else {
@@ -197,6 +212,11 @@ public class PortalController {
 				model.addAttribute("pageTitle",curpage.getTitle());
 				model.addAttribute("page", curpage);
 				model.addAttribute("content", curpage.getContent());
+				model.addAttribute("arg1",arg1);
+				model.addAttribute("arg2",arg2);
+				model.addAttribute("arg3",arg3);
+				model.addAttribute("arg4",arg4);
+				model.addAttribute("arg5",arg5);
 				return "page/plain.html";
 			}
 		}
