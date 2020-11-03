@@ -33,31 +33,8 @@
         <div class="navbar-nav">
         <ul class="nav">
                     
-            <li class="nav-item dropdown dropdown-mega">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-list-alt mr-2 d-lg-none"></i>
-                    Department
-                    <i class="caret fa fa-angle-down d-none d-lg-block"></i>
-                    <i class="caret fa fa-angle-left d-block d-lg-none"></i>
-                </a>
-                <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                    <div th:replace="${@pageService.renderPage('menu_department')}">
-                    </div>
-                </div>
-            </li>
-                
-            <li class="nav-item dropdown dropdown-mega">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-list-alt mr-2 d-lg-none"></i>
-                    System
-                    <i class="caret fa fa-angle-down d-none d-lg-block"></i>
-                    <i class="caret fa fa-angle-left d-block d-lg-none"></i>
-                </a>
-                <div class="p-0 dropdown-menu dropdown-animated bgc-light-m1 brc-primary-m2 border-x-1 border-b-2 ace-scrollbar">
-                    <div th:replace="${@pageService.renderPage('menu_system')}">
-                    </div>
-                </div>
-            </li>
+            <div th:replace="${@pageService.renderPage('navbar_menu')}">
+            </div>
             
             <li class="nav-item dropdown order-first order-lg-last" sec:authorize="!isAuthenticated()">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">          

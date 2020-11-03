@@ -80,6 +80,19 @@ public class PageService {
 			System.out.println("Slug not found:" + slug);
 		}
 		
-		return "&nbsp;";
+		return "<!-- -->";
+	}
+	
+	public boolean pageExist(String slug) {
+		try {
+			Page curpage = this.repo.findOneByModuleAndSlug("portal", slug);
+			if(curpage!=null) {
+				return true;
+			}
+		}
+		catch(Exception exp) {
+			System.out.println("Slug not found:" + slug);
+		}
+		return false;
 	}
 }

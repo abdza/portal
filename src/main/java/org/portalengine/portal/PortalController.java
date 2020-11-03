@@ -13,6 +13,7 @@ import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Setting.SettingService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tracker.SystemController;
@@ -79,6 +80,9 @@ public class PortalController {
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
+	private SettingService settingService;
+	
+	@Autowired
 	public PortalController() {
 	}
 	
@@ -90,8 +94,16 @@ public class PortalController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-		model.addAttribute("pageTitle","Home");
-		return "page/home";
+		Page curpage = pageService.getRepo().findOneByModuleAndSlug("portal", "home");
+		model.addAttribute("pageTitle",settingService.StringSetting("home_title", "Home"));
+		if(curpage!=null) {			
+			model.addAttribute("page", curpage);
+			model.addAttribute("content", curpage.getContent());
+			return "page/plain.html";
+		}
+		else {			
+			return "page/home";
+		}
 	}
 	
 	@GetMapping("/search")
@@ -139,6 +151,7 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -181,6 +194,7 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
