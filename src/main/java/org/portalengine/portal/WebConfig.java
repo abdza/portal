@@ -1,5 +1,7 @@
 package org.portalengine.portal;
 
+import java.awt.image.BufferedImage;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
+import org.springframework.http.converter.BufferedImageHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
@@ -66,5 +70,10 @@ public class WebConfig implements WebMvcConfigurer {
 		templateEngine.addDialect(new SpringSecurityDialect());
 		templateEngine.addDialect(new LayoutDialect());
 		return templateEngine;
+	}
+	
+	@Bean
+	public HttpMessageConverter<BufferedImage> createImageHttpMessageConverter() {
+	    return new BufferedImageHttpMessageConverter();
 	}
 }

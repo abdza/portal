@@ -136,6 +136,46 @@ public class PortalController {
 		return "page/setup.html";
 	}
 	
+	@RequestMapping(path={"/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE)
+	@ResponseBody
+	public Object pngPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
+		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		if(curpage!=null) {
+			if(curpage.getRunable()) {				
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
+				Object content = null;
+				try {
+					content = shell.evaluate(curpage.getContent());
+					System.out.println("Content:" + content);
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return content;				
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+	
 	@RequestMapping(path={"/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
@@ -210,6 +250,7 @@ public class PortalController {
 				if(curpage.getPage_type().equals("Template")) {
 					model.addAttribute("pageTitle","Running " + curpage.getTitle());
 					model.addAttribute("page", curpage);
+					model.addAttribute("content",content);
 					model.addAttribute("arg1",arg1);
 					model.addAttribute("arg2",arg2);
 					model.addAttribute("arg3",arg3);
