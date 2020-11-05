@@ -134,9 +134,13 @@ public class FileLinkService {
 	}
 	
 	public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
+		return generateQRCodeImage(barcodeText,200,200);
+	}
+	
+	public static BufferedImage generateQRCodeImage(String barcodeText, Integer width, Integer height) throws Exception {
 	    QRCodeWriter barcodeWriter = new QRCodeWriter();
 	    BitMatrix bitMatrix = 
-	      barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, 200, 200);
+	      barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, width, height);
 	 
 	    return MatrixToImageWriter.toBufferedImage(bitMatrix);
 	    
