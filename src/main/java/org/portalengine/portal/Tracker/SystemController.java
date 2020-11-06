@@ -78,7 +78,9 @@ public class SystemController {
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
-			model.addAttribute("formtitle","New " + tracker.getName());
+			String formtitle = "New " + tracker.getName();
+			model.addAttribute("formtitle",formtitle);			
+			model.addAttribute("pageTitle",formtitle);
 			model.addAttribute("transition",trackerService.create_transition(tracker));
 			return "tracker/data/form.html";
 		}
@@ -90,7 +92,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/display/{id}")
 	public String displaydata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
-		if(tracker!=null) {
+		/* if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
@@ -107,6 +109,9 @@ public class SystemController {
 				return "page/plain.html";
 			}
 			return "tracker/data/display.html";
+		} */
+		if(tracker!=null) {
+			return trackerService.displayData(model, tracker, id);
 		}
 		else {
 			return "404";
@@ -116,7 +121,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/edit/{id}")
 	public String editdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
-		if(tracker!=null) {
+		/* if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			String formtitle = "Edit " + tracker.getName();
@@ -136,6 +141,9 @@ public class SystemController {
 				return "page/plain.html";
 			}
 			return "tracker/data/form.html";
+		} */
+		if(tracker!=null) {
+			return trackerService.editData(model, tracker, id);
 		}
 		else {
 			return "404";
@@ -162,7 +170,7 @@ public class SystemController {
 			else {			
 				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
 			}
-		}
+		} 
 		else {
 			return "404";
 		}

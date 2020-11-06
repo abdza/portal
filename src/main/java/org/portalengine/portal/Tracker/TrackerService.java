@@ -127,13 +127,14 @@ public class TrackerService {
 		model.addAttribute("tracker", tracker);
 		String listtitle = tracker.getName();
 		model.addAttribute("listtitle",listtitle);
+		model.addAttribute("pageTitle",listtitle);
 		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
 		if(pp!=null) {
 			Map<String, Object> ctx2 = new HashMap<String, Object>();
 			ctx2.put("tracker", tracker);
 			ctx2.put("listtitle", listtitle);
 			String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-			model.addAttribute("content", content);
+			model.addAttribute("content", content);			
 			pp.setContent(content);
 			return "page/plain.html";
 		}
@@ -145,6 +146,10 @@ public class TrackerService {
 			model.addAttribute("tracker", tracker);
 			HashMap<String,Object> datarow = datarow(tracker, id);
 			model.addAttribute("datas", datarow);
+			String datatitle = tracker.getName() + " - Details";
+			System.out.println("Title:" + datatitle);
+			model.addAttribute("datatitle",datatitle);
+			model.addAttribute("pageTitle",datatitle);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
@@ -167,6 +172,7 @@ public class TrackerService {
 			model.addAttribute("tracker", tracker);
 			String formtitle = "Edit " + tracker.getName();
 			model.addAttribute("formtitle",formtitle);
+			model.addAttribute("pageTitle",formtitle);
 			HashMap<String,Object> datarow = this.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
