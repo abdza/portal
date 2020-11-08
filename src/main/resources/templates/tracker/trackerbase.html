@@ -77,7 +77,7 @@ $('#val_[(${field.name})]').select2({
 [# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
-    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+    url: /*[[@{/api/trackers/query_field/{field_id}(field_id=${field.id})}]]*/'/dummy/api/users',
     dataType: 'json',
     processResults: function (data) {
     	var dat = $.map(data.content, function(obj){
