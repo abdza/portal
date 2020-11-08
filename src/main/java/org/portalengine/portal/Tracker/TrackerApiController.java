@@ -89,7 +89,7 @@ public class TrackerApiController {
 					HashMap<String,Object> datarow = (HashMap<String, Object>) toreturn.getDataRows()[i];
 					datalist.add(new ApiData(Long.valueOf(datarow.get("id").toString()),(String)datarow.get(optJson.get("name_column").asText())));							
 				}
-				map.put("data", datalist);
+				map.put("content", datalist);
 			}
 		}
 		return map;

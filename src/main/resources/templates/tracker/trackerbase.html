@@ -115,10 +115,10 @@ $('#val_[(${field.name})]').select2({
 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0' th:text="${field.label}">Module</label></div>
 <div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
 <th:block th:if="${field.fieldWidget=='Default'}">
-<select th:if="${field.fieldType=='TreeNode'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
 	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
 </select>
-<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
+<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
 <input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
 </th:block>
 <th:block th:if="${field.fieldWidget=='DropDown'}">
