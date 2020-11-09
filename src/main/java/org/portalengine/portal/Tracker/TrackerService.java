@@ -2,6 +2,7 @@ package org.portalengine.portal.Tracker;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -34,6 +35,7 @@ import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.UserService;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,6 +82,9 @@ public class TrackerService {
 	
 	@Autowired
 	private PageService pageService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private NamedParameterJdbcTemplate namedjdbctemplate;
@@ -684,17 +689,17 @@ public class TrackerService {
 			curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
 		}
 		mapdata.forEach((fieldname,fieldval)->{
-			System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
+			// System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
 			TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,fieldname);
 			if(tfield!=null) {
-				System.out.println("tfield:" + tfield.getName());
+				// System.out.println("tfield:" + tfield.getName());
 				submittedfields.add(tfield);
 			}
 		});
 		System.out.println("before submitted");
 		submittedfields.forEach(tf->{
 			try {
-				System.out.println("processing:" + tf.getName());
+				// System.out.println("processing:" + tf.getName());
 				switch(tf.getFieldType()) {
 				case "String":
 				case "Text":
@@ -739,7 +744,7 @@ public class TrackerService {
 				e.printStackTrace();
 			}
 		});
-		System.out.println("after added paramsource");
+		// System.out.println("after added paramsource");
 		String dquery;
 		Long curid = null;
 		if(mapdata.get("id")!=null) {
@@ -754,8 +759,8 @@ public class TrackerService {
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
-		System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString());
+		/* System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString()); */
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder);
 		if(mapdata.get("id")==null) {
@@ -878,8 +883,8 @@ public class TrackerService {
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
-		System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString());
+		/* System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString()); */
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder);
 		if(postdata.get("id")==null) {
@@ -907,8 +912,8 @@ public class TrackerService {
 	public void trackerUpdateDb(Tracker tracker) {
 		
 		if(tracker.getDataTable().length()>0) {
-			System.out.println("Checking existance of table:" + tracker.getDataTable());
-			System.out.println("DC:" + dataURL);
+			/* System.out.println("Checking existance of table:" + tracker.getDataTable());
+			System.out.println("DC:" + dataURL); */
 			// Check whether data table already exists
 			String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "'";
@@ -941,7 +946,7 @@ public class TrackerService {
 			if(trythis.getInt("result")==0) {
 				jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
 			}
-			System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
+			// System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
 				if(tracker.getUpdatesTable().length()>0) {
@@ -961,6 +966,59 @@ public class TrackerService {
 				fieldUpdateDb(field);
 			}
 		}
+	}
+	
+	public String display(TrackerField field, HashMap<String,Object> datas) {
+		try {
+			System.out.println("In display field service");
+			if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
+				DateFormat format;
+				if(field.getFieldType().equals("Date")) {
+					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+				}
+				else {
+					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+				}
+				return format.format((Date)datas.get(field.getName()));
+			}
+			else if(field.getFieldType().equals("User")) {
+				Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
+				User data = userService.getRepo().getOne(targetid);
+				if(data!=null) {
+					return data.getName();
+				}
+			}
+			else if(field.getFieldType().equals("TrackerType")) {
+				System.out.println("Got trackertype");
+				JsonNode foptions = field.optionsJson();
+				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
+					String module = foptions.get("module").textValue();
+					String slug = foptions.get("slug").textValue();
+					String name_column = foptions.get("name_column").textValue();
+					System.out.println("Got module:" + module + " and slug:" + slug);
+					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+					if(targetTracker!=null) {
+						System.out.println("Not null for:" + field.getName());
+						System.out.println("Val:" + datas.get(field.getName()));
+						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
+						System.out.println("Got targettracker searching for:" + targetid.toString());						
+						HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
+						if(targetdatas!=null) {
+							System.out.println("Got rows from data");
+							return targetdatas.get(name_column).toString();
+						}
+					}
+				}
+			}
+			else {
+				return String.valueOf(datas.get(field.getName()));
+			}
+		}
+		catch(Exception exp) {
+			System.out.println("Error:" + exp);
+			return null;
+		}
+		return null;
 	}
 	
 	public void fieldUpdateDb(TrackerField field) {

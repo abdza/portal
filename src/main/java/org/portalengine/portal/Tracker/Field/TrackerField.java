@@ -78,26 +78,7 @@ public class TrackerField extends Auditable<String> {
 		return newfield;
 	}
 	
-	public String display(HashMap<String,Object> datas) {
-		try {
-			if(fieldType.equals("Date") || fieldType.equals("DateTime")) {
-				DateFormat format;
-				if(fieldType.equals("Date")) {
-					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-				}
-				else {
-					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-				}
-				return format.format((Date)datas.get(name));
-			}
-			else {
-				return String.valueOf(datas.get(name));
-			}
-		}
-		catch(Exception exp) {
-			return null;
-		}
-	}
+
 	
 	public String display(SqlRowSet datas) {
 		if(datas!=null) {

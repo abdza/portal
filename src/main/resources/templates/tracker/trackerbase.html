@@ -4,7 +4,7 @@
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
 <td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="${pnode}?@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}:@{/{module}/{slug}/display/{id}(id=${datas.get('id')},module=${tracker.module},slug=${tracker.slug})}" >2</a></td>
-<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
+<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${@trackerService.display(field,datas)}">module</td>
 </tr>
 </table>
 
@@ -132,7 +132,7 @@ $('#val_[(${field.name})]').select2({
 <div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}" class='columns'>
 <div class='column is-one-quarter has-text-weight-bold' th:text="${field.label + ':'}">Form Fields:</div>
-<div class='column' th:text="${datas.get(field.name)?.toString()}" >data_table</div>
+<div class='column' th:text="${@trackerService.display(field,datas)}" >data_table</div>
 </div>
 </div>
 
