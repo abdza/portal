@@ -400,7 +400,7 @@ public class TrackerService {
 		return curquery;
 	}
 	
-	public DataSet hashMapDataSet(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
+	public DataSet hashMapData(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode qjson = null;
 		try {
@@ -756,7 +756,11 @@ public class TrackerService {
 		return curid;
 	}
 	
-	public void trackerUpdateDb(Tracker tracker) {
+	public void clearDb(Tracker tracker) {
+		jdbctemplate.execute("truncate table " + tracker.getDataTable());
+	}
+	
+	public void updateDb(Tracker tracker) {
 		
 		if(tracker.getDataTable().length()>0) {
 			/* System.out.println("Checking existance of table:" + tracker.getDataTable());
@@ -810,7 +814,7 @@ public class TrackerService {
 					}
 			}
 			for(TrackerField field: tracker.getFields()) {
-				fieldUpdateDb(field);
+				updateDb(field);
 			}
 		}
 	}
@@ -868,7 +872,7 @@ public class TrackerService {
 		return null;
 	}
 	
-	public void fieldUpdateDb(TrackerField field) {
+	public void updateDb(TrackerField field) {
 		String sqltype = "varchar(256)";
 		if(field.getFieldType()!=null) {
 			switch(field.getFieldType()) {

@@ -14,6 +14,9 @@
 			class="btn btn-primary mr-1">View</a>
 		<a href="#" th:href="@{/admin/trackers/edit/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Edit</a>
 		<a href="#" th:href="@{/admin/trackers/updatedb/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Update DB</a>
+		<form th:action="@{/admin/trackers/cleardb/{id}(id=${tracker.id})}" method="POST" onsubmit="confirm('Clear Db?');">
+		<button class="btn btn-danger mr-1">Clear DB</button>
+		</form>
 		<a href="#" th:href="@{/admin/trackers/fixstatus/{id}(id=${tracker.id})}" class="btn btn-primary mr-1">Fix Status</a>
 		<form method='post' th:action='@{/admin/trackers/delete/{id}(id=${tracker.id})}' th:object="${tracker}"
 			class="form-inline">

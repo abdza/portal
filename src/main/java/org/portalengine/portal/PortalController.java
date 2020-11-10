@@ -24,6 +24,7 @@ import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -58,9 +59,6 @@ public class PortalController {
 	@Value("${server.servlet.context-path}")
 	private String contextPath;
 	
-	@Value("${rootnode:'portal'}")
-	private String rootnode;
-	
 	@Autowired
 	private PageService pageService;
 	
@@ -81,6 +79,12 @@ public class PortalController {
 	
 	@Autowired
 	private SettingService settingService;
+	
+	/* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	public PortalController() {
@@ -152,6 +156,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -192,6 +197,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -234,7 +240,8 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
-				binding.setVariable("settingService", settingService);				
+				binding.setVariable("settingService", settingService);	
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -251,6 +258,7 @@ public class PortalController {
 					model.addAttribute("pageTitle","Running " + curpage.getTitle());
 					model.addAttribute("page", curpage);
 					model.addAttribute("content",content);
+					model.addAttribute("env", env);
 					model.addAttribute("arg1",arg1);
 					model.addAttribute("arg2",arg2);
 					model.addAttribute("arg3",arg3);
@@ -267,6 +275,7 @@ public class PortalController {
 				model.addAttribute("pageTitle",curpage.getTitle());
 				model.addAttribute("page", curpage);
 				model.addAttribute("content", curpage.getContent());
+				model.addAttribute("env", env);
 				model.addAttribute("arg1",arg1);
 				model.addAttribute("arg2",arg2);
 				model.addAttribute("arg3",arg3);
