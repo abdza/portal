@@ -73,12 +73,11 @@ public class TrackerApiController {
 			JsonNode optJson = field.optionsJson();
 			
 			if(optJson!=null && optJson.get("query")!=null) {
-				ObjectNode onode = (ObjectNode) optJson.get("query");
 				if(request.getParameter("q")!=null) {
 					search = "%" + request.getParameter("q").replace(" " , "%") + "%";
 				}
-				JsonNode qnode = ((ObjectNode)optJson.get("query")).put("q", search);				
-				
+				JsonNode qnode = ((ObjectNode)optJson.get("query")).put("q", search);			
+								
 				Tracker targetTracker = service.getRepo().findOneByModuleAndSlug(optJson.get("module").asText(), optJson.get("slug").asText());
 				
 				toreturn = service.dataset(targetTracker, qnode, false);

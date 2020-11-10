@@ -234,7 +234,7 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
-				binding.setVariable("settingService", settingService);
+				binding.setVariable("settingService", settingService);				
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
