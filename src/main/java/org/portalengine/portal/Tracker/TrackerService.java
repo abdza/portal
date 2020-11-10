@@ -281,6 +281,13 @@ public class TrackerService {
 		return false;
 	}
 	
+	public boolean deletable(Tracker tracker, Integer id) {
+		if(tracker.getTrackerType().equals("Statement")) {
+			return true;
+		}
+		return false;
+	}
+	
 	public List<TrackerTransition> record_transitions(Tracker tracker, Long id) {
 		List<TrackerTransition> toreturn = new ArrayList<TrackerTransition>();
 		HashMap<String,Object> currow = datarow(tracker,id);
@@ -1056,5 +1063,9 @@ public class TrackerService {
 		if(trythis.getInt("result")==0) {
 			jdbctemplate.execute("alter table " + field.getTracker().getDataTable().toUpperCase() + " add " + field.getName().toUpperCase() + " " + sqltype + " NULL");
 		}
+	}
+	
+	public boolean listAction(Tracker tracker) {
+		return true;
 	}
 }

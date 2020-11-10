@@ -1,10 +1,16 @@
 <table th:fragment="datatable(tracker,dataset)" class="table">
 <tr><th>#</th>
 <th th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
+<th th:if="${@trackerService.listAction(tracker)}">Action</th>
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
 <td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="${pnode}?@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}:@{/{module}/{slug}/display/{id}(id=${datas.get('id')},module=${tracker.module},slug=${tracker.slug})}" >2</a></td>
 <td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${@trackerService.display(field,datas)}">module</td>
+<td th:if="${@trackerService.listAction(tracker)}">
+<form th:if="${@trackerService.deletable(tracker,datas.get('id'))}" th:action="@{/{module}/{slug}/delete/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}" onsubmit="return confirm('Confirm delete?');" method="POST">
+	<button class="btn btn-danger">Delete</button>
+</form>
+</td>
 </tr>
 </table>
 

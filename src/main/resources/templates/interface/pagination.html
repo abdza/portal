@@ -1,4 +1,4 @@
-<ul th:fragment="navpagination(items,url)" th:if="${items.totalPages gt 1 }" class="pagination is-centered" role="navigation" aria-label="pagination" th:with="url=${@environment.getProperty('server.servlet.context-path') + url}">
+<ul th:fragment="navpagination(items,url)" th:if="${items.totalPages gt 1 }" class="pagination is-centered" role="navigation" aria-label="pagination">
     <li th:if="${items.number gt 0}" class="paginate_button page-item previous">
         <a class="page-link"  th:href="@{{url}?page={id}(id=${items.number-1},url=${url})}">
             Previous

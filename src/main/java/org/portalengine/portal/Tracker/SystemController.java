@@ -12,6 +12,10 @@ import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +39,12 @@ public class SystemController {
 	
 	@Autowired
 	private TrackerService trackerService;
+	
+	@Autowired
+	private NamedParameterJdbcTemplate namedjdbctemplate;
+	
+	@Autowired
+	private JdbcTemplate jdbctemplate;
 	
 	@Autowired
 	public SystemController() {
@@ -116,6 +126,15 @@ public class SystemController {
 		else {
 			return "404";
 		}
+	}
+	
+	@PostMapping("/{module}/{slug}/delete/{id}")
+	public String deletedata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();
+		paramsource.addValue("id", id);
+		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where id=:id", paramsource);
+		return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
 	}
 	
 	@GetMapping("/{module}/{slug}/edit/{id}")
