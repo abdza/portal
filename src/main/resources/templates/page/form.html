@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-end">
+<style type="text/css" media="screen">
+form .ace_editor { 
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1 th:text="${pageTitle}">Create Page</h1>
-        <form method='post' th:action='@{/admin/pages/save}' th:object="${page}">
+        <form method='post' id='pageform' th:action='@{/admin/pages/save}' th:object="${page}">
             <input type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>
@@ -54,8 +66,9 @@
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Content</label></div>
-                <div class='col-sm-9'>
-                    <textarea class='textarea col-12' th:field="*{content}" rows="30">
+                <div class='col-sm-9' style="min-height: 50em;">
+                	<input type='hidden' th:field="*{content}"/>
+                    <textarea class='textarea col-12' rows="30" id='contenteditor' th:text="${page.content}">
                     </textarea>
                 </div>
             </div>
@@ -80,5 +93,35 @@
 	&lt;/html&gt;
     </div>
 </section>
+<th:block layout:fragment="page-javascript">
+<script th:src="@{/libs/ace-editor/ace.js}" type="text/javascript" charset="utf-8"></script>
+<script th:inline="javascript">
+    var editor = ace.edit("contenteditor");
+    editor.setTheme("ace/theme/chrome");
+    
+    [# th:if="${page.runable}"]
+    	editor.session.setMode("ace/mode/groovy");
+    [/]
+   	[# th:if="${!page.runable}"]
+   		editor.session.setMode("ace/mode/html");
+	[/]
+    
+	$('input[name="runable"]').on('change',function(){		
+		if($('input[name="runable"]').prop("checked")){
+			console.log("changing to groovy");
+			editor.session.setMode("ace/mode/groovy");
+		}
+		else{
+			console.log("chanding to html");
+			editor.session.setMode("ace/mode/html");
+		}
+	});
+
+    $('#pageform').on('submit',function(){    	
+		$('#content').val(editor.getValue());
+		
+	});
+</script>
+</th:block>
 
 </html>
