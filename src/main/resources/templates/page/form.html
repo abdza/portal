@@ -99,10 +99,10 @@ form .ace_editor {
     var editor = ace.edit("contenteditor");
     editor.setTheme("ace/theme/chrome");
     
-    [# th:if="${page.runable}"]
+    [# th:if="${page.runable==true}"]
     	editor.session.setMode("ace/mode/groovy");
     [/]
-   	[# th:if="${!page.runable}"]
+   	[# th:if="${page.runable!=true}"]
    		editor.session.setMode("ace/mode/html");
 	[/]
     
