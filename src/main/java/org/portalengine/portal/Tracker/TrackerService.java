@@ -400,6 +400,16 @@ public class TrackerService {
 		return curquery;
 	}
 	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,false);
+	}
+	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search, boolean pagelimit) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,pagelimit);
+	}
+	
 	public DataSet hashMapData(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode qjson = null;
