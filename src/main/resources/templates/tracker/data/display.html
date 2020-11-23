@@ -3,7 +3,7 @@
 
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
-        <h1>Display Data</h1>
+        <h1 th:text="${datatitle}">Display Data</h1>
 
 		<th:block th:if="${pnode}">
         <a href="#" th:href="@{/{portalpath}(portalpath=${pnode.portalPath()})}"

@@ -28,6 +28,10 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Data;
 
@@ -74,26 +78,7 @@ public class TrackerField extends Auditable<String> {
 		return newfield;
 	}
 	
-	public String display(HashMap<String,Object> datas) {
-		try {
-			if(fieldType.equals("Date") || fieldType.equals("DateTime")) {
-				DateFormat format;
-				if(fieldType.equals("Date")) {
-					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-				}
-				else {
-					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-				}
-				return format.format((Date)datas.get(name));
-			}
-			else {
-				return String.valueOf(datas.get(name));
-			}
-		}
-		catch(Exception exp) {
-			return null;
-		}
-	}
+
 	
 	public String display(SqlRowSet datas) {
 		if(datas!=null) {
@@ -125,6 +110,23 @@ public class TrackerField extends Auditable<String> {
 			toreturn = " datetimepicker datetimepicker-input ";
 		}
 		return toreturn;
+	}
+	
+	public JsonNode optionsJson() {
+		ObjectMapper mapper = new ObjectMapper();
+	    JsonNode qjson = null;
+	    if(this.optionSource!=null && this.optionSource.length()>0) {
+			try {				
+				qjson = mapper.readTree(this.optionSource.replace('`', '"'));				
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+		return qjson;
 	}
 	
 	@PreRemove

@@ -1,10 +1,16 @@
 <table th:fragment="datatable(tracker,dataset)" class="table">
 <tr><th>#</th>
 <th th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
+<th th:if="${@trackerService.listAction(tracker)}">Action</th>
 </tr>
 <tr th:each="datas,iter: ${dataset.dataRows}">
 <td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="${pnode}?@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}:@{/{module}/{slug}/display/{id}(id=${datas.get('id')},module=${tracker.module},slug=${tracker.slug})}" >2</a></td>
-<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${datas.get(field.name)?.toString()}">module</td>
+<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${@trackerService.display(field,datas)}">module</td>
+<td th:if="${@trackerService.listAction(tracker)}">
+<form th:if="${@trackerService.deletable(tracker,datas.get('id'))}" th:action="@{/{module}/{slug}/delete/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}" onsubmit="return confirm('Confirm delete?');" method="POST">
+	<button class="btn btn-danger">Delete</button>
+</form>
+</td>
 </tr>
 </table>
 
@@ -77,7 +83,7 @@ $('#val_[(${field.name})]').select2({
 [# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
-    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+    url: /*[[@{/api/trackers/query_field/{field_id}(field_id=${field.id})}]]*/'/dummy/api/users',
     dataType: 'json',
     processResults: function (data) {
     	var dat = $.map(data.content, function(obj){
@@ -115,10 +121,10 @@ $('#val_[(${field.name})]').select2({
 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0' th:text="${field.label}">Module</label></div>
 <div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
 <th:block th:if="${field.fieldWidget=='Default'}">
-<select th:if="${field.fieldType=='TreeNode'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
 	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
 </select>
-<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
+<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${field.display(datas)}"/>
 <input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
 </th:block>
 <th:block th:if="${field.fieldWidget=='DropDown'}">
@@ -132,7 +138,7 @@ $('#val_[(${field.name})]').select2({
 <div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}" class='columns'>
 <div class='column is-one-quarter has-text-weight-bold' th:text="${field.label + ':'}">Form Fields:</div>
-<div class='column' th:text="${datas.get(field.name)?.toString()}" >data_table</div>
+<div class='column' th:text="${@trackerService.display(field,datas)}" >data_table</div>
 </div>
 </div>
 

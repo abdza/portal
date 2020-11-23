@@ -2,6 +2,7 @@ package org.portalengine.portal.Tracker;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.sql.Types;
 import java.text.DateFormat;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +36,7 @@ import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.UserService;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,6 +85,9 @@ public class TrackerService {
 	private PageService pageService;
 	
 	@Autowired
+	private UserService userService;
+	
+	@Autowired
 	private NamedParameterJdbcTemplate namedjdbctemplate;
 	
 	@Autowired
@@ -99,123 +105,6 @@ public class TrackerService {
 	
 	public String slugify(String data) {
 		return data.replaceAll("[^A-Za-z0-9]", "_").toLowerCase();
-	}
-	
-	public Tracker copyTracker(Tracker source, Long destId) {
-		Tracker newtracker = source.copy(destId);
-		repo.save(newtracker);
-		for(TrackerField curfield : source.getFields()) {
-			TrackerField newfield = curfield.copy(newtracker);
-			fieldRepo.save(newfield);
-		}
-		for(TrackerRole currole : source.getRoles()) {
-			TrackerRole newrole = currole.copy(newtracker);
-			roleRepo.save(newrole);
-		}
-		for(TrackerStatus curstatus : source.getStatuses()) {
-			TrackerStatus newstatus = curstatus.copy(newtracker);
-			statusRepo.save(newstatus);			
-		}
-		for(TrackerTransition curtransition : source.getTransitions()) {
-			TrackerTransition newtransition = curtransition.copy(newtracker);
-			transitionRepo.save(newtransition);
-		}
-		return newtracker;
-	}
-	
-	public String displayList(Model model, Tracker tracker) {
-		model.addAttribute("tracker", tracker);
-		String listtitle = tracker.getName();
-		model.addAttribute("listtitle",listtitle);
-		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
-		if(pp!=null) {
-			Map<String, Object> ctx2 = new HashMap<String, Object>();
-			ctx2.put("tracker", tracker);
-			ctx2.put("listtitle", listtitle);
-			String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-			model.addAttribute("content", content);
-			pp.setContent(content);
-			return "page/plain.html";
-		}
-		return "tracker/data/list.html";
-	}
-	
-	public String displayData(Model model, Tracker tracker, Long id) {
-		if(tracker!=null) {
-			model.addAttribute("tracker", tracker);
-			HashMap<String,Object> datarow = datarow(tracker, id);
-			model.addAttribute("datas", datarow);
-			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
-			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("tracker", tracker);
-				ctx2.put("datas", datarow);
-				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
-				return "page/plain.html";
-			}
-			return "tracker/data/display.html";
-		}
-		else {
-			return "404";
-		}
-	}
-	
-	public String editData(Model model, Tracker tracker, Long id) {
-		if(tracker!=null) {
-			model.addAttribute("tracker", tracker);
-			String formtitle = "Edit " + tracker.getName();
-			model.addAttribute("formtitle",formtitle);
-			HashMap<String,Object> datarow = this.datarow(tracker, id);
-			model.addAttribute("datas", datarow);
-			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
-			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("tracker", tracker);
-				ctx2.put("datas", datarow);
-				ctx2.put("formtitle", formtitle);
-				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
-				return "page/plain.html";
-			}
-			return "tracker/data/form.html";
-		}
-		else {
-			return "404";
-		}
-	}
-	
-	public String saveData(Tracker tracker, User curuser, TreeNode pnode) {
-		if(tracker!=null) {
-			this.saveForm(tracker, curuser);
-			Map<String, String[]> postdata = request.getParameterMap();
-			if(postdata.get("transition_id")!=null) {
-				TrackerTransition transition = this.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
-			}
-			if(postdata.get("id")!=null) {
-				return "redirect:" + treeService.portalPath(pnode) + "/t/display/" + postdata.get("id")[0].toString();
-			}
-			else {			
-				return "redirect:" + treeService.portalPath(pnode);
-			}
-		}	
-		else {
-			return "404";
-		}
-	}
-	
-	public String createData(Model model, Tracker tracker) {
-		if(tracker!=null) {
-			model.addAttribute("tracker", tracker);
-			model.addAttribute("formtitle","New " + tracker.getName());
-			model.addAttribute("transition",this.create_transition(tracker));
-			return "tracker/data/form.html";
-		}
-		else {
-			return "404";
-		}
 	}
 	
 	public TrackerTransition create_transition(Tracker tracker) {
@@ -264,6 +153,13 @@ public class TrackerService {
 	}
 	
 	public boolean editable(Tracker tracker, Integer id) {
+		if(tracker.getTrackerType().equals("Statement")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean deletable(Tracker tracker, Integer id) {
 		if(tracker.getTrackerType().equals("Statement")) {
 			return true;
 		}
@@ -504,6 +400,31 @@ public class TrackerService {
 		return curquery;
 	}
 	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,false);
+	}
+	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search, boolean pagelimit) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,pagelimit);
+	}
+	
+	public DataSet hashMapData(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode qjson = null;
+		try {
+			qjson = mapper.readTree(mapper.writeValueAsString(search));
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dataset(tracker,qjson,pagelimit);
+	}
+	
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -547,60 +468,6 @@ public class TrackerService {
 			 * 
 			 * 
 			 */
-			
-			
-			/* System.out.println("Got search node");
-			ArrayList<String> squery = new ArrayList<String>();
-			String qstring = null;
-			System.out.println("Did it reach here dddd");
-			if(request.getParameter("q")!=null) {				
-				qstring = request.getParameter("q");
-			}			
-			else if(search.get("q")!=null) {				
-				qstring = search.get("q").asText();
-			}		
-			System.out.println("Got here already");
-			if(qstring!=null) {
-				System.out.println("Searching: " + qstring);
-			}
-			else {
-				System.out.println("qstirng is null");
-			}
-			if(search.get("like")!=null) {
-				System.out.println("Got a like");
-				if(search.get("like").isArray()) {					
-					qstring = "%" + qstring + "%";
-					for(final JsonNode jfield : search.get("like")) {						
-						squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
-						paramsource.addValue(jfield.asText(), qstring);
-					}
-				}
-				else if(search.get("like").isObject()) {					
-					Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
-					svals.forEachRemaining( node -> {						
-						squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
-						paramsource.addValue(node.getKey(),node.getValue().asText());
-					});
-				}
-			}
-			if(search.get("equal")!=null) {
-				if(search.get("equal").isArray()) {
-					for(final JsonNode jfield : search.get("equal")) {						
-						squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
-						paramsource.addValue(jfield.asText(), qstring);
-					}
-				}
-				else if(search.get("equal").isObject()) {						
-					Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
-					svals.forEachRemaining( node -> {						
-						squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
-						paramsource.addValue(node.getKey(),node.getValue().asText());
-					});
-				}
-			}
-			if(squery.size()>0) {
-				filterquery += " and (" + String.join(" or ", squery) + ")";
-			} */
 			
 			HashMap<String,Object> curquery = new HashMap<String,Object>();
 			curquery = jsonquery(search, null, paramsource,"or");
@@ -670,6 +537,7 @@ public class TrackerService {
 	}
 	
 	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
+		System.out.println("In savemap");
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -678,17 +546,17 @@ public class TrackerService {
 			curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
 		}
 		mapdata.forEach((fieldname,fieldval)->{
-			System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
+			// System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
 			TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,fieldname);
 			if(tfield!=null) {
-				System.out.println("tfield:" + tfield.getName());
+				// System.out.println("tfield:" + tfield.getName());
 				submittedfields.add(tfield);
 			}
 		});
 		System.out.println("before submitted");
 		submittedfields.forEach(tf->{
 			try {
-				System.out.println("processing:" + tf.getName());
+				// System.out.println("processing:" + tf.getName());
 				switch(tf.getFieldType()) {
 				case "String":
 				case "Text":
@@ -733,7 +601,7 @@ public class TrackerService {
 				e.printStackTrace();
 			}
 		});
-		System.out.println("after added paramsource");
+		// System.out.println("after added paramsource");
 		String dquery;
 		Long curid = null;
 		if(mapdata.get("id")!=null) {
@@ -748,8 +616,8 @@ public class TrackerService {
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
-		System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString());
+		/* System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString()); */
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder);
 		if(mapdata.get("id")==null) {
@@ -872,8 +740,8 @@ public class TrackerService {
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
-		System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString());
+		/* System.out.println("dquery:" + dquery);
+		System.out.println("params:" + paramsource.toString()); */
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder);
 		if(postdata.get("id")==null) {
@@ -898,11 +766,15 @@ public class TrackerService {
 		return curid;
 	}
 	
-	public void trackerUpdateDb(Tracker tracker) {
+	public void clearDb(Tracker tracker) {
+		jdbctemplate.execute("truncate table " + tracker.getDataTable());
+	}
+	
+	public void updateDb(Tracker tracker) {
 		
 		if(tracker.getDataTable().length()>0) {
-			System.out.println("Checking existance of table:" + tracker.getDataTable());
-			System.out.println("DC:" + dataURL);
+			/* System.out.println("Checking existance of table:" + tracker.getDataTable());
+			System.out.println("DC:" + dataURL); */
 			// Check whether data table already exists
 			String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "'";
@@ -935,7 +807,7 @@ public class TrackerService {
 			if(trythis.getInt("result")==0) {
 				jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
 			}
-			System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
+			// System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
 				if(tracker.getUpdatesTable().length()>0) {
@@ -952,12 +824,65 @@ public class TrackerService {
 					}
 			}
 			for(TrackerField field: tracker.getFields()) {
-				fieldUpdateDb(field);
+				updateDb(field);
 			}
 		}
 	}
 	
-	public void fieldUpdateDb(TrackerField field) {
+	public String display(TrackerField field, HashMap<String,Object> datas) {
+		try {
+			System.out.println("In display field service");
+			if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
+				DateFormat format;
+				if(field.getFieldType().equals("Date")) {
+					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+				}
+				else {
+					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+				}
+				return format.format((Date)datas.get(field.getName()));
+			}
+			else if(field.getFieldType().equals("User")) {
+				Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
+				User data = userService.getRepo().getOne(targetid);
+				if(data!=null) {
+					return data.getName();
+				}
+			}
+			else if(field.getFieldType().equals("TrackerType")) {
+				System.out.println("Got trackertype");
+				JsonNode foptions = field.optionsJson();
+				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
+					String module = foptions.get("module").textValue();
+					String slug = foptions.get("slug").textValue();
+					String name_column = foptions.get("name_column").textValue();
+					System.out.println("Got module:" + module + " and slug:" + slug);
+					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+					if(targetTracker!=null) {
+						System.out.println("Not null for:" + field.getName());
+						System.out.println("Val:" + datas.get(field.getName()));
+						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
+						System.out.println("Got targettracker searching for:" + targetid.toString());						
+						HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
+						if(targetdatas!=null) {
+							System.out.println("Got rows from data");
+							return targetdatas.get(name_column).toString();
+						}
+					}
+				}
+			}
+			else {
+				return String.valueOf(datas.get(field.getName()));
+			}
+		}
+		catch(Exception exp) {
+			System.out.println("Error:" + exp);
+			return null;
+		}
+		return null;
+	}
+	
+	public void updateDb(TrackerField field) {
 		String sqltype = "varchar(256)";
 		if(field.getFieldType()!=null) {
 			switch(field.getFieldType()) {
@@ -992,5 +917,13 @@ public class TrackerService {
 		if(trythis.getInt("result")==0) {
 			jdbctemplate.execute("alter table " + field.getTracker().getDataTable().toUpperCase() + " add " + field.getName().toUpperCase() + " " + sqltype + " NULL");
 		}
+	}
+	
+	public boolean listAction(Tracker tracker) {
+		return true;
+	}
+	
+	public Tracker load(String module, String slug) {
+		return repo.findOneByModuleAndSlug(module, slug);
 	}
 }

@@ -24,6 +24,7 @@ import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,9 +59,6 @@ public class PortalController {
 	
 	@Value("${server.servlet.context-path}")
 	private String contextPath;
-	
-	@Value("${rootnode:'portal'}")
-	private String rootnode;
 	
 	@Autowired
 	private PageService pageService;
@@ -81,6 +80,12 @@ public class PortalController {
 	
 	@Autowired
 	private SettingService settingService;
+	
+	/* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	public PortalController() {
@@ -136,7 +141,7 @@ public class PortalController {
 		return "page/setup.html";
 	}
 	
-	@RequestMapping(path={"/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE)
+	@RequestMapping(path={"/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public Object pngPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
@@ -152,6 +157,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -176,7 +182,7 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path={"/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
@@ -192,6 +198,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -216,7 +223,7 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"})
+	@RequestMapping(path={"/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })
 	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
@@ -234,7 +241,8 @@ public class PortalController {
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
-				binding.setVariable("settingService", settingService);
+				binding.setVariable("settingService", settingService);	
+				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
 				binding.setVariable("arg3", arg3);
@@ -251,6 +259,7 @@ public class PortalController {
 					model.addAttribute("pageTitle","Running " + curpage.getTitle());
 					model.addAttribute("page", curpage);
 					model.addAttribute("content",content);
+					model.addAttribute("env", env);
 					model.addAttribute("arg1",arg1);
 					model.addAttribute("arg2",arg2);
 					model.addAttribute("arg3",arg3);
@@ -267,6 +276,7 @@ public class PortalController {
 				model.addAttribute("pageTitle",curpage.getTitle());
 				model.addAttribute("page", curpage);
 				model.addAttribute("content", curpage.getContent());
+				model.addAttribute("env", env);
 				model.addAttribute("arg1",arg1);
 				model.addAttribute("arg2",arg2);
 				model.addAttribute("arg3",arg3);

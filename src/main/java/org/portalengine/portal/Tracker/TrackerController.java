@@ -93,7 +93,14 @@ public class TrackerController {
 		@GetMapping("/updatedb/{id}")
 		public String updateDb(@PathVariable Long id, Model model) {
 			Tracker tracker = service.getRepo().getOne(id);
-			service.trackerUpdateDb(tracker);
+			service.updateDb(tracker);
+			return "redirect:/admin/trackers/display/" + id.toString();
+		}
+		
+		@PostMapping("/cleardb/{id}")
+		public String clearDb(@PathVariable Long id, Model model) {
+			Tracker tracker = service.getRepo().getOne(id);
+			service.clearDb(tracker);
 			return "redirect:/admin/trackers/display/" + id.toString();
 		}
 		

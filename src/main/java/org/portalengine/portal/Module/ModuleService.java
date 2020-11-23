@@ -3,11 +3,15 @@ package org.portalengine.portal.Module;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -419,7 +423,21 @@ public class ModuleService {
 				cmodules.add(dmod);
 			}
 		}
-		System.out.println("cmodules:" + cmodules.toString());
+		
+		String cwd = new File("").getAbsolutePath() + "/custom_modules";
+		String prepend = settingService.StringSetting("module_folder",cwd);		
+		
+		File folder = new File(prepend);
+		File[] listOfFiles = folder.listFiles(); 
+		for(int i=0;i<listOfFiles.length;i++) {
+			if(listOfFiles[i].isDirectory()) {				
+				String dmod = listOfFiles[i].getName();
+				if(!cmodules.contains(dmod)){
+					cmodules.add(dmod);
+				}
+			}
+		}		
+		
 		jdbctemplate.execute("delete from portal_module");
 		cmodules.forEach(cmod -> {
 			Module curmod = new Module();

@@ -12,6 +12,10 @@ import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +39,12 @@ public class SystemController {
 	
 	@Autowired
 	private TrackerService trackerService;
+	
+	@Autowired
+	private NamedParameterJdbcTemplate namedjdbctemplate;
+	
+	@Autowired
+	private JdbcTemplate jdbctemplate;
 	
 	@Autowired
 	public SystemController() {
@@ -78,7 +88,9 @@ public class SystemController {
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
-			model.addAttribute("formtitle","New " + tracker.getName());
+			String formtitle = "New " + tracker.getName();
+			model.addAttribute("formtitle",formtitle);			
+			model.addAttribute("pageTitle",formtitle);
 			model.addAttribute("transition",trackerService.create_transition(tracker));
 			return "tracker/data/form.html";
 		}
@@ -91,14 +103,16 @@ public class SystemController {
 	public String displaydata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
+			String datatitle = tracker.getName() + " - Details";
+			System.out.println("Title:" + datatitle);
+			model.addAttribute("datatitle",datatitle);
+			model.addAttribute("pageTitle",datatitle);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerService);
 				ctx2.put("tracker", tracker);
 				ctx2.put("datas", datarow);
 				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
@@ -113,20 +127,28 @@ public class SystemController {
 		}
 	}
 	
+	@PostMapping("/{module}/{slug}/delete/{id}")
+	public String deletedata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();
+		paramsource.addValue("id", id);
+		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where id=:id", paramsource);
+		return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
+	}
+	
 	@GetMapping("/{module}/{slug}/edit/{id}")
 	public String editdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			String formtitle = "Edit " + tracker.getName();
 			model.addAttribute("formtitle",formtitle);
+			model.addAttribute("pageTitle",formtitle);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
 			if(pp!=null) {
 				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerService);
 				ctx2.put("tracker", tracker);
 				ctx2.put("datas", datarow);
 				ctx2.put("formtitle", formtitle);
@@ -162,7 +184,7 @@ public class SystemController {
 			else {			
 				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
 			}
-		}
+		} 
 		else {
 			return "404";
 		}
@@ -171,11 +193,20 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/list")
 	public String list(@PathVariable String module, @PathVariable String slug, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
-		if(tracker!=null) {
-			return trackerService.displayList(model, tracker);
+		model.addAttribute("tracker", tracker);
+		String listtitle = tracker.getName();
+		model.addAttribute("listtitle",listtitle);
+		model.addAttribute("pageTitle",listtitle);
+		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
+		if(pp!=null) {
+			Map<String, Object> ctx2 = new HashMap<String, Object>();
+			ctx2.put("tracker", tracker);
+			ctx2.put("listtitle", listtitle);
+			String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
+			model.addAttribute("content", content);			
+			pp.setContent(content);
+			return "page/plain.html";
 		}
-		else {
-			return "404";
-		}
+		return "tracker/data/list.html";
 	}
 }
