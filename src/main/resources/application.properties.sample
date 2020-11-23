@@ -17,9 +17,9 @@
 # spring.datasource.password = sa
 
 #### Postgresql connection settings
-# spring.datasource.url=jdbc:postgresql://localhost:5432/qrform
-# spring.datasource.username = qrform
-# spring.datasource.password = qrform123
+# spring.datasource.url=jdbc:postgresql://localhost:5432/portal
+# spring.datasource.username = portal
+# spring.datasource.password = portal123
 # spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 # spring.jpa.generate-ddl=true
 
