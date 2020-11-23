@@ -118,7 +118,6 @@ public class TrackerService {
 				statuslist.add("'" + tstat.getName() + "'");
 			}
 			String dquery = "update " + tracker.getDataTable() + " set record_status='" + tracker.getInitialStatus() + "' where record_status not in (" + statuslist.toString() + ") or record_status is null";
-			System.out.println(dquery);
 			jdbctemplate.execute(dquery);
 		}
 	}
@@ -226,8 +225,7 @@ public class TrackerService {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode savefield;
 			try {
-				savefield = mapper.readTree(field.getOptionSource());			
-				System.out.println("savefield is:" + savefield.toString());
+				savefield = mapper.readTree(field.getOptionSource());
 				if(savefield.isArray()) {
 					ArrayNode opts = (ArrayNode) savefield;
 					for(int i=0;i<opts.size();i++) {
@@ -314,7 +312,7 @@ public class TrackerService {
 		}
 	}
 	
-	public HashMap<String,Object> jsonquery(JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
+	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
 		HashMap<String,Object> curquery = new HashMap<String,Object>();
 		HashMap<String,Object> subquery = new HashMap<String,Object>();
 		
@@ -323,12 +321,12 @@ public class TrackerService {
 		String qstring = null;		
 		
 		if(search.get("and") != null) {
-			subquery = jsonquery(search.get("and"), filterquery, paramsource,"and");
+			subquery = jsonquery(tracker, search.get("and"), filterquery, paramsource,"and");
 			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
 			filterquery = (String) subquery.get("filterquery");
 		}
 		if(search.get("or") != null) {
-			subquery = jsonquery(search.get("or"), filterquery, paramsource,"or");
+			subquery = jsonquery(tracker, search.get("or"), filterquery, paramsource,"or");
 			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
 			filterquery = (String) subquery.get("filterquery");
 		}				
@@ -340,12 +338,11 @@ public class TrackerService {
 			qstring = search.get("q").asText();
 		}		
 		if(search.get("like")!=null) {
-			System.out.println("Got a like");
 			if(search.get("like").isArray()) {					
 				qstring = "%" + qstring + "%";
 				for(final JsonNode jfield : search.get("like")) {						
 					squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
-					paramsource.addValue(jfield.asText(), qstring);
+					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 				}
 			}
 			else if(search.get("like").isObject()) {					
@@ -353,7 +350,7 @@ public class TrackerService {
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
 					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
-					paramsource.addValue(node.getKey(),node.getValue().asText());
+					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
 				}
 				/* svals.forEachRemaining( node -> {						
 					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
@@ -365,15 +362,15 @@ public class TrackerService {
 			if(search.get("equal").isArray()) {
 				for(final JsonNode jfield : search.get("equal")) {						
 					squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
-					paramsource.addValue(jfield.asText(), qstring);
+					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 				}
 			}
 			else if(search.get("equal").isObject()) {						
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
-					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
-					paramsource.addValue(node.getKey(),node.getValue().asText());
+					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
+					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
 				}
 				/* svals.forEachRemaining( node -> {						
 					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
@@ -429,7 +426,6 @@ public class TrackerService {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
-		System.out.println("basequery:" + basequery);
 		String filterquery = "";
 		if(search!=null) {
 			/*
@@ -470,10 +466,9 @@ public class TrackerService {
 			 */
 			
 			HashMap<String,Object> curquery = new HashMap<String,Object>();
-			curquery = jsonquery(search, null, paramsource,"or");
+			curquery = jsonquery(tracker, search, null, paramsource,"or");
 			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
-			System.out.println("filterquery:" + filterquery);
 		}
 		Integer size = 10;
 		Integer page = 0;
@@ -536,8 +531,61 @@ public class TrackerService {
 		return curobject;
 	}
 	
+	public MapSqlParameterSource addValue(Tracker tracker, MapSqlParameterSource paramsource, String fieldname ,Object data) {		
+		TrackerField tf = fieldRepo.findByTrackerAndName(tracker, fieldname);
+		if(tf==null) {			
+			if(fieldname.equals("id")) {
+				return paramsource.addValue("id",data,Types.NUMERIC);
+			}
+		}		
+		return addValue(paramsource, tf, data);
+	}
+	
+	public MapSqlParameterSource addValue(MapSqlParameterSource paramsource, TrackerField tf,Object data) {
+		try {
+			switch(tf.getFieldType()) {
+			case "String":
+			case "Text":
+				paramsource.addValue(tf.getName(), data,Types.VARCHAR);
+				break;
+			case "TrackerType":
+			case "TreeNode":
+			case "Integer":
+			case "User":				
+			case "Number":
+				paramsource.addValue(tf.getName(),data,Types.NUMERIC);
+				break;
+			case "Date":
+			case "DateTime":
+				DateFormat format;
+				if(tf.getFieldType().equals("Date")) {
+					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+				}
+				else {
+					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+				}
+				Date date;
+
+				date = format.parse((String) data);
+				if(date!=null) {
+					if(tf.getFieldType().equals("Date")) {
+						paramsource.addValue(tf.getName(), date, Types.DATE);
+					}
+					else {
+						paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+					}
+				}
+			}			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return paramsource;
+	}
+	
 	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
-		System.out.println("In savemap");
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -546,62 +594,18 @@ public class TrackerService {
 			curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
 		}
 		mapdata.forEach((fieldname,fieldval)->{
-			// System.out.println("fname:" + fieldname + " fval:" + String.valueOf(fieldval));
 			TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,fieldname);
 			if(tfield!=null) {
-				// System.out.println("tfield:" + tfield.getName());
 				submittedfields.add(tfield);
 			}
 		});
-		System.out.println("before submitted");
+		// using array to get around local variable in enclosing scope need to be final
+		MapSqlParameterSource[] inparamsource = {new MapSqlParameterSource()};
 		submittedfields.forEach(tf->{
-			try {
-				// System.out.println("processing:" + tf.getName());
-				switch(tf.getFieldType()) {
-				case "String":
-				case "Text":
-					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.VARCHAR);
-					break;
-				case "TrackerType":
-				case "TreeNode":
-				case "Integer":
-				case "User":
-					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.NUMERIC);
-					break;
-				case "Number":
-					paramsource.addValue(tf.getName(), mapdata.get(tf.getName()),Types.NUMERIC);
-					break;
-				case "Date":
-				case "DateTime":
-					DateFormat format;
-					if(tf.getFieldType().equals("Date")) {
-						format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-					}
-					else {
-						format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-					}
-					Date date;
-	
-					date = format.parse((String) mapdata.get(tf.getName()));
-					if(date!=null) {
-						if(tf.getFieldType().equals("Date")) {
-							paramsource.addValue(tf.getName(), date, Types.DATE);
-						}
-						else {
-							paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
-						}
-					}
-	
-				}
-				submittednames.add(tf.getName());
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
+			inparamsource[0] = addValue(inparamsource[0], tf, mapdata.get(tf.getName()));
+			submittednames.add(tf.getName());
 		});
-		// System.out.println("after added paramsource");
+		paramsource = inparamsource[0];
 		String dquery;
 		Long curid = null;
 		if(mapdata.get("id")!=null) {
@@ -615,11 +619,9 @@ public class TrackerService {
 		}
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
-		}
-		/* System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString()); */
+		}		
 		KeyHolder keyholder = new GeneratedKeyHolder();
-		namedjdbctemplate.update(dquery,paramsource,keyholder);
+		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
 		if(mapdata.get("id")==null) {
 			curid = keyholder.getKey().longValue();
 		}
@@ -740,10 +742,8 @@ public class TrackerService {
 		else {
 			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", submittednames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
-		/* System.out.println("dquery:" + dquery);
-		System.out.println("params:" + paramsource.toString()); */
 		KeyHolder keyholder = new GeneratedKeyHolder();
-		namedjdbctemplate.update(dquery,paramsource,keyholder);
+		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
 		if(postdata.get("id")==null) {
 			curid = keyholder.getKey().longValue();
 		}
@@ -772,9 +772,7 @@ public class TrackerService {
 	
 	public void updateDb(Tracker tracker) {
 		
-		if(tracker.getDataTable().length()>0) {
-			/* System.out.println("Checking existance of table:" + tracker.getDataTable());
-			System.out.println("DC:" + dataURL); */
+		if(tracker.getDataTable().length()>0) {			
 			// Check whether data table already exists
 			String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "'";
@@ -786,13 +784,22 @@ public class TrackerService {
 					jdbctemplate.execute("create table " + tracker.getDataTable().toUpperCase() + " (ID INT NOT NULL AUTO_INCREMENT,"
 							+ " PRIMARY KEY(ID))");
 				}
+				else if(dataURL.contains("jdbc:postgresql")) {
+					jdbctemplate.execute("create table if not exists " + tracker.getDataTable().toUpperCase() + " (ID serial PRIMARY KEY)");
+				}
 				else {
 					jdbctemplate.execute("create table " + tracker.getDataTable().toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1),"
 						+ "CONSTRAINT PK_" + tracker.getDataTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
 				}
 			}
-			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+			if(dataURL.contains("jdbc:postgresql")) {
+				trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'record_status'");
+			}
+			else {
+				trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
 					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
+			}
 			trythis.next();
 			if(trythis.getInt("result")==0) {
 				// Check to see if column record_status doesn't exist yet
@@ -801,25 +808,56 @@ public class TrackerService {
 					jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add RECORD_STATUS varchar(256) NULL");
 				}
 			}
-			trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-					+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'");
+			String ttstring = null;
+			
+			if(dataURL.contains("jdbc:postgresql")) {
+				ttstring =  "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'dataupdate_id'";
+				
+			}
+			else {
+				ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+						+ " TABLE_NAME = '" + tracker.getDataTable().toUpperCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'";
+			}
+			trythis = jdbctemplate.queryForRowSet(ttstring);
 			trythis.next();
 			if(trythis.getInt("result")==0) {
 				jdbctemplate.execute("alter table " + tracker.getDataTable().toUpperCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
 			}
-			// System.out.println("Type is:" + tracker.getTrackerType() + "-----------------");
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
 				if(tracker.getUpdatesTable().length()>0) {
-					SqlRowSet trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
-							+ " TABLE_NAME = '" + tracker.getUpdatesTable().toUpperCase() + "'");
+					SqlRowSet trytrails;
+					if(dataURL.contains("jdbc:postgresql")) {
+						trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
+								+ " TABLE_NAME = '" + tracker.getUpdatesTable().toLowerCase() + "'");
+					}
+					else {
+						trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
+								+ " TABLE_NAME = '" + tracker.getUpdatesTable().toUpperCase() + "'");
+					}
+							
 					trytrails.next();
 					if(trytrails.getInt("result")==0) {
 						// If updates table does not exists please create one
-						jdbctemplate.execute("create table " + tracker.getUpdatesTable().toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
-								+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
-								+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
-								+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+						if(dataURL.contains("jdbc:mysql")) {
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toUpperCase() + " (ID INT NOT NULL AUTO_INCREMENT, "
+									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
+									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
+									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+						}
+						else if(dataURL.contains("jdbc:postgresql")) {
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toUpperCase() + " (ID serial PRIMARY KEY, "
+									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
+									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
+									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + ")");
+						}
+						else {
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toUpperCase() + " (ID INT NOT NULL IDENTITY(1,1), "
+									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
+									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
+									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toUpperCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+						}
 					}
 					}
 			}
@@ -830,8 +868,7 @@ public class TrackerService {
 	}
 	
 	public String display(TrackerField field, HashMap<String,Object> datas) {
-		try {
-			System.out.println("In display field service");
+		try {			
 			if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
 				DateFormat format;
 				if(field.getFieldType().equals("Date")) {
@@ -850,22 +887,16 @@ public class TrackerService {
 				}
 			}
 			else if(field.getFieldType().equals("TrackerType")) {
-				System.out.println("Got trackertype");
 				JsonNode foptions = field.optionsJson();
 				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
 					String module = foptions.get("module").textValue();
 					String slug = foptions.get("slug").textValue();
 					String name_column = foptions.get("name_column").textValue();
-					System.out.println("Got module:" + module + " and slug:" + slug);
 					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
 					if(targetTracker!=null) {
-						System.out.println("Not null for:" + field.getName());
-						System.out.println("Val:" + datas.get(field.getName()));
-						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
-						System.out.println("Got targettracker searching for:" + targetid.toString());						
+						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;												
 						HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
 						if(targetdatas!=null) {
-							System.out.println("Got rows from data");
 							return targetdatas.get(name_column).toString();
 						}
 					}
@@ -911,8 +942,17 @@ public class TrackerService {
 				break;
 			}
 		}
-		SqlRowSet trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-				+ "TABLE_NAME = '" + field.getTracker().getDataTable().toUpperCase() + "' and COLUMN_NAME = '" + field.getName().toUpperCase() + "'");
+		String ttstring = null;
+		if(dataURL.contains("jdbc:postgresql")) {
+			ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+					+ "TABLE_NAME = '" + field.getTracker().getDataTable().toLowerCase() + "' and COLUMN_NAME = '" + field.getName().toLowerCase() + "'";
+		}
+		else {
+			ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
+					+ "TABLE_NAME = '" + field.getTracker().getDataTable().toUpperCase() + "' and COLUMN_NAME = '" + field.getName().toUpperCase() + "'";
+			
+		}
+		SqlRowSet trythis = jdbctemplate.queryForRowSet(ttstring);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
 			jdbctemplate.execute("alter table " + field.getTracker().getDataTable().toUpperCase() + " add " + field.getName().toUpperCase() + " " + sqltype + " NULL");

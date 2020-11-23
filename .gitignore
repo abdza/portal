@@ -35,4 +35,4 @@ src/main/resources/application.properties
 *~
 *.swp
 
-/custom_modules/
+/custom_modules
