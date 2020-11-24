@@ -140,11 +140,23 @@ public class DataUpdateController {
 	public String saveparam(@PathVariable Long id, Model model) {
 		DataUpdate dataupdate = service.getRepo().getOne(id);
 		Map<String, String[]> postdata = request.getParameterMap();
-		HashMap<String, String> savedfield = new HashMap<String, String>();
+		HashMap<String, Object> savedfield = new HashMap<String, Object>();
 		
 		dataupdate.getTracker().getFields().forEach(field->{
+			boolean savefield = false;
+			HashMap<String, String> fieldparams = new HashMap<String, String>();
 			if(postdata.get("col_" + field.getName())!=null) {
-				savedfield.put(field.getName(), postdata.get("col_" + field.getName())[0]);
+				fieldparams.put("column", postdata.get("col_" + field.getName())[0]);
+				savefield = true;
+			}
+			if(postdata.get("manual_" + field.getName())!=null) {
+				fieldparams.put("manual", postdata.get("manual_" + field.getName())[0]);
+			}
+			if(postdata.get("key_" + field.getName())!=null) {
+				fieldparams.put("key", postdata.get("key_" + field.getName())[0]);
+			}
+			if(savefield) {
+				savedfield.put(field.getName(),fieldparams);
 			}
 		});
 		

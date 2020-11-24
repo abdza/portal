@@ -410,16 +410,24 @@ public class PoiExcel {
 						boolean firstcompare = true;
 						boolean nodata = true;
 						String torun = "select 1";
+						
 						for(TrackerField field:statementfields) {
 							// System.out.println("sp:" + this.savedparams.toString());
-							String datasource = this.savedparams.get(field.getName()).asText();
+							
+							JsonNode curnode = this.savedparams.get(field.getName());
+							
+							
+							String datasource = curnode.get("column").asText();
 
 							Object curdata;
 
 							if(datasource.equals("manual")){
 								//not implemented yet
 								//curdata = this.savedparams.get("manual_" + field.getName()).asText();
-								curdata = "";
+								curdata = curnode.get("manual").asText();
+							}
+							else if(datasource.equals("ignore")) {
+								curdata = null;
 							}
 							else{
 								Integer curpos = Integer.parseInt(datasource);
@@ -439,15 +447,13 @@ public class PoiExcel {
 								paramsqlfields += ":" + field.getName();
 								updatefields += field.getName() + "=:" + field.getName();
 
-								if(this.savedparams.get("update_" + field.getName())!=null) {
-									String updatecheck = this.savedparams.get("update_" + field.getName()).asText();
-									if(updatecheck!=""){
-										if(!firstcompare){
-											comparefields += " and ";
-										}
-										comparefields += field.getName() + "=:" + field.getName();
-										firstcompare = false;
+								if(curnode.get("key")!=null) {									
+									if(!firstcompare){
+										comparefields += " and ";
 									}
+									comparefields += field.getName() + "=:" + field.getName();
+									firstcompare = false;
+									gotupdate=true;
 								}
 							
 								try {
@@ -503,7 +509,7 @@ public class PoiExcel {
 								sql.update(torun,qparam);
 							}
 							else{
-								updatefields += " , batchno=:batchno";
+								updatefields += " , DATAUPDATE_ID=:batchno";
 								torun = "update " + this.filtertable + " set " + updatefields + " where " + comparefields;
 								int updated = 0;
 								updated = sql.update(torun, qparam);

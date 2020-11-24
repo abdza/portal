@@ -26,8 +26,8 @@
                                 th:selected='${field.name==opt.getValue().replace(" ","_").replaceAll("[^A-Za-z0-9_]","").toLowerCase()}'>
                         </select>
                     </td>
-                    <td></td>
-                    <td></td>
+                    <td><input type="text" th:name='${"manual_" + field.name}'/></td>
+                    <td><input type="checkbox" th:name='${"key_" + field.name}'/></td>
                 </tr>
             </table>
 
