@@ -12,10 +12,10 @@
             	</div>                
                 <th:block sec:authorize="isAuthenticated()">
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/users}">Users</a>
+	                    <a class="nav-link" th:href="@{/admin/users}">Users</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
-	                    <a class="nav-link" th:href="@{/users/roles}">User Roles</a>
+	                    <a class="nav-link" th:href="@{/admin/users/roles}">User Roles</a>
 	                </li>
 	                <li sec:authorize="hasRole('ROLE_SYSTEM_ADMIN')" class="nav-item">
 	                    <a class="nav-link" th:href="@{/admin/modules}">Modules</a>

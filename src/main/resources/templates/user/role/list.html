@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <h1>User Role</h1>
    
-    <a href="#" th:href="@{/users/roles/create}" class="btn btn-primary">Add</a>
+    <a href="#" th:href="@{/admin/users/roles/create}" class="btn btn-primary">Add</a>
 
     <div class='table-container'>
         <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
@@ -18,7 +18,7 @@
             </tr>
 			<tr th:each="user_role,iter: ${user_roles}">
                 <td><a href='#'
-                        th:href='@{/users/roles/edit/{user_role_id}(user_role_id=${user_role.id})}'
+                        th:href='@{/admin/users/roles/edit/{user_role_id}(user_role_id=${user_role.id})}'
                         th:text="${iter.index + 1}">2</a></td>
                 <td th:text="${user_role.module}">name</td>
                 <td th:text="${user_role.role}">name</td>
@@ -26,7 +26,7 @@
                 <td th:text="${user_role.user.name}">name</td>                
                 <td>
                     <form method='post'
-                        th:action='@{/users/roles/delete/{user_role_id}(user_role_id=${user_role.id})}'
+                        th:action='@{/admin/users/roles/delete/{user_role_id}(user_role_id=${user_role.id})}'
                         th:object="${user_role}">
                         <input type='submit' class='button danger'
                             th:onClick='return confirm("Confirm delete user role " + this.getAttribute("data-fname") + "?");'
@@ -36,6 +36,8 @@
             </tr>
         </table>
     </div>
+    
+    <nav th:replace="interface/pagination::navpagination(items=${user_roles},url='/admin/users/roles')"></nav>
 
 </section>
 

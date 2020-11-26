@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/users/roles")
+@RequestMapping("/admin/users/roles")
 public class UserRoleController {
 
 	@Autowired
@@ -72,12 +72,12 @@ public class UserRoleController {
 		if(user_role!=null) {
 			service.getRoleRepo().deleteById(role_id);
 		}
-		return "redirect:/users/roles";
+		return "redirect:/admin/users/roles";
 	}
 
 	@PostMapping("/save")
 	public String save_role(@Valid UserRole user_role, Model model) {
 		service.getRoleRepo().save(user_role);
-		return "redirect:/users/roles";
+		return "redirect:/admin/users/roles";
 	}
 }

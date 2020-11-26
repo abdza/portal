@@ -4,7 +4,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>User Role</h1>
-        <form method='post' th:action='@{/users/roles/save}'
+        <form method='post' th:action='@{/admin/users/roles/save}'
             th:object="${user_role}">
             <input type='hidden' name='id' th:value='${user_role.id}' />
             <div class='form-group row'>

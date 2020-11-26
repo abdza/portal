@@ -40,7 +40,7 @@ public class UserController {
 		return "redirect:/";
 	}
 	
-	@GetMapping("/users")
+	@GetMapping("/admin/users")
 	public String list(HttpServletRequest request, Model model) {			
 		int page = 0;
 		int size = 10;
@@ -55,7 +55,7 @@ public class UserController {
 		return "user/list.html";
 	}
 	
-	@GetMapping(value= {"/users/create","/users/edit/{id}"})
+	@GetMapping(value= {"/admin/users/create","/admin/users/edit/{id}"})
 	public String form(@PathVariable(required=false) Long id, Model model) {
 		if(id!=null) {
 			User user = service.getRepo().getOne(id);
@@ -69,7 +69,7 @@ public class UserController {
 		return "user/form.html";
 	}
 	
-	@GetMapping("/users/display/{id}")
+	@GetMapping("/admin/users/display/{id}")
 	public String display(@PathVariable Long id, Model model) {
 		User curuser = service.getRepo().getOne(id);
 		model.addAttribute("pageTitle","User - " + curuser.getName());
@@ -77,16 +77,16 @@ public class UserController {
 		return "user/display.html";
 	}
 	
-	@PostMapping("/users/save")
+	@PostMapping("/admin/users/save")
 	public String save(@Valid RegistrationForm userreg,Model model) {
 		service.getRepo().save(userreg.toUser(this.passwordEncoder,service));
-		return "redirect:/users";
+		return "redirect:/admin/users";
 	}
 	
-	@PostMapping("/users/delete/{id}")
+	@PostMapping("/admin/users/delete/{id}")
 	public String delete(@PathVariable Long id, Model model) {
 		service.getRepo().deleteById(id);
-		return "redirect:/users";
+		return "redirect:/admin/users";
 	}
 
 }
