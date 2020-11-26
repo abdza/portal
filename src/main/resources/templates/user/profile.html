@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout/main}">
+
+<section layout:fragment="content" class='user-content'>
+
+<div class="container">
+
+	<h1>User Profile</h1>
+
+    <div class='row'>
+        <div class='col-sm  has-text-weight-bold'>Username:</div>
+        <div class='col-sm ' th:text="${user.username}">module</div>
+        <div class='col-sm  has-text-weight-bold'>Name:</div>
+        <div class='col-sm ' th:text="${user.name}">slug</div>
+    </div>
+
+    <div class='row'>
+        <div class='col-sm  has-text-weight-bold'>Staff Id:</div>
+        <div class='col-sm ' th:text="${user.staffid}">module</div>
+        <div class='col-sm  has-text-weight-bold'>Email:</div>
+        <div class='col-sm ' th:text="${user.email}">slug</div>
+    </div>
+    
+    <a href="#" th:href="@{/update_password}" class="btn btn-primary">Update Password</a>
+   
+</div>
+
+</section>
+
+</html>

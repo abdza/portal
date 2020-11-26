@@ -70,8 +70,7 @@ public class User extends Auditable<String> implements UserDetails {
 	
 	@JsonIgnore
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		System.out.println("In get authorities");
+	public Collection<? extends GrantedAuthority> getAuthorities() {		
 		List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
 		if(this.isAdmin!=null && this.isAdmin) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_SYSTEM_ADMIN"));

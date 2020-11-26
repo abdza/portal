@@ -65,6 +65,17 @@ public class UserService implements UserDetailsService {
 		}
 	}
 	
+	public User currentUser() {
+		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(secuser!=null){
+			User duser = repo.findById(((User)secuser).getId()).orElse(null);			
+			return duser;
+		}
+		else{
+			return null;
+		}
+	}
+	
 	public List<UserMessage> currentMessages() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
 		if(secuser!=null){
