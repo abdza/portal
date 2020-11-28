@@ -152,6 +152,7 @@ public class PortalController {
 				Map<String, String[]> postdata = request.getParameterMap();
 				binding.setVariable("pageService",pageService);
 				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
@@ -193,6 +194,7 @@ public class PortalController {
 				Map<String, String[]> postdata = request.getParameterMap();
 				binding.setVariable("pageService",pageService);
 				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);
@@ -237,6 +239,7 @@ public class PortalController {
 				Map<String, String[]> postdata = request.getParameterMap();
 				binding.setVariable("pageService",pageService);
 				binding.setVariable("postdata", postdata);				
+				binding.setVariable("request", request);
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);
 				binding.setVariable("userService",userService);

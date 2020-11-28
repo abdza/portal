@@ -585,6 +585,15 @@ public class TrackerService {
 		return paramsource;
 	}
 	
+	public String currentDate() {
+		return dateToString(new Date());
+	}
+	
+	public String dateToString(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		return formatter.format(date);
+	}
+	
 	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
@@ -935,7 +944,12 @@ public class TrackerService {
 				sqltype = "date";
 				break;
 			case "DateTime":
-				sqltype = "datetime";
+				if(dataURL.contains("jdbc:postgresql")) {
+					sqltype = "timestamp";
+				}
+				else {
+					sqltype = "datetime";
+				}
 				break;
 			case "Checkbox":
 				sqltype = "bit";

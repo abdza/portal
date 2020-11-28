@@ -12,6 +12,7 @@ import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -46,6 +47,12 @@ public class SystemController {
 	@Autowired
 	private JdbcTemplate jdbctemplate;
 	
+	/* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
+	@Autowired
+	private Environment env;
+	
 	@Autowired
 	public SystemController() {
 	}
@@ -64,15 +71,8 @@ public class SystemController {
 			model.addAttribute("datas", datarow);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerService.slugify(transition.getName()));
 			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("trackerservice",trackerService);
-				ctx2.put("tracker", tracker);
-				ctx2.put("datas", datarow);
-				ctx2.put("transition",transition);
-				ctx2.put("formtitle",formtitle);
-				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
+				model.addAttribute("page",pp);
+				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
 			}
 			return "tracker/data/form.html";
@@ -112,12 +112,8 @@ public class SystemController {
 			model.addAttribute("pageTitle",datatitle);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("tracker", tracker);
-				ctx2.put("datas", datarow);
-				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
+				model.addAttribute("page",pp);
+				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
 			}
 			return "tracker/data/display.html";
@@ -148,13 +144,8 @@ public class SystemController {
 			model.addAttribute("datas", datarow);
 			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
 			if(pp!=null) {
-				Map<String, Object> ctx2 = new HashMap<String, Object>();
-				ctx2.put("tracker", tracker);
-				ctx2.put("datas", datarow);
-				ctx2.put("formtitle", formtitle);
-				String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-				model.addAttribute("content", content);
-				pp.setContent(content);
+				model.addAttribute("page",pp);
+				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
 			}
 			return "tracker/data/form.html";
@@ -199,12 +190,8 @@ public class SystemController {
 		model.addAttribute("pageTitle",listtitle);
 		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
 		if(pp!=null) {
-			Map<String, Object> ctx2 = new HashMap<String, Object>();
-			ctx2.put("tracker", tracker);
-			ctx2.put("listtitle", listtitle);
-			String content = pageService.getTemplateFromMap(pp.getContent(), ctx2);
-			model.addAttribute("content", content);			
-			pp.setContent(content);
+			model.addAttribute("page",pp);
+			model.addAttribute("content", pp.getContent());				
 			return "page/plain.html";
 		}
 		return "tracker/data/list.html";
