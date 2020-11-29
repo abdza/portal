@@ -141,9 +141,12 @@ public class PortalController {
 		return "page/setup.html";
 	}
 	
-	@RequestMapping(path={"/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(path={"/img/{slug}","/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public Object pngPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
+	public Object pngPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+		if(module==null) {
+			module = "portal";
+		}
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
@@ -183,9 +186,12 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(path={"/json/{slug}","/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public Object jsonPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
+	public Object jsonPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+		if(module==null) {
+			module = "portal";
+		}
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
@@ -225,8 +231,11 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })
-	public String viewPage(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {				
+	@RequestMapping(path={"/view/{slug}","/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })
+	public String viewPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {		
+		if(module==null) {
+			module = "portal";
+		}
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
@@ -293,9 +302,12 @@ public class PortalController {
 		}
 	}	
 	
-	@GetMapping("/download/{module}/{slug}")
+	@GetMapping(path={"/download/{slug}","/download/{module}/{slug}"})
 	@ResponseBody
-	public ResponseEntity<Resource> downloadFile(@PathVariable String module, @PathVariable String slug, Model model,HttpServletRequest request) {
+	public ResponseEntity<Resource> downloadFile(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request) {
+		if(module==null) {
+			module = "portal";
+		}
 		FileLink curfile = fileService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(curfile!=null) {
 			Resource resfile = fileService.getResource(curfile);
