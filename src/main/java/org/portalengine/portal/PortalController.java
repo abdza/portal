@@ -239,62 +239,67 @@ public class PortalController {
 		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
-			if(curpage.getRunable()) {
-				if(curpage.getPage_type().equals("JSON")) {
-					return "redirect:/json/" + module + "/" + slug;
+			if(curpage.getPublished()!=null && curpage.getPublished()==true) {
+				if(curpage.getRunable()) {
+					if(curpage.getPage_type().equals("JSON")) {
+						return "redirect:/json/" + module + "/" + slug;
+					}
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);				
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",trackerService);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("settingService", settingService);	
+					binding.setVariable("env", env);
+					binding.setVariable("arg1", arg1);
+					binding.setVariable("arg2", arg2);
+					binding.setVariable("arg3", arg3);
+					binding.setVariable("arg4", arg4);
+					binding.setVariable("arg5", arg5);
+					String content = null;
+					try {
+						content = (String) shell.evaluate(curpage.getContent());					
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+					if(curpage.getPage_type().equals("Template")) {
+						model.addAttribute("pageTitle","Running " + curpage.getTitle());
+						model.addAttribute("page", curpage);
+						model.addAttribute("content",content);
+						model.addAttribute("env", env);
+						model.addAttribute("arg1",arg1);
+						model.addAttribute("arg2",arg2);
+						model.addAttribute("arg3",arg3);
+						model.addAttribute("arg4",arg4);
+						model.addAttribute("arg5",arg5);
+						return "page/plain.html";	
+					}				
+					else {
+						// if wish to redirect then page should return a string beginning with "redirect:/" and target
+						return content;
+					}
 				}
-				Binding binding = new Binding();		
-				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
-				Map<String, String[]> postdata = request.getParameterMap();
-				binding.setVariable("pageService",pageService);
-				binding.setVariable("postdata", postdata);				
-				binding.setVariable("request", request);
-				binding.setVariable("trackerService",trackerService);
-				binding.setVariable("treeService",treeService);
-				binding.setVariable("userService",userService);
-				binding.setVariable("fileService",fileService);
-				binding.setVariable("settingService", settingService);	
-				binding.setVariable("env", env);
-				binding.setVariable("arg1", arg1);
-				binding.setVariable("arg2", arg2);
-				binding.setVariable("arg3", arg3);
-				binding.setVariable("arg4", arg4);
-				binding.setVariable("arg5", arg5);
-				String content = null;
-				try {
-					content = (String) shell.evaluate(curpage.getContent());					
-				}
-				catch(Exception e) {
-					System.out.println("Error in page:" + e.toString());
-				}
-				if(curpage.getPage_type().equals("Template")) {
-					model.addAttribute("pageTitle","Running " + curpage.getTitle());
+				else {
+					model.addAttribute("pageTitle",curpage.getTitle());
 					model.addAttribute("page", curpage);
-					model.addAttribute("content",content);
+					model.addAttribute("content", curpage.getContent());
 					model.addAttribute("env", env);
 					model.addAttribute("arg1",arg1);
 					model.addAttribute("arg2",arg2);
 					model.addAttribute("arg3",arg3);
 					model.addAttribute("arg4",arg4);
 					model.addAttribute("arg5",arg5);
-					return "page/plain.html";	
-				}				
-				else {
-					// if wish to redirect then page should return a string beginning with "redirect:/" and target
-					return content;
+					return "page/plain.html";
 				}
 			}
 			else {
-				model.addAttribute("pageTitle",curpage.getTitle());
-				model.addAttribute("page", curpage);
-				model.addAttribute("content", curpage.getContent());
-				model.addAttribute("env", env);
-				model.addAttribute("arg1",arg1);
-				model.addAttribute("arg2",arg2);
-				model.addAttribute("arg3",arg3);
-				model.addAttribute("arg4",arg4);
-				model.addAttribute("arg5",arg5);
-				return "page/plain.html";
+				return "error/403";
 			}
 		}
 		else {

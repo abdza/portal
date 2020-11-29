@@ -27,9 +27,9 @@
 					th:text="${portalpage.slug}">slug</td>
 				<td th:text="${portalpage.title}">title</td>
 				<td th:text="${portalpage.runable}">Runable</td>
-				<td>published</td>
+				<td th:text="${portalpage.published}">published</td>
 				<td th:text="${portalpage.createdDate}">created</td>
-				<td>updated</td>
+				<td th:text="${portalpage.lastModifiedDate}">updated</td>
 				<td>
 					<form method='post'
 						th:action='@{/admin/pages/delete/{id}(id=${portalpage.id})}'

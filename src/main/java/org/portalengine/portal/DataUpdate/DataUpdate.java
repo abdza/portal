@@ -58,9 +58,5 @@ public class DataUpdate extends Auditable<String> {
 	private String savedParams;	
 	
 	@org.hibernate.annotations.Type( type = "text" )
-	private String messages;
-	
-	@Transient
-	@Autowired
-	private JdbcTemplate jdbctemplate;
+	private String messages;	
 }

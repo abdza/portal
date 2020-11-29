@@ -1,0 +1,10 @@
+<!doctype html>
+<html layout:decorate="~{layout/base}">
+<title layout:fragment="head-title" >Resource Not Found</title>
+<div layout:fragment="body-container" class="body-container">
+<h2>403 - access denied</h2>
+<p>
+    <span th:text="${message}" th:remove="tag"></span>
+</p>
+</div>
+</html>
