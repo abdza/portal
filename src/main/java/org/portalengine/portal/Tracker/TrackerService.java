@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 
@@ -278,7 +279,30 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
-		return dataset(tracker, null, true);
+		if(request.getParameter("q")!=null) {
+			String q = request.getParameter("q");
+			// {"q":"ahmad","like":["name","description"]}
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode qjson = mapper.createObjectNode();			
+			ArrayNode arrayNode = qjson.putArray("like");
+			boolean gotfields = false;
+			for(String sfield:tracker.getSearchFields().split(",")) {				
+				if(sfield.length()>0) {
+					arrayNode.add(sfield);
+					gotfields = true;
+				}
+			}
+			if(gotfields) {
+				qjson.put("q", q);			
+				return dataset(tracker, qjson, true);
+			}
+			else {
+				return dataset(tracker, null, true);	
+			}
+		}
+		else{
+			return dataset(tracker, null, true);
+		}
 	}
 	
 	public DataSet dataset(String module, String slug) {
@@ -310,116 +334,6 @@ public class TrackerService {
 		else {
 			return dataset(tracker,null,false);
 		}
-	}
-	
-	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
-		HashMap<String,Object> curquery = new HashMap<String,Object>();
-		HashMap<String,Object> subquery = new HashMap<String,Object>();
-		
-		ArrayList<String> squery = new ArrayList<String>();
-		String filterquery = null;
-		String qstring = null;		
-		
-		if(search.get("and") != null) {
-			subquery = jsonquery(tracker, search.get("and"), filterquery, paramsource,"and");
-			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
-			filterquery = (String) subquery.get("filterquery");
-		}
-		if(search.get("or") != null) {
-			subquery = jsonquery(tracker, search.get("or"), filterquery, paramsource,"or");
-			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
-			filterquery = (String) subquery.get("filterquery");
-		}				
-		if(combinor==null) {
-			combinor = "or";
-		}
-		
-		if(search.get("q")!=null) {				
-			qstring = search.get("q").asText();
-		}		
-		if(search.get("like")!=null) {
-			if(search.get("like").isArray()) {					
-				qstring = "%" + qstring + "%";
-				for(final JsonNode jfield : search.get("like")) {						
-					squery.add(" " + jfield.asText() + " like :" + jfield.asText() + " ");
-					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
-				}
-			}
-			else if(search.get("like").isObject()) {					
-				Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
-				while(svals.hasNext()) {
-					Entry<String, JsonNode> node = svals.next();
-					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
-					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
-				}
-				/* svals.forEachRemaining( node -> {						
-					squery.add(" " + node.getKey() + " like :" + node.getKey() + " ");
-					paramsource.addValue(node.getKey(),node.getValue().asText());
-				});*/
-			}
-		}
-		if(search.get("equal")!=null) {
-			if(search.get("equal").isArray()) {
-				for(final JsonNode jfield : search.get("equal")) {						
-					squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
-					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
-				}
-			}
-			else if(search.get("equal").isObject()) {						
-				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
-				while(svals.hasNext()) {
-					Entry<String, JsonNode> node = svals.next();
-					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
-					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
-				}
-				/* svals.forEachRemaining( node -> {						
-					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
-					paramsource.addValue(node.getKey(),node.getValue().asText());
-				}); */
-			}
-		}
-		if(squery.size()>0) {
-			String newfilterquery = "(" + String.join(" " + combinor + " ", squery) + ")";
-			if(filterquery!=null) {
-				filterquery = filterquery + " " + combinor + " " + newfilterquery;
-			}
-			else {
-				filterquery = newfilterquery;
-			}
-		}
-		if(prependfilter!=null) {
-			filterquery = prependfilter + " " + combinor + " " + filterquery;
-		}
-		
-		curquery.put("filterquery", filterquery);
-		curquery.put("paramsource", paramsource);
-		
-		return curquery;
-	}
-	
-	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
-		return hashMapData(tracker,search,false);
-	}
-	
-	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search, boolean pagelimit) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
-		return hashMapData(tracker,search,pagelimit);
-	}
-	
-	public DataSet hashMapData(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode qjson = null;
-		try {
-			qjson = mapper.readTree(mapper.writeValueAsString(search));
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return dataset(tracker,qjson,pagelimit);
 	}
 	
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
@@ -467,8 +381,10 @@ public class TrackerService {
 			
 			HashMap<String,Object> curquery = new HashMap<String,Object>();
 			curquery = jsonquery(tracker, search, null, paramsource,"or");
-			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");
+			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");			
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
+			/* System.out.println("filterquery:" + filterquery);
+			System.out.println("paramsource:" + paramsource); */
 		}
 		Integer size = 10;
 		Integer page = 0;
@@ -508,6 +424,113 @@ public class TrackerService {
 		return dataset;
 	}
 	
+	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
+		HashMap<String,Object> curquery = new HashMap<String,Object>();
+		HashMap<String,Object> subquery = new HashMap<String,Object>();
+		
+		ArrayList<String> squery = new ArrayList<String>();
+		String filterquery = null;
+		String qstring = null;		
+		
+		if(search.get("and") != null) {
+			subquery = jsonquery(tracker, search.get("and"), filterquery, paramsource,"and");
+			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+			filterquery = (String) subquery.get("filterquery");
+		}
+		if(search.get("or") != null) {
+			subquery = jsonquery(tracker, search.get("or"), filterquery, paramsource,"or");
+			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+			filterquery = (String) subquery.get("filterquery");
+		}				
+		if(combinor==null) {
+			combinor = "or";
+		}
+		
+		if(search.get("q")!=null) {				
+			qstring = search.get("q").asText();
+		}		
+		if(search.get("like")!=null) {
+			String exp = "like"; 
+			if(dataURL.contains("jdbc:postgresql")) {
+				exp = "ilike";
+			}
+			if(search.get("like").isArray()) {				
+				qstring = "%" + qstring + "%";
+				for(final JsonNode jfield : search.get("like")) {
+					
+					squery.add(" " + jfield.asText() + " " + exp + " :" + jfield.asText() + " ");
+					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
+				}
+			}
+			else if(search.get("like").isObject()) {					
+				Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
+				while(svals.hasNext()) {
+					Entry<String, JsonNode> node = svals.next();
+					squery.add(" " + node.getKey() + " " + exp + " :" + node.getKey() + " ");
+					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
+				}
+			}
+		}
+		if(search.get("equal")!=null) {
+			if(search.get("equal").isArray()) {
+				for(final JsonNode jfield : search.get("equal")) {						
+					squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
+					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
+				}
+			}
+			else if(search.get("equal").isObject()) {						
+				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
+				while(svals.hasNext()) {
+					Entry<String, JsonNode> node = svals.next();
+					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
+					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
+				}
+			}
+		}
+		if(squery.size()>0) {
+			String newfilterquery = "(" + String.join(" " + combinor + " ", squery) + ")";
+			if(filterquery!=null) {
+				filterquery = filterquery + " " + combinor + " " + newfilterquery;
+			}
+			else {
+				filterquery = newfilterquery;
+			}
+		}
+		if(prependfilter!=null) {
+			filterquery = prependfilter + " " + combinor + " " + filterquery;
+		}
+		
+		curquery.put("filterquery", filterquery);
+		curquery.put("paramsource", paramsource);
+		
+		return curquery;
+	}
+	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,false);
+	}
+	
+	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search, boolean pagelimit) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,pagelimit);
+	}
+	
+	public DataSet hashMapData(Tracker tracker, LinkedHashMap<String,Object> search, boolean pagelimit) {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode qjson = null;
+		try {
+			qjson = mapper.readTree(mapper.writeValueAsString(search));
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dataset(tracker,qjson,pagelimit);
+	}
+	
 	public int saveMap(String module, String slug,Map<String, Object> mapdata) {
 		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
@@ -543,36 +566,38 @@ public class TrackerService {
 	
 	public MapSqlParameterSource addValue(MapSqlParameterSource paramsource, TrackerField tf,Object data) {
 		try {
-			switch(tf.getFieldType()) {
-			case "String":
-			case "Text":
-				paramsource.addValue(tf.getName(), data,Types.VARCHAR);
-				break;
-			case "TrackerType":
-			case "TreeNode":
-			case "Integer":
-			case "User":				
-			case "Number":
-				paramsource.addValue(tf.getName(),data,Types.NUMERIC);
-				break;
-			case "Date":
-			case "DateTime":
-				DateFormat format;
-				if(tf.getFieldType().equals("Date")) {
-					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-				}
-				else {
-					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-				}
-				Date date;
-
-				date = format.parse((String) data);
-				if(date!=null) {
+			if(tf!=null) {
+				switch(tf.getFieldType()) {
+				case "String":
+				case "Text":
+					paramsource.addValue(tf.getName(), data,Types.VARCHAR);
+					break;
+				case "TrackerType":
+				case "TreeNode":
+				case "Integer":
+				case "User":				
+				case "Number":
+					paramsource.addValue(tf.getName(),data,Types.NUMERIC);
+					break;
+				case "Date":
+				case "DateTime":
+					DateFormat format;
 					if(tf.getFieldType().equals("Date")) {
-						paramsource.addValue(tf.getName(), date, Types.DATE);
+						format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
 					}
 					else {
-						paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+						format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+					}
+					Date date;
+	
+					date = format.parse((String) data);
+					if(date!=null) {
+						if(tf.getFieldType().equals("Date")) {
+							paramsource.addValue(tf.getName(), date, Types.DATE);
+						}
+						else {
+							paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+						}
 					}
 				}
 			}			
