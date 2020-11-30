@@ -10,20 +10,7 @@
             class="btn btn-primary">Add</a>
         <a th:unless="${pnode}" href="#" th:href="@{/{module}/{slug}/create(module=${tracker.module},slug=${tracker.slug})}"
             class="btn btn-primary">Add</a>
-        <div class="card acard mt-2 mt-lg-3" th:if="${tracker.searchFields!=null and #strings.length(tracker.searchFields)>0}">
-	        <div class="card-body px-3 pb-1">
-		        <form class="mt-lg-3">
-		        	<div class="form-group row">
-		        		<div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">        	
-		        			<label>Search:</label>
-		        		</div>
-		        		<div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
-		        			<input type='text' name='q' th:value="${param.q}"/><button class="btn btn-primary m-1">Search</button>
-		        		</div>
-		        	</div>
-		        </form>
-	        </div>
-        </div>
+        <div th:replace="tracker/trackerbase::trackerfilter(tracker=${tracker})"></div>
         <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer"
             th:replace="tracker/trackerbase::datatable(tracker=${tracker},dataset=${dataset})">
             <tr>
