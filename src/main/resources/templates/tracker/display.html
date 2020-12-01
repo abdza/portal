@@ -64,7 +64,9 @@
 
 		<div class='row'>
 			<div class='col-sm font-bold text-sm-right'>Display Fields:</div>
-			<div class='col-sm-9' th:text="${tracker.displayFields}">dataTable</div>
+			<div class='col-sm' th:text="${tracker.displayFields}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>Filter Fields:</div>
+			<div class='col-sm' th:text="${tracker.filterFields}">dataTable</div>
 		</div>
 
 		<div class='row'>

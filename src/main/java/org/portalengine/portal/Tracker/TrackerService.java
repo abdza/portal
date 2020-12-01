@@ -125,6 +125,8 @@ public class TrackerService {
 	
 	public List<TrackerField> field_list(Tracker tracker, String list_name, TrackerTransition transition) {
 		switch(list_name) {
+		case "filter":
+			return fields(tracker,tracker.getFilterFields());
 		case "list":
 			return fields(tracker,tracker.getListFields());
 		case "form":
@@ -179,10 +181,12 @@ public class TrackerService {
 	
 	public List<TrackerField> fields(Tracker tracker, String fieldnames) {		
 		List<TrackerField> toreturn=new ArrayList<TrackerField>();
-		for(String fname:fieldnames.split(",")) {
-			TrackerField tf = fieldRepo.findByTrackerAndName(tracker, fname);
-			if(tf!=null) {
-				toreturn.add(tf);
+		if(fieldnames!=null) {
+			for(String fname:fieldnames.split(",")) {
+				TrackerField tf = fieldRepo.findByTrackerAndName(tracker, fname);
+				if(tf!=null) {
+					toreturn.add(tf);
+				}
 			}
 		}
 		return toreturn;
@@ -245,6 +249,25 @@ public class TrackerService {
 		return toret;
 	}
 	
+	public List<HashMap<String,String>> filter_options(TrackerField field) {
+		ArrayList<HashMap<String,String>> toret = new ArrayList<HashMap<String,String>>();
+		
+		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
+		SqlRowSet options = namedjdbctemplate.queryForRowSet("select distinct " + field.getName() + " from " + field.getTracker().getDataTable() + " order by " + field.getName(), paramsource);
+		HashMap<String,String> dtoin = new HashMap<String,String>();
+		dtoin.put("val", "All");
+		dtoin.put("label", "All");
+		toret.add(dtoin);
+		while(options.next()) {
+			HashMap<String,String> toin = new HashMap<String,String>();
+			toin.put("val", options.getString(field.getName()));
+			toin.put("label", options.getString(field.getName()));
+			toret.add(toin);
+		}		
+		
+		return toret;
+	}
+	
 	public HashMap<String,Object> datarow(String module, String slug, Long id) {
 		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
@@ -279,30 +302,69 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
-		if(request.getParameter("q")!=null) {
-			String q = request.getParameter("q");
-			// {"q":"ahmad","like":["name","description"]}
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectNode qjson = mapper.createObjectNode();			
-			ArrayNode arrayNode = qjson.putArray("like");
-			boolean gotfields = false;
-			for(String sfield:tracker.getSearchFields().split(",")) {				
-				if(sfield.length()>0) {
-					arrayNode.add(sfield);
-					gotfields = true;
+		ObjectMapper mapper = new ObjectMapper();
+		boolean gotfields = false;		
+		ObjectNode filterjson = mapper.createObjectNode();		
+		ObjectNode qjson = mapper.createObjectNode();
+		
+		List<TrackerField> filters = field_list(tracker,"filter",null);
+		ObjectNode fjson = mapper.createObjectNode();
+		ArrayNode equalNode = fjson.putArray("equal");
+		filters.forEach(filter->{			
+			if(request.getParameter("opt_" + filter.getName())!=null) {
+				String opt = request.getParameter("opt_" + filter.getName());
+				if(opt.length()>0 && !opt.equals("All")) {					
+					ObjectNode fojson = mapper.createObjectNode();
+					fojson.put(filter.getName(), opt);
+					equalNode.add(fojson);
 				}
 			}
-			if(gotfields) {
-				qjson.put("q", q);			
-				return dataset(tracker, qjson, true);
-			}
-			else {
-				return dataset(tracker, null, true);	
+		});
+		
+		if(request.getParameter("q")!=null) {
+			String q = request.getParameter("q");
+			ObjectNode inqjson = mapper.createObjectNode();
+			// {"q":"ahmad","like":["name","description"]}				
+			ArrayNode arrayNode = inqjson.putArray("like");
+			if(tracker.getSearchFields()!=null) {
+				for(String sfield:tracker.getSearchFields().split(",")) {
+					if(sfield.length()>0) {
+						arrayNode.add(sfield);
+						gotfields = true;
+					}
+				}
+				if(gotfields) {
+					if(q.length()>0) {
+						inqjson.put("q", q);
+						qjson.put("or",inqjson);
+					}
+					else {
+						gotfields = false;
+					}
+				}
 			}
 		}
-		else{
-			return dataset(tracker, null, true);
+		
+		if(gotfields && equalNode.size()>0) {
+			ArrayNode andNode = filterjson.putArray("and");
+			andNode.add(fjson);
+			andNode.add(qjson);
 		}
+		else if(gotfields) {
+			filterjson = qjson;
+		}
+		else if(equalNode.size()>0) {
+			ArrayNode andNode = filterjson.putArray("and");
+			andNode.add(fjson);
+		}
+		
+		if(filterjson.size()>0) {
+			return dataset(tracker, filterjson, true);
+		}
+		else {
+			return dataset(tracker, null, true);	
+		}
+		
 	}
 	
 	public DataSet dataset(String module, String slug) {
@@ -384,7 +446,7 @@ public class TrackerService {
 			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");			
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
 			/* System.out.println("filterquery:" + filterquery);
-			System.out.println("paramsource:" + paramsource); */
+			System.out.println("paramsource:" + paramsource);  */
 		}
 		Integer size = 10;
 		Integer page = 0;
@@ -403,7 +465,8 @@ public class TrackerService {
 		if(!pagelimit) {
 			pagequery = "";
 		}
-		Integer rowcount = namedjdbctemplate.queryForObject("select count(*) from " + tracker.getDataTable() + filterquery, paramsource, Integer.class); 
+		String countquery = "select count(*) from " + tracker.getDataTable() + filterquery;		
+		Integer rowcount = namedjdbctemplate.queryForObject(countquery, paramsource, Integer.class);		
 		Integer totalPages = rowcount/size;
 		if(rowcount%size>0) {
 			totalPages += 1;
@@ -430,7 +493,8 @@ public class TrackerService {
 		
 		ArrayList<String> squery = new ArrayList<String>();
 		String filterquery = null;
-		String qstring = null;		
+		String qstring = null;
+		boolean foundquery = false;
 		
 		if(search.get("and") != null) {
 			subquery = jsonquery(tracker, search.get("and"), filterquery, paramsource,"and");
@@ -447,9 +511,11 @@ public class TrackerService {
 		}
 		
 		if(search.get("q")!=null) {				
+			foundquery = true;
 			qstring = search.get("q").asText();
 		}		
 		if(search.get("like")!=null) {
+			foundquery = true;
 			String exp = "like"; 
 			if(dataURL.contains("jdbc:postgresql")) {
 				exp = "ilike";
@@ -472,13 +538,24 @@ public class TrackerService {
 			}
 		}
 		if(search.get("equal")!=null) {
+			foundquery = true;
 			if(search.get("equal").isArray()) {
 				for(final JsonNode jfield : search.get("equal")) {						
-					squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
-					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
+					if(jfield.isObject()) {
+						Iterator<String> fieldNames = jfield.fieldNames();
+						while(fieldNames.hasNext()) {
+				            String fieldName = fieldNames.next();
+							squery.add(" " + fieldName + " = :" + fieldName + " ");							
+							paramsource = addValue(tracker,paramsource,fieldName, jfield.get(fieldName).asText());							
+						}						
+					}
+					else {
+						squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
+						paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
+					}
 				}
 			}
-			else if(search.get("equal").isObject()) {						
+			else if(search.get("equal").isObject()) {
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
@@ -487,8 +564,17 @@ public class TrackerService {
 				}
 			}
 		}
+		if(!foundquery) {
+			if(search.isArray()) {
+				for(final JsonNode jq : search) {
+					subquery = jsonquery(tracker, jq, filterquery, paramsource, combinor);
+					paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+					filterquery = (String) subquery.get("filterquery");		
+				}
+			}			
+		}
 		if(squery.size()>0) {
-			String newfilterquery = "(" + String.join(" " + combinor + " ", squery) + ")";
+			String newfilterquery = "( " + String.join(" " + combinor + " ", squery) + " )";
 			if(filterquery!=null) {
 				filterquery = filterquery + " " + combinor + " " + newfilterquery;
 			}
