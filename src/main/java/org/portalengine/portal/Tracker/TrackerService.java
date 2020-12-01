@@ -38,6 +38,7 @@ import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
 import org.springframework.ui.Model;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -267,7 +268,7 @@ public class TrackerService {
 		
 		return toret;
 	}
-	
+		
 	public HashMap<String,Object> datarow(String module, String slug, Long id) {
 		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {

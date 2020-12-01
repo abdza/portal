@@ -9,8 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.TemplateSpec;
 import org.thymeleaf.context.Context;
@@ -94,5 +97,12 @@ public class PageService {
 			System.out.println("Slug not found:" + slug);
 		}
 		return false;
+	}
+	
+	public String urlParamUpdate(String param, String value) {		
+		ServletUriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
+		urlBuilder.replaceQueryParam(param, value);
+		String result = urlBuilder.build().toUriString();
+		return result;
 	}
 }
