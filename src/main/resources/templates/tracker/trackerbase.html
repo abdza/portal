@@ -173,20 +173,20 @@ $('#val_[(${field.name})]').select2({
 </ul>
 </div>
 
-<div th:fragment="trackerfilter(tracker)" class="card acard mt-2 mt-lg-3" th:if="${tracker.searchFields!=null and #strings.length(tracker.searchFields)>0}">
+<div th:fragment="trackerfilter(tracker)" class="card acard mt-2 mt-lg-3" th:if="${(tracker.searchFields!=null and #strings.length(tracker.searchFields)>0) or (tracker.filterFields!=null and #strings.length(tracker.filterFields)>0)}">
  <div class="card-body px-3 pb-1">
   <form class="mt-lg-3">
-  	<div th:each="field,iter: ${@trackerService.field_list(tracker,'filter',null)}" class="form-group row">
+  	<div th:each="field,iter: ${@trackerService.field_list(tracker,'filter',null)}" class="form-group row" th:if="${tracker.filterFields!=null and #strings.length(tracker.filterFields)>0}">
   		<div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">        	
   			<label><span th:text="${field.label}">Search</span>:</label>
   		</div>
   		<div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
   			<select th:name="${'opt_' + field.name}" th:id="${'opt_' + field.name}" onchange="submit();">
-  				<option th:each="option,optiter: ${@trackerService.filter_options(field)}" th:value="${option.get('val')}" th:text="${option.get('val')}" th:selected="${param.get('opt_' + field.name)?.toString()==option.get('val')?.toString()}" th:readonly="${param.get('opt_' + field.name)==option.get('val')}" >One</option>  				
+  				<option th:each="option,optiter: ${@trackerService.filter_options(field)}" th:value="${option.get('val')}" th:text="${option.get('label')}" th:selected="${param.get('opt_' + field.name)?.toString()==option.get('val')?.toString()}" th:readonly="${param.get('opt_' + field.name)==option.get('val')}" >One</option>  				
   			</select>
   		</div>
   	</div>
-  	<div class="form-group row">
+  	<div class="form-group row" th:if="${tracker.searchFields!=null and #strings.length(tracker.searchFields)>0}">
   		<div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">        	
   			<label>Search:</label>
   		</div>

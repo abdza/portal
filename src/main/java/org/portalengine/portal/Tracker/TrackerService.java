@@ -260,10 +260,29 @@ public class TrackerService {
 		dtoin.put("label", "All");
 		toret.add(dtoin);
 		while(options.next()) {
-			HashMap<String,String> toin = new HashMap<String,String>();
-			toin.put("val", options.getString(field.getName()));
-			toin.put("label", options.getString(field.getName()));
-			toret.add(toin);
+			if(options.getString(field.getName())!=null) {
+				String opt = options.getString(field.getName());
+				HashMap<String,String> toin = new HashMap<String,String>();
+				toin.put("val", opt);
+				if(field.getFieldType().equals("TrackerType")) {
+					JsonNode foptions = field.optionsJson();
+					if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
+						String module = foptions.get("module").textValue();
+						String slug = foptions.get("slug").textValue();
+						String name_column = foptions.get("name_column").textValue();
+						Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+						if(targetTracker!=null) {
+							HashMap<String,Object> dataobj = datarow(targetTracker,Long.valueOf(options.getString(field.getName())));
+							if(dataobj!=null) {
+								toin.put("val", opt);
+								opt = (String) dataobj.get(name_column);
+							}
+						}
+					}
+				}
+				toin.put("label", opt);
+				toret.add(toin);
+			}
 		}		
 		
 		return toret;
@@ -1013,11 +1032,11 @@ public class TrackerService {
 					String module = foptions.get("module").textValue();
 					String slug = foptions.get("slug").textValue();
 					String name_column = foptions.get("name_column").textValue();
-					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
-					if(targetTracker!=null) {
+					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
+					if(targetTracker!=null && datas.get(field.getName())!=null) {						
 						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;												
 						HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
-						if(targetdatas!=null) {
+						if(targetdatas!=null && targetdatas.get(name_column)!=null) {
 							return targetdatas.get(name_column).toString();
 						}
 					}
