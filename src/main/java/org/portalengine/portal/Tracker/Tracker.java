@@ -53,6 +53,7 @@ public class Tracker extends Auditable<String> {
 	private String formFields;
 	private String displayFields;
 	private String searchFields;
+	private String filterFields;
 	private String initialStatus;
 	private Long nodeId;
 	
@@ -88,6 +89,7 @@ public class Tracker extends Auditable<String> {
 		newtracker.listFields = this.listFields;
 		newtracker.formFields = this.formFields;
 		newtracker.searchFields = this.searchFields;
+		newtracker.filterFields = this.filterFields;
 		newtracker.displayFields = this.displayFields;
 		newtracker.initialStatus = this.initialStatus;
 		newtracker.dataTable = this.dataTable + "_" + newNodeId.toString();
