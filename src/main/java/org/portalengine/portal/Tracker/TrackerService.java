@@ -906,6 +906,15 @@ public class TrackerService {
 		return curid;
 	}
 	
+	public void executeQuery(String query) {
+		try {			
+			jdbctemplate.execute(query);
+		} catch ( Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void clearDb(Tracker tracker) {
 		jdbctemplate.execute("truncate table " + tracker.getDataTable());
 	}
