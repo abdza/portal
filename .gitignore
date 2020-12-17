@@ -36,3 +36,5 @@ src/main/resources/application.properties
 *.swp
 
 /custom_modules
+
+docs/_build/
