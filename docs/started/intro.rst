@@ -23,3 +23,13 @@ To run it using java, issue the following command in the directory of the jar fi
     java -jar portal.jar
 
 That should start the Java Portal Framework and you can browse it at `http://localhost:6060/ <http://localhost:6000>`_
+
+Setup JPF
+---------
+
+To create default admin user and other default settings, go to the following url `http://localhost:6060/setup <http://localhost:6060/setup>`_ and press on the "Setup" button.
+
+You should now be able to login with the following credentials:
+
+  - Username: admin
+  - Password: admin123
