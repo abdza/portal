@@ -1010,7 +1010,8 @@ public class TrackerService {
 					}
 					}
 			}
-			for(TrackerField field: tracker.getFields()) {
+			List<TrackerField> fields = fieldRepo.findByTracker(tracker);
+			for(TrackerField field: fields) {
 				updateDb(field);
 			}
 		}

@@ -143,8 +143,9 @@ public class ModuleService {
 					if(curp!=null) {
 						page.setId(curp.getId());
 					}
-					pageService.getRepo().save(page);
+					pageService.getRepo().save(page);					
 				});
+				pageService.getRepo().flush();
 			}
 		} catch (JsonMappingException e1) {
 			// TODO Auto-generated catch block
@@ -168,6 +169,7 @@ public class ModuleService {
 					}
 					fileService.getRepo().save(cfile);
 				});
+				fileService.getRepo().flush();
 			}
 		} catch (JsonMappingException e1) {
 			// TODO Auto-generated catch block
@@ -206,12 +208,13 @@ public class ModuleService {
 						 ctracker.setFields(null);
 					 }
 					 trackerService.getRepo().save(ctracker);
+					 trackerService.getRepo().flush();
 					 final Tracker fctracker = trackerService.getRepo().findOneByModuleAndSlug(ctracker.getModule(), ctracker.getSlug());					 
 					 fields.forEach(cfield -> {
 						 cfield.setTracker(fctracker);						 
 						 trackerService.getFieldRepo().save(cfield);						
-					 });		 
-					 
+					 });
+					 trackerService.getFieldRepo().flush();					 
 				 });
 			 }
 		} catch (JsonMappingException e1) {
@@ -236,6 +239,7 @@ public class ModuleService {
 					}
 					settingService.getRepo().save(csetting);
 				});
+				settingService.getRepo().flush();
 			}
 		} catch (JsonMappingException e1) {
 			// TODO Auto-generated catch block
@@ -272,6 +276,7 @@ public class ModuleService {
 					ctree.setNodes(new ArrayList<TreeNode>());
 					
 					treeService.getTreeRepo().save(ctree);
+					treeService.getTreeRepo().flush();
 					
 					final Tree fctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
 					nodes.forEach(cnode -> {						
@@ -291,6 +296,7 @@ public class ModuleService {
 							});
 						}
 					});					
+					treeService.getNodeRepo().flush();
 				});
 			}
 		} catch (JsonMappingException e1) {

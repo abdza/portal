@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Module.ModuleService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Setting.SettingService;
@@ -76,6 +78,9 @@ public class PortalController {
 	private UserService userService;
 	
 	@Autowired
+	private ModuleService moduleService;
+	
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
@@ -138,6 +143,18 @@ public class PortalController {
 				userService.getRepo().save(admin);
 			}
 		}
+		String setup_modules = env.getProperty("setup_modules");		
+		if(setup_modules!=null) {
+			String[] modules = setup_modules.split(",");
+			for(String module : modules ) {				
+				moduleService.importModule(module);				
+				List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
+				for(Tracker tracker : trackers) {					
+					trackerService.updateDb(tracker);
+				}				
+			}
+		}
+		
 		return "page/setup.html";
 	}
 	
