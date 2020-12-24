@@ -33,6 +33,7 @@ import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
 import org.portalengine.portal.Tree.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -52,6 +53,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 
 @Service
 public class ModuleService {
@@ -88,6 +92,9 @@ public class ModuleService {
 	
 	@Autowired
 	private NamedParameterJdbcTemplate namedjdbctemplate;
+	
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	private JdbcTemplate jdbctemplate;
@@ -308,7 +315,7 @@ public class ModuleService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}		
 	}
 	
 	public void exportModule(String module) {

@@ -130,7 +130,7 @@ public class PortalController {
 	}
 	
 	@PostMapping("/setup")
-	public String doSetupSite(Model model) {
+	public String doSetupSite(Model model, HttpServletRequest request) {
 		User admin = userService.getRepo().findByUsername("admin");
 		model.addAttribute("admin",admin);
 		if(admin==null) {
@@ -151,7 +151,35 @@ public class PortalController {
 				List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
 				for(Tracker tracker : trackers) {					
 					trackerService.updateDb(tracker);
-				}				
+				}	
+				Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, "post_module_import");
+				if(curpage!=null) {
+					System.out.println("Found post import page for " + module);
+					if(curpage.getRunable()) {				
+						System.out.println("Page is runable");
+						Binding binding = new Binding();		
+						GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+						Map<String, String[]> postdata = request.getParameterMap();
+						binding.setVariable("pageService",pageService);
+						binding.setVariable("postdata", postdata);
+						binding.setVariable("request", request);
+						binding.setVariable("trackerService",trackerService);
+						binding.setVariable("treeService",treeService);
+						binding.setVariable("userService",userService);
+						binding.setVariable("fileService",fileService);
+						binding.setVariable("settingService", settingService);
+						binding.setVariable("env", env);				
+						Object content = null;
+						try {
+							content = shell.evaluate(curpage.getContent());
+							System.out.println("Content:" + content);
+						}
+						catch(Exception e) {
+							System.out.println("Error in page:" + e.toString());
+						}							
+						System.out.println("Done run page");
+					}
+				}
 			}
 		}
 		

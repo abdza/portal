@@ -725,6 +725,11 @@ public class TrackerService {
 		return formatter.format(date);
 	}
 	
+	/* To easily save data in tracker using groovy
+	 * 
+	 * trackerService.saveMap(tracker, ['<field1>':'any data','<field2>':'any data 2'])
+	 * 
+	 */
 	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
