@@ -132,7 +132,7 @@ public class PortalController {
 	@PostMapping("/setup")
 	public String doSetupSite(Model model, HttpServletRequest request) {
 		User admin = userService.getRepo().findByUsername("admin");
-		model.addAttribute("admin",admin);
+		
 		if(admin==null) {
 			admin = new User("admin", "admin", "Admin", "admin@portal.com", passwordEncoder.encode("admin123"), true);
 			userService.getRepo().save(admin);
@@ -143,10 +143,13 @@ public class PortalController {
 				userService.getRepo().save(admin);
 			}
 		}
+		model.addAttribute("admin",admin);
 		String setup_modules = env.getProperty("setup_modules");		
 		if(setup_modules!=null) {
 			String[] modules = setup_modules.split(",");
-			for(String module : modules ) {				
+			for(String rawmodule : modules ) {
+				String module = rawmodule.trim();
+				System.out.println("Importing " + module);
 				moduleService.importModule(module);				
 				List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
 				for(Tracker tracker : trackers) {					
@@ -182,6 +185,26 @@ public class PortalController {
 				}
 			}
 		}
+		String post_setup_page = env.getProperty("post_setup_page");
+		if(post_setup_page!=null) {
+			String[] psetup = post_setup_page.split(":");
+			String mdl = "portal";
+			String slg = "";
+			if(psetup.length==2) {
+				mdl = psetup[0].trim();
+				slg = psetup[1].trim();
+			}
+			else if(psetup.length==1){
+				slg = psetup[0].trim();
+			}
+			else {
+				slg = post_setup_page.trim();
+			}			
+			Page curpage = pageService.getRepo().findOneByModuleAndSlug(mdl, slg);
+			if(curpage!=null) {			
+				return "redirect:/view/" + mdl + "/" + slg;
+			}
+		}	
 		
 		return "page/setup.html";
 	}

@@ -7,15 +7,7 @@
 </th:block>
 
 <section layout:fragment="content" class='page-content'>
-<h1>Portal Setup Page</h1>
-<div th:if="${admin}">
-<p>User admin found</p>
-<p th:if="${admin.isAdmin}">User admin is an admin</p>
-<p th:unless="${admin.isAdmin}">But user admin is not admin</p>
-</div>
-<div th:unless="${admin}">
-<p>User admin not found</p>
-</div>
+<h1 th:text="${@environment.getProperty('spring.application.name')} + ' Setup'"> Portal Setup Page</h1>
 <form method='post' th:action='@{/setup}'>
 <button type='submit'>Setup</button>
 </form>
