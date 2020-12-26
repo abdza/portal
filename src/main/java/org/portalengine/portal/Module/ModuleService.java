@@ -51,6 +51,8 @@ import org.thymeleaf.templateresolver.StringTemplateResolver;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -320,6 +322,8 @@ public class ModuleService {
 	
 	public void exportModule(String module) {
 		ObjectMapper objectMapper = new ObjectMapper();
+		DefaultPrettyPrinter printer = new DefaultPrettyPrinter()
+	            .withObjectIndenter(new DefaultIndenter("  ", "\n"));
 		String cwd = new File("").getAbsolutePath() + "/custom_modules";
 		String prepend = settingService.StringSetting("module_folder",cwd);
 		String mod_path = prepend + "/" + module + "/";
@@ -329,8 +333,11 @@ public class ModuleService {
 		}
 		
 		List<Page> pages = pageService.getRepo().findAllByModule(module);
-		try {
-			objectMapper.writeValue(new File(mod_path + "pages.json"), pages);
+		try {			
+			Path path = Paths.get(mod_path + "pages.json");
+			byte[] data = objectMapper.writer(printer).writeValueAsBytes(pages);		
+			Files.write(path, data);
+			
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -344,7 +351,9 @@ public class ModuleService {
 		
 		List<FileLink> files = fileService.getRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "files.json"), files);
+			Path path = Paths.get(mod_path + "files.json");
+			byte[] data = objectMapper.writer(printer).writeValueAsBytes(files);		
+			Files.write(path, data);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -358,7 +367,9 @@ public class ModuleService {
 		
 		List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "trackers.json"), trackers);
+			Path path = Paths.get(mod_path + "trackers.json");
+			byte[] data = objectMapper.writer(printer).writeValueAsBytes(trackers);		
+			Files.write(path, data);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -372,7 +383,9 @@ public class ModuleService {
 		
 		List<Setting> settings = settingService.getRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "settings.json"), settings);
+			Path path = Paths.get(mod_path + "settings.json");
+			byte[] data = objectMapper.writer(printer).writeValueAsBytes(settings);		
+			Files.write(path, data);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -386,7 +399,9 @@ public class ModuleService {
 		
 		List<Tree> trees = treeService.getTreeRepo().findAllByModule(module);
 		try {
-			objectMapper.writeValue(new File(mod_path + "trees.json"), trees);
+			Path path = Paths.get(mod_path + "trees.json");
+			byte[] data = objectMapper.writer(printer).writeValueAsBytes(trees);		
+			Files.write(path, data);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
