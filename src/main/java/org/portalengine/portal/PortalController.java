@@ -204,9 +204,9 @@ public class PortalController {
 			if(curpage!=null) {			
 				return "redirect:/view/" + mdl + "/" + slg;
 			}
-		}	
+		}
 		
-		return "page/setup.html";
+		return "redirect:/";
 	}
 	
 	@RequestMapping(path={"/img/{slug}","/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
