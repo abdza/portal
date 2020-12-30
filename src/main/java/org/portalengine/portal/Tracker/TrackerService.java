@@ -423,6 +423,7 @@ public class TrackerService {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable();
 		String filterquery = "";
+		String orderby = null;;
 		if(search!=null) {
 			/*
 			 * search is a JsonNode with the following children
@@ -463,10 +464,14 @@ public class TrackerService {
 			
 			HashMap<String,Object> curquery = new HashMap<String,Object>();
 			curquery = jsonquery(tracker, search, null, paramsource,"or");
-			filterquery = " where 1=1 and " +  (String) curquery.get("filterquery");			
+			orderby = (String) curquery.get("orderby");
+			filterquery = (String) curquery.get("filterquery");
+			if(filterquery!=null && filterquery.length()>0) {
+				filterquery = " where " + filterquery;
+			}
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
-			/* System.out.println("filterquery:" + filterquery);
-			System.out.println("paramsource:" + paramsource);  */
+			System.out.println("filterquery:" + filterquery);
+			System.out.println("paramsource:" + paramsource); 
 		}
 		Integer size = 10;
 		Integer page = 0;
@@ -478,12 +483,26 @@ public class TrackerService {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
 		Integer offset = page * size;
-		String pagequery = " order by id offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";
-		if(dataURL.contains("jdbc:mysql")) {
-			pagequery = " order by id limit " + offset.toString() + "," + size.toString();
+		String pagequery = " order by id";
+		if(orderby!=null) {
+			pagequery = " order by " + orderby + ",id";
 		}
-		if(!pagelimit) {
-			pagequery = "";
+		if(!pagelimit) {			
+		}
+		else {
+			pagequery += " offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";	
+		}
+		
+		if(dataURL.contains("jdbc:mysql")) {
+			pagequery = " order by id";
+			if(orderby!=null) {
+				pagequery = " order by " + orderby + ",id";
+			}
+			if(!pagelimit) {				
+			}
+			else {
+				pagequery += " limit " + offset.toString() + "," + size.toString();
+			}
 		}
 		String countquery = "select count(*) from " + tracker.getDataTable() + filterquery;		
 		Integer rowcount = namedjdbctemplate.queryForObject(countquery, paramsource, Integer.class);		
@@ -492,6 +511,7 @@ public class TrackerService {
 			totalPages += 1;
 		}
 		dataset.setTotalPages(totalPages);
+		// System.out.println("final query:" + basequery + filterquery + pagequery);
 		SqlRowSet toret = namedjdbctemplate.queryForRowSet(basequery + filterquery + pagequery, paramsource);
 		ArrayList<HashMap<String,Object>> rows = new ArrayList<HashMap<String,Object>>(); 
 		while(toret.next()) {
@@ -508,11 +528,12 @@ public class TrackerService {
 	}
 	
 	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
+		System.out.println("Processing node:" + search.toPrettyString());
 		HashMap<String,Object> curquery = new HashMap<String,Object>();
 		HashMap<String,Object> subquery = new HashMap<String,Object>();
 		
 		ArrayList<String> squery = new ArrayList<String>();
-		String filterquery = null;
+		String filterquery = "";
 		String qstring = null;
 		boolean foundquery = false;
 		
@@ -595,17 +616,52 @@ public class TrackerService {
 		}
 		if(squery.size()>0) {
 			String newfilterquery = "( " + String.join(" " + combinor + " ", squery) + " )";
-			if(filterquery!=null) {
+			if(filterquery!=null && filterquery.length()>0) {
 				filterquery = filterquery + " " + combinor + " " + newfilterquery;
 			}
 			else {
 				filterquery = newfilterquery;
 			}
 		}
-		if(prependfilter!=null) {
+		if(prependfilter!=null && prependfilter.length()>0) {
 			filterquery = prependfilter + " " + combinor + " " + filterquery;
 		}
 		
+		String orderby = null;
+		if(search.get("order")!=null) {
+			orderby = " ";
+			if(search.get("order").isArray()) {
+				int curpos = 1;
+				// System.out.println("order is an array");
+				for(final JsonNode jfield : search.get("order")) {
+					// System.out.println("field:" + jfield.toString());
+					if(curpos>1) {
+						orderby += ",";
+					}
+					orderby += jfield.textValue();
+					curpos++;
+				}
+			}
+			else if(search.get("order").isObject()) {
+				// System.out.println("order is an object");
+				Iterator<Map.Entry<String,JsonNode>> svals = search.get("order").fields();
+				int curpos = 1;
+				while(svals.hasNext()) {
+					// System.out.println("field:");
+					Entry<String, JsonNode> node = svals.next();
+					if(curpos>1) {
+						orderby += ",";
+					}
+					orderby += node.getValue().asText();
+					curpos++;
+				}
+			}
+			else {
+				// System.out.println("what on earth " + search.get("order").getClass());
+			}			
+		}
+		System.out.println("filter:" + filterquery);		
+		curquery.put("orderby", orderby);		
 		curquery.put("filterquery", filterquery);
 		curquery.put("paramsource", paramsource);
 		
