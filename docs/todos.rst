@@ -10,3 +10,4 @@ Trackers
   #.  Add page as field type
   #.  Default widget for field type Text should be textarea
   #.  When field is a TrackerType, editing the record should display the name value, not the id
+  #.  Should have a template for adding/editing related records
