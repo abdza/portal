@@ -160,11 +160,11 @@ public class Tracker extends Auditable<String> {
 	void checkTables() {
 		if(this.dataTable.length()==0) {
 			this.dataTable = "trak_" + this.slug + "_data";
-			this.dataTable = this.dataTable.toUpperCase();
+			this.dataTable = this.dataTable.toLowerCase();
 		}
 		if(this.trackerType.equals("Trailed Tracker") && this.updatesTable.length()==0) {
 			this.updatesTable = "trak_" + this.slug + "_updates";
-			this.updatesTable = this.updatesTable.toUpperCase();
+			this.updatesTable = this.updatesTable.toLowerCase();
 		}
 	}
 	
