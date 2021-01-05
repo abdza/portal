@@ -1020,8 +1020,12 @@ public class TrackerService {
 	}
 	
 	public boolean dbTableExists(String tablename) {
+		if(dataURL.contains("jdbc:h2")) {
+			tablename = tablename.toUpperCase();			
+		}
 		String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
 				+ " TABLE_NAME = '" + tablename + "'";
+		System.out.println("checking table:" + toquery);
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
@@ -1033,8 +1037,12 @@ public class TrackerService {
 	}
 	
 	public boolean dbFieldExists(String tablename, String columname) {
+		if(dataURL.contains("jdbc:h2")) {
+			tablename = tablename.toUpperCase();			
+		}
 		String toquery = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-				+ " TABLE_NAME = '" + tablename + "' and COLUMN_NAME = '" + columname + "'";		
+				+ " TABLE_NAME = '" + tablename + "' and COLUMN_NAME = '" + columname + "'";
+		System.out.println("checking field:" + toquery);
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
@@ -1043,6 +1051,18 @@ public class TrackerService {
 		}
 		System.out.println("Field " + columname + " already exists");
 		return true;
+	}
+	
+	public String dbEscapeColumn(String columname) {
+		if(dataURL.contains("jdbc:mysql")) {
+			return "`" + columname + "`";
+		}
+		else if(dataURL.contains("jdbc:postgresql") || dataURL.contains("jdbc:h2")) {
+			return "\"" + columname + "\"";
+		} 
+		else {
+			return "[" + columname + "]";	
+		}
 	}
 	
 	public void updateDb(Tracker tracker) {
@@ -1059,15 +1079,15 @@ public class TrackerService {
 			if(!dbTableExists(tracker.getDataTable().toLowerCase())) {
 				// Data table does not exists yet, so please create
 				if(dataURL.contains("jdbc:mysql")) {
-					jdbctemplate.execute("create table " + tracker.getDataTable().toLowerCase() + " (ID INT NOT NULL AUTO_INCREMENT,"
-							+ " PRIMARY KEY(ID))");
+					jdbctemplate.execute("create table " + tracker.getDataTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL AUTO_INCREMENT,"
+							+ " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 				}
 				else if(dataURL.contains("jdbc:postgresql")) {
-					jdbctemplate.execute("create table if not exists " + tracker.getDataTable().toLowerCase() + " (ID serial PRIMARY KEY)");
+					jdbctemplate.execute("create table if not exists " + tracker.getDataTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY)");
 				}
 				else {
-					jdbctemplate.execute("create table " + tracker.getDataTable().toLowerCase() + " (ID INT NOT NULL IDENTITY(1,1),"
-						+ "CONSTRAINT PK_" + tracker.getDataTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+					jdbctemplate.execute("create table " + tracker.getDataTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL IDENTITY(1,1),"
+						+ "CONSTRAINT PK_" + tracker.getDataTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 				}
 			}
 			
@@ -1086,7 +1106,7 @@ public class TrackerService {
 				// Check to see if column record_status doesn't exist yet
 				if(!tracker.getTrackerType().equals("Statement")) {
 					// Please add record_status if type is a tracker (ie not a statement)
-					jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add RECORD_STATUS varchar(256) NULL");
+					jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add " + dbEscapeColumn("record_status") + " varchar(256) NULL");
 				}
 			}
 			
@@ -1099,14 +1119,14 @@ public class TrackerService {
 			}
 			else {
 				ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'DATAUPDATE_ID'";
+						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'dataupdate_id'";
 			}
 			trythis = jdbctemplate.queryForRowSet(ttstring);
 			trythis.next(); 
 			if(trythis.getInt("result")==0) { */
 			
 			if(!dbFieldExists(tracker.getDataTable().toLowerCase(),"dataupdate_id")) { 
-				jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add DATAUPDATE_ID numeric(24,0) NULL");
+				jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add " + dbEscapeColumn("dataupdate_id") + " numeric(24,0) NULL");
 			}
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
@@ -1128,22 +1148,22 @@ public class TrackerService {
 					if(!dbTableExists(tracker.getUpdatesTable().toLowerCase())) {
 						// If updates table does not exists please create one
 						if(dataURL.contains("jdbc:mysql")) {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (ID INT NOT NULL AUTO_INCREMENT, "
-									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
-									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
-									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id INT NOT NULL AUTO_INCREMENT, "
+									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
+									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
+									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
 						}
 						else if(dataURL.contains("jdbc:postgresql")) {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (ID serial PRIMARY KEY, "
-									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
-									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
-									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + ")");
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id serial PRIMARY KEY, "
+									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
+									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
+									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + ")");
 						}
 						else {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (ID INT NOT NULL IDENTITY(1,1), "
-									+ "ATTACHMENT_ID numeric(19,0), DESCRIPTION text, RECORD_ID numeric(19,0),"
-									+ "UPDATE_DATE datetime, UPDATER_ID numeric(19,0), STATUS varchar(255),"
-									+ "CHANGES text, ALLOWEDROLES varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(ID))");
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id INT NOT NULL IDENTITY(1,1), "
+									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
+									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
+									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
 						}
 					}
 				}
@@ -1261,7 +1281,7 @@ public class TrackerService {
 			if(dataURL.contains("jdbc:mysql")) {
 				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add `" + field.getName().toLowerCase() + "` " + sqltype + " NULL";
 			}
-			else if(dataURL.contains("jdbc:postgresql")) {
+			else if(dataURL.contains("jdbc:postgresql") || dataURL.contains("jdbc:h2")) {
 				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add \"" + field.getName().toLowerCase() + "\" " + sqltype + " NULL";
 			} 
 			else {

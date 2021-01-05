@@ -1,7 +1,8 @@
 #### H2 connection settings
 # spring.datasource.driverClassName=org.h2.Driver
 # spring.datasource.url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
-# spring.datasource.url=jdbc:h2:file:~/portaldb;DB_CLOSE_DELAY=-1
+# spring.datasource.url=jdbc:h2:file:~/portaldb
+# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 # spring.datasource.username=sa
 # spring.datasource.password=sa
 
@@ -12,7 +13,7 @@
 # spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 #### MySQL connection settings
-# spring.datasource.url = jdbc:mysql://localhost:3306/portal?serverTimezone=GMT+8
+# spring.datasource.url = jdbc:mysql://localhost:3306/portal?serverTimezone=Asia/Kuala_Lumpur
 # spring.datasource.username = root
 # spring.datasource.password = sa
 

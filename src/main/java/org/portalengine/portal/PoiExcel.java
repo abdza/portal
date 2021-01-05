@@ -504,18 +504,18 @@ public class PoiExcel {
 						if(!nodata){
 							qparam.addValue("batchno",batchno);
 							if(!gotupdate){
-								torun = "insert into " + this.filtertable + " (" + sqlfields + " , DATAUPDATE_ID) values (" + paramsqlfields + " , :batchno)";
+								torun = "insert into " + this.filtertable + " (" + sqlfields + " , dataupdate_id) values (" + paramsqlfields + " , :batchno)";
 								// System.out.println("running:" + torun);
 								sql.update(torun,qparam);
 							}
 							else{
-								updatefields += " , DATAUPDATE_ID=:batchno";
+								updatefields += " , dataupdate_id=:batchno";
 								torun = "update " + this.filtertable + " set " + updatefields + " where " + comparefields;
 								int updated = 0;
 								updated = sql.update(torun, qparam);
 								// System.out.println("running:" + torun);
 								if(updated==0){
-									torun = "insert into " + this.filtertable + " (" + sqlfields + " , DATAUPDATE_ID) values (" + paramsqlfields + " , :batchno)";
+									torun = "insert into " + this.filtertable + " (" + sqlfields + " , dataupdate_id) values (" + paramsqlfields + " , :batchno)";
 									sql.update(torun, qparam);
 									// System.out.println("running:" + torun);
 								}
