@@ -35,6 +35,9 @@ src/main/resources/application.properties
 *~
 *.swp
 
+### H2 DB ###
+*.db
+
 /custom_modules
 
 docs/_build/
