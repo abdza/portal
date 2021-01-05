@@ -1070,12 +1070,6 @@ public class TrackerService {
 		if(tracker.getDataTable().length()>0) {			
 			// Check whether data table already exists
 			
-			/* String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
-					+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "'";
-			SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
-			trythis.next(); */
-			
-			
 			if(!dbTableExists(tracker.getDataTable().toLowerCase())) {
 				// Data table does not exists yet, so please create
 				if(dataURL.contains("jdbc:mysql")) {
@@ -1089,18 +1083,7 @@ public class TrackerService {
 					jdbctemplate.execute("create table " + tracker.getDataTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL IDENTITY(1,1),"
 						+ "CONSTRAINT PK_" + tracker.getDataTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 				}
-			}
-			
-			/* if(dataURL.contains("jdbc:postgresql")) {
-				trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'record_status'");
-			}
-			else {
-				trythis = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-					+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'RECORD_STATUS'");
-			}
-			trythis.next();  */
-			
+			}			
 			
 			if(!dbFieldExists(tracker.getDataTable().toLowerCase(),"record_status")) {
 				// Check to see if column record_status doesn't exist yet
@@ -1110,41 +1093,12 @@ public class TrackerService {
 				}
 			}
 			
-			/* String ttstring = null;
-			
-			if(dataURL.contains("jdbc:postgresql")) {
-				ttstring =  "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'dataupdate_id'";
-				
-			}
-			else {
-				ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-						+ " TABLE_NAME = '" + tracker.getDataTable().toLowerCase() + "' and COLUMN_NAME = 'dataupdate_id'";
-			}
-			trythis = jdbctemplate.queryForRowSet(ttstring);
-			trythis.next(); 
-			if(trythis.getInt("result")==0) { */
-			
 			if(!dbFieldExists(tracker.getDataTable().toLowerCase(),"dataupdate_id")) { 
 				jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add " + dbEscapeColumn("dataupdate_id") + " numeric(24,0) NULL");
 			}
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
-				if(tracker.getUpdatesTable().length()>0) {
-					
-					/* SqlRowSet trytrails;
-					if(dataURL.contains("jdbc:postgresql")) {
-						trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
-								+ " TABLE_NAME = '" + tracker.getUpdatesTable().toLowerCase() + "'");
-					}
-					else {
-						trytrails = jdbctemplate.queryForRowSet("select count(*) as result from INFORMATION_SCHEMA.TABLES where "
-								+ " TABLE_NAME = '" + tracker.getUpdatesTable().toLowerCase() + "'");
-					}
-							
-					trytrails.next();
-					if(trytrails.getInt("result")==0) { */
-					
+				if(tracker.getUpdatesTable().length()>0) {					
 					if(!dbTableExists(tracker.getUpdatesTable().toLowerCase())) {
 						// If updates table does not exists please create one
 						if(dataURL.contains("jdbc:mysql")) {
@@ -1255,26 +1209,6 @@ public class TrackerService {
 				break;
 			}
 		}
-		
-		/* 
-		String ttstring = null;
-		if(dataURL.contains("jdbc:mysql")) {
-			ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-					+ "TABLE_NAME = '" + field.getTracker().getDataTable().toLowerCase() + "' and COLUMN_NAME = '" + field.getName().toLowerCase() + "'";
-		}
-		else if(dataURL.contains("jdbc:postgresql")) {
-			ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-					+ "TABLE_NAME = '" + field.getTracker().getDataTable().toLowerCase() + "' and COLUMN_NAME = '" + field.getName().toLowerCase() + "'";
-		}
-		else {
-			ttstring = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-					+ "TABLE_NAME = '" + field.getTracker().getDataTable().toLowerCase() + "' and COLUMN_NAME = '" + field.getName().toLowerCase() + "'";
-			
-		}
-		System.out.println("ttstring:" + ttstring);
-		SqlRowSet trythis = jdbctemplate.queryForRowSet(ttstring);
-		trythis.next();
-		if(trythis.getInt("result")==0) { */
 		
 		if(!dbFieldExists(field.getTracker().getDataTable().toLowerCase(),field.getName().toLowerCase())) {
 			String fixsql = "";
