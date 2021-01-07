@@ -484,7 +484,7 @@ public class TrackerService {
 		}
 		Integer offset = page * size;
 		String pagequery = " order by id";
-		if(orderby!=null) {
+		if(orderby!=null && orderby.length()>1) {
 			pagequery = " order by " + orderby + ",id";
 		}
 		if(!pagelimit) {			
@@ -495,7 +495,7 @@ public class TrackerService {
 		
 		if(dataURL.contains("jdbc:mysql")) {
 			pagequery = " order by id";
-			if(orderby!=null) {
+			if(orderby!=null && orderby.length()>1) {
 				pagequery = " order by " + orderby + ",id";
 			}
 			if(!pagelimit) {				
@@ -666,6 +666,16 @@ public class TrackerService {
 		curquery.put("paramsource", paramsource);
 		
 		return curquery;
+	}
+	
+	public Object[] dataRows(String module, String slug) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,null,false).getDataRows();
+	}
+	
+	public Object[] dataRows(String module, String slug, LinkedHashMap<String,Object> search) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		return hashMapData(tracker,search,false).getDataRows();
 	}
 	
 	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
