@@ -44,5 +44,7 @@ When field type is TrackerType, then "Option Source" can contain:
 
   #) module : Module of the tracker the field refers to
   #) slug : Slug of the tracker the field refers to
-  #) query : `Query node <query_node.html>`_ to be used to query listing
   #) name_column : The column used to display the value in the drop down of the field
+  #) query : `Query node <query_node.html>`_ to be used to query listing when searching to display drop down. Usually it is used to search on the name field that is used in the name_column. The json could be something like this::
+
+          { 'like':{'name'} }
