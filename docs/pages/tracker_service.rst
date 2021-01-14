@@ -49,3 +49,12 @@ To save data in a runable page, you can use the saveMap method to do it. For exa
   def ss = trackerService.saveMap('survey','survey_session',['survey':postdata['survey_id'][0]]);
 
 The above code would save into the tracker with module 'survey' and slug 'survey_session'. The field 'survey' would be set to what was submitted. postdata is automatically provided and consist of an array of each field that was sent. If only 1 value was submitted with that particular name, then just refer to item 0 like above.
+
+How to save current date time in a runable page
+-----------------------------------------------
+
+To save date time in a runable page, you can use the currentDate method of the trackerService. For example::
+
+  def ss = trackerService.saveMap('survey','survey_session',['survey':postdata['survey_id'][0],'session_date':trackerService.currentDate(),]);
+
+That would shortcut the need to create a new date object and format it to a string. If you would like to format a date to string yourself, you can use the dateToString method in trackerService. That method would take the date object as a parameter and output a string with date formatted "dd/MM/yyyy HH:mm:ss".

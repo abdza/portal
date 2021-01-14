@@ -1,5 +1,5 @@
-Java Portal Framework Pages
-===========================
+JPF Page Modes
+==============
 
 A JPF page is a basic components for any JPF module. A page can be in either of 3 modes. The modes are:
 
@@ -11,5 +11,6 @@ A JPF page is a basic components for any JPF module. A page can be in either of 
    :maxdepth: 1
    :caption: Contents:
 
-   tracker_service
-   modes
+   modes/template
+   modes/redirect
+   modes/json

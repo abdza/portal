@@ -1,0 +1,2 @@
+JPF Page Redirect Mode
+======================

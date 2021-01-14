@@ -703,13 +703,13 @@ public class TrackerService {
 		return dataset(tracker,qjson,pagelimit);
 	}
 	
-	public int saveMap(String module, String slug,Map<String, Object> mapdata) {
+	public Long saveMap(String module, String slug,Map<String, Object> mapdata) {
 		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			return saveMap(tracker,mapdata);
 		}
 		else {
-			return -1;
+			return (long) -1;
 		}
 	}
 	
@@ -797,8 +797,10 @@ public class TrackerService {
 	 * 
 	 * trackerService.saveMap(tracker, ['<field1>':'any data','<field2>':'any data 2'])
 	 * 
+	 * Method would return the id of the item saved
+	 * 
 	 */
-	public int saveMap(Tracker tracker,Map<String, Object> mapdata) {
+	public Long saveMap(Tracker tracker,Map<String, Object> mapdata) {
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -854,7 +856,7 @@ public class TrackerService {
 		if(mapdata.get("id")==null) {
 			curid = keyholder.getKey().longValue();
 		}
-		return 1;
+		return curid;
 	}
 	
 	public long saveForm(Tracker tracker,User principal) {
