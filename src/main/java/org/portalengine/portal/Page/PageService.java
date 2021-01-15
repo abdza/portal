@@ -58,6 +58,7 @@ public class PageService {
 	public String getTemplateFromMap(String htmlContent, Map<String, Object> dynamicAttributesMap) {
 
 		String template = null;
+		
 		final WebContext wctx = new WebContext(request, response, servletContext);
 		
 		if(!CollectionUtils.isEmpty(dynamicAttributesMap)) {
@@ -76,7 +77,10 @@ public class PageService {
 		try {
 			Page curpage = this.repo.findOneByModuleAndSlug("portal", slug);
 			if(curpage!=null) {
-				return getTemplateFromMap(curpage.getContent(), null);
+				String toreturn = getTemplateFromMap(curpage.getContent(), null);
+				if(toreturn.length()>0) {
+					return toreturn;
+				}
 			}
 		}
 		catch(Exception exp) {
