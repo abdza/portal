@@ -16,3 +16,4 @@ There are some reserve words for the slug. These are explained further in the `S
    tracker_service
    modes
    special
+   advanced
