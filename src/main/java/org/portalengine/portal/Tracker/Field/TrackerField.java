@@ -62,7 +62,7 @@ public class TrackerField extends Auditable<String> {
 	private Tracker tracker; 
 	
 	@Transient
-	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User"};
+	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User","HasMany"};
 	
 	@Transient
 	public String[] widgetOptions = {"Default","DropDown"};

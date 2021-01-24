@@ -140,7 +140,8 @@ $('#val_[(${field.name})]').select2({
 <div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}" class='columns'>
 <div class='column is-one-quarter has-text-weight-bold' th:text="${field.label + ':'}">Form Fields:</div>
-<div class='column' th:text="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='column' th:if="${field.FieldType!='HasMany'}" th:text="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='column' th:if="${field.FieldType=='HasMany'}" th:utext="${@trackerService.display(field,datas)}" >data_table</div>
 </div>
 </div>
 

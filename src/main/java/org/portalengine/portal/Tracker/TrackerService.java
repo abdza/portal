@@ -678,6 +678,14 @@ public class TrackerService {
 		return hashMapData(tracker,search,false).getDataRows();
 	}
 	
+	public Object[] dataRows(Tracker tracker) {		
+		return hashMapData(tracker,null,false).getDataRows();
+	}
+	
+	public Object[] dataRows(Tracker tracker, LinkedHashMap<String,Object> search) {		
+		return hashMapData(tracker,search,false).getDataRows();
+	}
+	
 	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
 		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
 		return hashMapData(tracker,search,false);
@@ -1176,6 +1184,43 @@ public class TrackerService {
 					}
 				}
 			}
+			else if(field.getFieldType().equals("HasMany")) {				
+				JsonNode foptions = field.optionsJson();
+				String toret = "";
+				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("fields")!=null && foptions.get("refer_field")!=null) {					
+					String module = foptions.get("module").textValue();
+					String slug = foptions.get("slug").textValue();
+					String refer_field = foptions.get("refer_field").textValue();					
+					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
+					if(targetTracker!=null && datas.get("id")!=null) {						
+						HashMap<String,Object> curquery = new HashMap<String,Object>();
+						LinkedHashMap<String,Object> qq = new LinkedHashMap<String,Object>(curquery);
+						Long targetid = Long.valueOf((Integer)datas.get("id"));												
+						Object[] targetdatas = dataRows(targetTracker,qq);
+						toret += "<table id='data_" + field.getName() + "' class='table'>";
+						toret += "<tr><th>#</th>";
+						for(final JsonNode jfield : foptions.get("fields")) {														
+							TrackerField curf = fieldRepo.findByTrackerAndName(targetTracker, jfield.asText());
+							if(curf!=null) {								
+								toret += "<th>" + curf.getLabel() + "</th>";
+							}
+						}
+						toret += "</tr>";
+						for(int i=0;i<targetdatas.length;i++) {
+							System.out.println("HasMany item:" + String.valueOf(i));
+							toret += "<tr>";
+							toret += "<td>" + String.valueOf(i+1) + "</td>";
+							for(final JsonNode jfield : foptions.get("fields")) {															
+								HashMap<String,Object> row = (HashMap<String,Object>)targetdatas[i];								
+								toret += "<td>" + row.get(jfield.asText()) + "</td>";
+							}
+							toret += "</tr>";
+						}
+						toret += "</table>";
+					}
+				}
+				return toret;
+			}
 			else {
 				return String.valueOf(datas.get(field.getName()));
 			}
@@ -1189,7 +1234,7 @@ public class TrackerService {
 	
 	public void updateDb(TrackerField field) {
 		String sqltype = "varchar(256)";
-		if(field.getFieldType()!=null) {
+		if(field.getFieldType()!=null && field.getFieldType()!="HasMany") {
 			switch(field.getFieldType()) {
 			case "String":			 
 				break;
