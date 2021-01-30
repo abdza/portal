@@ -1,8 +1,14 @@
 package org.portalengine.portal.Tracker;
 
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -234,8 +240,22 @@ public class SystemController {
 			Row currow = sheet.createRow(j+1);
 			HashMap<String,Object> datarow = (HashMap<String, Object>) dataset.getDataRows()[j];
 			for(int i=0;i<flist.size();i++) {
+				TrackerField curfield = flist.get(i);
 				Cell cell = currow.createCell(i);
-				cell.setCellValue((String)datarow.get(flist.get(i).getName()));
+				switch(curfield.getFieldType()) {
+				case "String":
+				case "Text":
+				case "TrackerType":
+				case "TreeNode":				
+				case "User":
+				case "Integer":
+				case "Number":
+				case "Date":
+				case "DateTime":
+					String datedata = trackerService.display(curfield, datarow);
+					cell.setCellValue(datedata);
+					break;
+				}
 			}	
 		}
 		
