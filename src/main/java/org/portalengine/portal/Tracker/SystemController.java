@@ -2,6 +2,7 @@ package org.portalengine.portal.Tracker;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,22 +218,31 @@ public class SystemController {
 		model.addAttribute("tracker", tracker);
 		String listtitle = tracker.getName();
 		DataSet dataset = trackerService.dataset(tracker,false);
+		String exceltitle = tracker.getName().toLowerCase().replaceAll(" ", "_") + ".xlsx";
 		
 		SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
-		Sheet sheet = wb.createSheet();
-		
-		String[] qheaders = {"Try","This","Out"};
+		Sheet sheet = wb.createSheet();		
 		
 		Row headerRow = sheet.createRow(0);
-		for(int i=0;i<qheaders.length;i++) {
+		List<TrackerField> flist = trackerService.field_list(tracker,"list",null);
+		for(int i=0;i<flist.size();i++) {
 			Cell cell = headerRow.createCell(i);
-			cell.setCellValue(qheaders[i]);
+			cell.setCellValue(flist.get(i).getLabel());
+		}
+		
+		for(int j=0;j<dataset.getDataRows().length;j++) {
+			Row currow = sheet.createRow(j+1);
+			HashMap<String,Object> datarow = (HashMap<String, Object>) dataset.getDataRows()[j];
+			for(int i=0;i<flist.size();i++) {
+				Cell cell = currow.createCell(i);
+				cell.setCellValue((String)datarow.get(flist.get(i).getName()));
+			}	
 		}
 		
 		return ResponseEntity
 			    .ok()
 			    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-			    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"myfilename.xlsx\"")
+			    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + exceltitle + "\"")
 			    .body(wb::write);
 	}
 }
