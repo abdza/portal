@@ -105,7 +105,14 @@ public class PageService {
 	
 	public String urlParamUpdate(String param, String value) {		
 		ServletUriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
-		urlBuilder.replaceQueryParam(param, value);
+		urlBuilder.replaceQueryParam(param, value);		
+		String result = urlBuilder.build().toUriString();
+		return result;
+	}
+	
+	public String urlChangePath(String newPath) {
+		ServletUriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
+		urlBuilder.replacePath(newPath);		
 		String result = urlBuilder.build().toUriString();
 		return result;
 	}
