@@ -322,33 +322,47 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
+		/* Default function for tracker to get dataset to display */
+		
 		ObjectMapper mapper = new ObjectMapper();
 		boolean gotfields = false;		
 		ObjectNode filterjson = mapper.createObjectNode();		
 		ObjectNode qjson = mapper.createObjectNode();
 		
+		/* Filtering based on the filter fields of the tracker */
 		List<TrackerField> filters = field_list(tracker,"filter",null);
 		ObjectNode fjson = mapper.createObjectNode();
 		ArrayNode equalNode = fjson.putArray("equal");
+		/* Looping for each filter */
 		filters.forEach(filter->{			
-			if(request.getParameter("opt_" + filter.getName())!=null) {
+			/* Check to see if the parameter is set for that filter using the opt_<filtername> parameter */
+			if(request.getParameter("opt_" + filter.getName())!=null) {				
 				String opt = request.getParameter("opt_" + filter.getName());
+				/* Make sure that the selection is actually valid data and that it is not 'All'.
+				 * 'All' option will bypass this filter
+				 */
 				if(opt.length()>0 && !opt.equals("All")) {					
 					ObjectNode fojson = mapper.createObjectNode();
 					fojson.put(filter.getName(), opt);
+					/* Add the filtering field and value into the default json query 
+					 * for 'equal' values
+					 * */
 					equalNode.add(fojson);
 				}
 			}
 		});
 		
+		/* Check to see if the tracker is filtering based on search	 */
 		if(request.getParameter("q")!=null) {
 			String q = request.getParameter("q");
 			ObjectNode inqjson = mapper.createObjectNode();
 			// {"q":"ahmad","like":["name","description"]}				
 			ArrayNode arrayNode = inqjson.putArray("like");
 			if(tracker.getSearchFields()!=null) {
+				/* Loop over searchfields split by comma array */
 				for(String sfield:tracker.getSearchFields().split(",")) {
 					if(sfield.length()>0) {
+						/* If value got length, add the field to the node to be test for like */
 						arrayNode.add(sfield);
 						gotfields = true;
 					}
@@ -365,14 +379,19 @@ public class TrackerService {
 			}
 		}
 		
+		/* Got both search query and filter query */
 		if(gotfields && equalNode.size()>0) {
+			/* So got to filter by filter AND search */
 			ArrayNode andNode = filterjson.putArray("and");
 			andNode.add(fjson);
 			andNode.add(qjson);
 		}
+		/* but if only got search query only */
 		else if(gotfields) {
+			/* then only filter by search json */
 			filterjson = qjson;
 		}
+		/* only got filter */
 		else if(equalNode.size()>0) {
 			ArrayNode andNode = filterjson.putArray("and");
 			andNode.add(fjson);
@@ -487,9 +506,7 @@ public class TrackerService {
 		if(orderby!=null && orderby.length()>1) {
 			pagequery = " order by " + orderby + ",id";
 		}
-		if(!pagelimit) {			
-		}
-		else {
+		if(pagelimit) {
 			pagequery += " offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";	
 		}
 		
@@ -498,9 +515,7 @@ public class TrackerService {
 			if(orderby!=null && orderby.length()>1) {
 				pagequery = " order by " + orderby + ",id";
 			}
-			if(!pagelimit) {				
-			}
-			else {
+			if(pagelimit) {
 				pagequery += " limit " + offset.toString() + "," + size.toString();
 			}
 		}

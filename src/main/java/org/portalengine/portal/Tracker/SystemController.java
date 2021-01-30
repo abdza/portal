@@ -186,6 +186,8 @@ public class SystemController {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		model.addAttribute("tracker", tracker);
 		String listtitle = tracker.getName();
+		DataSet dataset = trackerService.dataset(tracker);
+		model.addAttribute("dataset",dataset);
 		model.addAttribute("listtitle",listtitle);
 		model.addAttribute("pageTitle",listtitle);
 		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
