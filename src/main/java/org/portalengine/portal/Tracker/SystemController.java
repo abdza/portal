@@ -6,6 +6,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
@@ -13,6 +17,10 @@ import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,6 +32,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 @Controller
 @RequestMapping("/")
@@ -197,5 +207,31 @@ public class SystemController {
 			return "page/plain.html";
 		}
 		return "tracker/data/list.html";
+	}
+	
+	@GetMapping("/{module}/{slug}/excel")
+	@ResponseBody
+	public ResponseEntity<StreamingResponseBody> excel(@PathVariable String module, @PathVariable String slug, Model model) {
+		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		model.addAttribute("tracker", tracker);
+		String listtitle = tracker.getName();
+		DataSet dataset = trackerService.dataset(tracker,false);
+		
+		SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+		Sheet sheet = wb.createSheet();
+		
+		String[] qheaders = {"Try","This","Out"};
+		
+		Row headerRow = sheet.createRow(0);
+		for(int i=0;i<qheaders.length;i++) {
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(qheaders[i]);
+		}
+		
+		return ResponseEntity
+			    .ok()
+			    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+			    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"myfilename.xlsx\"")
+			    .body(wb::write);
 	}
 }

@@ -322,6 +322,10 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(Tracker tracker) {
+		return dataset(tracker, true);
+	}
+	
+	public DataSet dataset(Tracker tracker, boolean pagelimit) {
 		/* Default function for tracker to get dataset to display */
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -398,10 +402,10 @@ public class TrackerService {
 		}
 		
 		if(filterjson.size()>0) {
-			return dataset(tracker, filterjson, true);
+			return dataset(tracker, filterjson, pagelimit);
 		}
 		else {
-			return dataset(tracker, null, true);	
+			return dataset(tracker, null, pagelimit);	
 		}
 		
 	}
