@@ -28,6 +28,7 @@ they are Admin of but only view or download information from modules where they 
    files/intro
    trees/intro
    trackers/intro
+   examples/intro
    todos
 
 
