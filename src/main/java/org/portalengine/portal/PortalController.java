@@ -31,6 +31,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -86,6 +88,9 @@ public class PortalController {
 	@Autowired
 	private SettingService settingService;
 	
+	@Autowired
+    private JavaMailSender javaMailSender;
+	
 	/* Read application.properties with the following function:
 	 * String keyValue = env.getProperty(key);
 	 */
@@ -94,6 +99,21 @@ public class PortalController {
 	
 	@Autowired
 	public PortalController() {
+	}
+	
+	@GetMapping("/testemail")
+	public String testemail(Model model) {
+		System.out.println("In email");
+		
+		SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo("abdullah.zainul@gmail.com");
+
+        msg.setSubject("Testing from Spring Boot");
+        msg.setText("Hello World \n Spring Boot Email");
+
+        javaMailSender.send(msg);
+        
+		return "redirect:/";
 	}
 	
 	@GetMapping("/login")
