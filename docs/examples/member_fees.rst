@@ -55,3 +55,39 @@ Create the member tracker
   #. You can test the tracker by adding a new record. Press on the "Add" button. Fill in some test data in the form. Then click on the "Save" button to insert the information into the database.
   #. You should see it added to the data listing. You can view the record details by clicking on the item number on the very left column. In the details page, you can click on the "Edit" button to update the information for that record. Click on the "List" button to go back to the record listing.
   #. You can also try to delete information by clicking on the "Delete" button, then confirm the delete by clicking on the "OK" button or "Cancel" to cancel the process.
+
+Create the fees type tracker
+----------------------------
+
+  #. Click on the "Trackers" menu in the Sidebar menu.
+  #. Click on the "Add" button under the "Tracker Listing".
+  #. In the form, fill in the following values:
+       #. Module: club
+       #. Slug: fees_type
+       #. Name: Fees Type
+       #. Type: Statement
+  #. Click on the "Save" button.
+  #. Click on the "Fields" tab at the "Tracker Info" page.
+  #. Add the following fields following step 7-9 from the "Create the member tracker" section
+      +-----------------+---------------+---------------+---------------+
+      |Name             |Label          |Type           |Widget         |
+      +=================+===============+===============+===============+
+      |name             |Name           |String         |Default        |
+      +-----------------+---------------+---------------+---------------+
+      |amount           |Amount         |Number         |Default        |
+      +-----------------+---------------+---------------+---------------+
+      |repeat           |Repeat         |String         |DropDown       |
+      +-----------------+---------------+---------------+---------------+
+  #. To specify what values the user can select for the repeat field, update the "Option Source" value. Make sure the root node is an "array". Then "Append" a "String" to it. Put "Monthly" for the first string. Then "Append" another "String" and put the value "Yearly". And lastly "Append" the value "Once".
+  #. Once all there fields have been added, update the database table. Click on the "Details" tab, then on the "Update DB" button to update the database table.
+  #. Next we need to specify the fields display in the default listing. Click on the "Edit" button. Add the values "name, amount, repeat" to the "List Fields" value. The click on the "Save" button.
+  #. Now we can start using the tracker. Click on the "View" button to view the "Fees Type" tracker data.
+  #. Click on the "Add" button, in the form, fill in the following values, then click on the "Save" button after:
+       #. Name: Registration
+       #. Amount: 100
+       #. Repeat: Once
+  #. Do the step above for the following values too:
+       #. Name: Monthly Fee
+       #. Amount: 20
+       #. Repeat: Monthly
+
