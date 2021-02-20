@@ -25,9 +25,6 @@ public class UserController {
 	private UserService service;
 	
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
 	public UserController() {
 	}
 	
@@ -59,7 +56,7 @@ public class UserController {
 		}
 		
 		User curuser = service.currentUser();
-		curuser.setPassword(passwordEncoder.encode(updatePasswordForm.getPassword()));
+		curuser.setPassword(service.getPasswordEncoder().encode(updatePasswordForm.getPassword()));
 		service.getRepo().save(curuser);
 		
 		return "redirect:/profile";
@@ -80,7 +77,7 @@ public class UserController {
 	
 	@PostMapping("/register")
 	public String register(@Valid RegistrationForm userreg, Model model) {
-		service.getRepo().save(userreg.toUser(this.passwordEncoder,service));
+		service.getRepo().save(userreg.toUser(service.getPasswordEncoder(),service));
 		return "redirect:/";
 	}
 	
@@ -123,7 +120,7 @@ public class UserController {
 	
 	@PostMapping("/admin/users/save")
 	public String save(@Valid RegistrationForm userreg,Model model) {
-		service.getRepo().save(userreg.toUser(this.passwordEncoder,service));
+		service.getRepo().save(userreg.toUser(service.getPasswordEncoder(),service));
 		return "redirect:/admin/users";
 	}
 	

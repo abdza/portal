@@ -91,3 +91,27 @@ Create the fees type tracker
        #. Amount: 20
        #. Repeat: Monthly
 
+Create the payment tracker
+--------------------------
+
+  #. Click on the "Trackers" menu in the Sidebar menu.
+  #. Click on the "Add" button under the "Tracker Listing".
+  #. In the form, fill in the following values:
+       #. Module: club
+       #. Slug: payment
+       #. Name: Payment
+       #. Type: Statement
+  #. Click on the "Save" button.
+  #. Click on the "Fields" tab at the "Tracker Info" page.
+  #. Click on the "Add" button to add a new field. Then fill in the following values:
+       #. Name: payment_date
+       #. Label: Payment Date
+       #. Type: Date
+       #. Widget: Default
+  #. Next we want to add information on who is currently paying their fees. Click on the "Add" button to add a new field. Then fill in the following values:
+       #. Name: member
+       #. Label: Member
+       #. Type: TrackerType
+       #. Widget: Default
+
+     As a tracker type, we need to specify which tracker this particular field will be connected to. That is done by updating the "Option Source" field. First we need to change the root node to "object", then add "String" with the name "module" and value "club". Then add "String" with name "slug" and value "member". The module and slug is the tracker the field is connected to. Then we specify which field will be used to display the selection for when the user type into the field. Add a "String" with the name "name_column" and value "name". Then we need to specify how to query for the values to select. Add an "Object" with the name "query". In the object add an "Array" with the name "like". Then add a "String" with the value "name".

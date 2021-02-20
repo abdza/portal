@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.Data;
@@ -38,6 +39,9 @@ public class UserService implements UserDetailsService {
 	
 	@Autowired
 	private UserRoleRepository roleRepo;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	public UserService() {
@@ -74,6 +78,11 @@ public class UserService implements UserDetailsService {
 		else{
 			return null;
 		}
+	}
+	
+	public User setPassword(User user,String password) {
+		user.setPassword(passwordEncoder.encode(password));
+		return user;
 	}
 	
 	public List<UserMessage> currentMessages() {

@@ -444,7 +444,7 @@ public class TrackerService {
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
-		String basequery = "select * from " + tracker.getDataTable();
+		String basequery = "select * from " + tracker.getDataTable() + " ct ";
 		String filterquery = "";
 		String orderby = null;;
 		if(search!=null) {
@@ -492,9 +492,7 @@ public class TrackerService {
 			if(filterquery!=null && filterquery.length()>0) {
 				filterquery = " where " + filterquery;
 			}
-			paramsource = (MapSqlParameterSource) curquery.get("paramsource");
-			System.out.println("filterquery:" + filterquery);
-			System.out.println("paramsource:" + paramsource); 
+			paramsource = (MapSqlParameterSource) curquery.get("paramsource");			
 		}
 		Integer size = 10;
 		Integer page = 0;
@@ -523,7 +521,7 @@ public class TrackerService {
 				pagequery += " limit " + offset.toString() + "," + size.toString();
 			}
 		}
-		String countquery = "select count(*) from " + tracker.getDataTable() + filterquery;		
+		String countquery = "select count(*) from " + tracker.getDataTable() + " ct " + filterquery;		
 		Integer rowcount = namedjdbctemplate.queryForObject(countquery, paramsource, Integer.class);		
 		Integer totalPages = rowcount/size;
 		if(rowcount%size>0) {
@@ -546,8 +544,7 @@ public class TrackerService {
 		return dataset;
 	}
 	
-	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {
-		System.out.println("Processing node:" + search.toPrettyString());
+	public HashMap<String,Object> jsonquery(Tracker tracker, JsonNode search, String prependfilter, MapSqlParameterSource paramsource, String combinor) {		
 		HashMap<String,Object> curquery = new HashMap<String,Object>();
 		HashMap<String,Object> subquery = new HashMap<String,Object>();
 		
@@ -584,7 +581,7 @@ public class TrackerService {
 				qstring = "%" + qstring + "%";
 				for(final JsonNode jfield : search.get("like")) {
 					
-					squery.add(" " + jfield.asText() + " " + exp + " :" + jfield.asText() + " ");
+					squery.add(" ct." + jfield.asText() + " " + exp + " :" + jfield.asText() + " ");
 					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 				}
 			}
@@ -592,35 +589,47 @@ public class TrackerService {
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
-					squery.add(" " + node.getKey() + " " + exp + " :" + node.getKey() + " ");
+					squery.add(" ct." + node.getKey() + " " + exp + " :" + node.getKey() + " ");
 					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
 				}
 			}
 		}
 		if(search.get("equal")!=null) {
 			foundquery = true;
-			if(search.get("equal").isArray()) {
+			if(search.get("equal").isArray()) {				
 				for(final JsonNode jfield : search.get("equal")) {						
 					if(jfield.isObject()) {
 						Iterator<String> fieldNames = jfield.fieldNames();
 						while(fieldNames.hasNext()) {
 				            String fieldName = fieldNames.next();
-							squery.add(" " + fieldName + " = :" + fieldName + " ");							
-							paramsource = addValue(tracker,paramsource,fieldName, jfield.get(fieldName).asText());							
+				            String queryval = jfield.get(fieldName).asText();
+				            if(queryval==null) {
+				            	squery.add(" ct." + fieldName + " is null ");			
+				            }
+				            else {				            	
+								squery.add(" ct." + fieldName + " = :" + fieldName + " ");							
+								paramsource = addValue(tracker,paramsource,fieldName, queryval);
+				            }
 						}						
 					}
 					else {
-						squery.add(" " + jfield.asText() + " = :" + jfield.asText() + " ");
+						squery.add(" ct." + jfield.asText() + " = :" + jfield.asText() + " ");
 						paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 					}
 				}
 			}
-			else if(search.get("equal").isObject()) {
+			else if(search.get("equal").isObject()) {				
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("equal").fields();
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
-					squery.add(" " + node.getKey() + " = :" + node.getKey() + " ");
-					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
+					String queryval = node.getValue().asText();					
+					if(queryval==null || queryval.equals("null")) {
+						squery.add(" ct." + node.getKey() + " is null ");
+					}
+					else {						
+						squery.add(" ct." + node.getKey() + " = :" + node.getKey() + " ");
+						paramsource = addValue(tracker,paramsource,node.getKey(), queryval);
+					}
 				}
 			}
 		}
@@ -651,9 +660,7 @@ public class TrackerService {
 			orderby = " ";
 			if(search.get("order").isArray()) {
 				int curpos = 1;
-				// System.out.println("order is an array");
 				for(final JsonNode jfield : search.get("order")) {
-					// System.out.println("field:" + jfield.toString());
 					if(curpos>1) {
 						orderby += ",";
 					}
@@ -662,11 +669,9 @@ public class TrackerService {
 				}
 			}
 			else if(search.get("order").isObject()) {
-				// System.out.println("order is an object");
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("order").fields();
 				int curpos = 1;
 				while(svals.hasNext()) {
-					// System.out.println("field:");
 					Entry<String, JsonNode> node = svals.next();
 					if(curpos>1) {
 						orderby += ",";
@@ -679,7 +684,6 @@ public class TrackerService {
 				// System.out.println("what on earth " + search.get("order").getClass());
 			}			
 		}
-		System.out.println("filter:" + filterquery);		
 		curquery.put("orderby", orderby);		
 		curquery.put("filterquery", filterquery);
 		curquery.put("paramsource", paramsource);
@@ -833,14 +837,19 @@ public class TrackerService {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		HashMap<String,Object> curobject = null;
 		if(mapdata.get("id")!=null) {
-			curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
+			try {
+				curobject = datarow(tracker,Long.parseLong((String) mapdata.get("id")));
+			}
+			catch(ClassCastException cce) {				
+				curobject = datarow(tracker,Long.valueOf(((Integer)mapdata.get("id")).longValue()));
+			}
 		}
 		mapdata.forEach((fieldname,fieldval)->{
 			TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,fieldname);
 			if(tfield!=null) {
 				submittedfields.add(tfield);
 			}
-		});
+		});		
 		// using array to get around local variable in enclosing scope need to be final
 		MapSqlParameterSource[] inparamsource = {new MapSqlParameterSource()};
 		submittedfields.forEach(tf->{
@@ -864,7 +873,12 @@ public class TrackerService {
 				}
 			});
 			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where id=:id";
-			curid = Long.parseLong((String) mapdata.get("id"));
+			try {
+				curid = Long.parseLong((String) mapdata.get("id"));
+			}
+			catch(ClassCastException cce) {				
+				curid = Long.valueOf(((Integer)mapdata.get("id")).longValue());
+			}
 			paramsource.addValue("id", curid);
 		}
 		else {
@@ -882,7 +896,7 @@ public class TrackerService {
 		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
 		if(mapdata.get("id")==null) {
 			curid = keyholder.getKey().longValue();
-		}
+		}		
 		return curid;
 	}
 	
@@ -935,12 +949,10 @@ public class TrackerService {
 			try {
 				switch(tf.getFieldType()) {
 				case "String":
-					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.VARCHAR);
-					System.out.println("str saving: " + tf.getName() + " value:" + postdata.get("val_" + tf.getName())[0]);
+					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.VARCHAR);					
 					break;
 				case "Text":
-					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.LONGVARCHAR);
-					System.out.println("txt saving: " + tf.getName() + " value:" + postdata.get("val_" + tf.getName())[0]);
+					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.LONGVARCHAR);					
 					break;
 				case "TrackerType":
 				case "TreeNode":
@@ -1020,8 +1032,7 @@ public class TrackerService {
 				dquery = "insert into " + tracker.getDataTable() + " ([" + String.join("],[", submittednames) + "]) values (:" + String.join(",:" , submittednames) + ")";
 			}
 		}
-		KeyHolder keyholder = new GeneratedKeyHolder();
-		System.out.println("insert:" + dquery);
+		KeyHolder keyholder = new GeneratedKeyHolder();		
 		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
 		if(postdata.get("id")==null) {
 			curid = keyholder.getKey().longValue();
@@ -1063,8 +1074,7 @@ public class TrackerService {
 			tablename = tablename.toUpperCase();			
 		}
 		String toquery = "select count(*) as result from INFORMATION_SCHEMA.TABLES where "
-				+ " TABLE_NAME = '" + tablename + "'";
-		System.out.println("checking table:" + toquery);
+				+ " TABLE_NAME = '" + tablename + "'";		
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
@@ -1080,8 +1090,7 @@ public class TrackerService {
 			tablename = tablename.toUpperCase();			
 		}
 		String toquery = "select count(*) as result from INFORMATION_SCHEMA.COLUMNS where "
-				+ " TABLE_NAME = '" + tablename + "' and COLUMN_NAME = '" + columname + "'";
-		System.out.println("checking field:" + toquery);
+				+ " TABLE_NAME = '" + tablename + "' and COLUMN_NAME = '" + columname + "'";		
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
@@ -1169,7 +1178,7 @@ public class TrackerService {
 	}
 	
 	public String display(TrackerField field, HashMap<String,Object> datas) {
-		try {			
+		try {
 			if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
 				DateFormat format;
 				if(field.getFieldType().equals("Date")) {
@@ -1181,24 +1190,35 @@ public class TrackerService {
 				return format.format((Date)datas.get(field.getName()));
 			}
 			else if(field.getFieldType().equals("User")) {
-				Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
-				User data = userService.getRepo().getOne(targetid);
-				if(data!=null) {
-					return data.getName();
+				if(datas.get(field.getName())!=null) {
+					Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
+					User data = userService.getRepo().getOne(targetid);
+					if(data!=null) {
+						return data.getName();
+					}
+				}
+				else {
+					return "";
 				}
 			}
-			else if(field.getFieldType().equals("TrackerType")) {
+			else if(field.getFieldType().equals("TrackerType")) {				
 				JsonNode foptions = field.optionsJson();
-				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
+				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {					
 					String module = foptions.get("module").textValue();
 					String slug = foptions.get("slug").textValue();
 					String name_column = foptions.get("name_column").textValue();
-					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
+					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
 					if(targetTracker!=null && datas.get(field.getName())!=null) {						
-						Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;												
-						HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
-						if(targetdatas!=null && targetdatas.get(name_column)!=null) {
-							return targetdatas.get(name_column).toString();
+						BigDecimal cdata = (BigDecimal)datas.get(field.getName());						
+						if(cdata!=null) {
+							Long targetid = cdata.longValue() ;												
+							HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
+							if(targetdatas!=null && targetdatas.get(name_column)!=null) {
+								return targetdatas.get(name_column).toString();
+							}
+						}
+						else {
+							return "";
 						}
 					}
 				}
@@ -1225,8 +1245,7 @@ public class TrackerService {
 							}
 						}
 						toret += "</tr>";
-						for(int i=0;i<targetdatas.length;i++) {
-							System.out.println("HasMany item:" + String.valueOf(i));
+						for(int i=0;i<targetdatas.length;i++) {							
 							toret += "<tr>";
 							toret += "<td>" + String.valueOf(i+1) + "</td>";
 							for(final JsonNode jfield : foptions.get("fields")) {															
@@ -1297,7 +1316,6 @@ public class TrackerService {
 			else {
 				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add [" + field.getName().toLowerCase() + "] " + sqltype + " NULL";	
 			}			
-			System.out.println("fix:" + fixsql);
 			jdbctemplate.execute(fixsql);
 		}
 	}

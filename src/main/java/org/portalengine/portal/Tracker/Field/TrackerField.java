@@ -59,7 +59,10 @@ public class TrackerField extends Auditable<String> {
 	@JsonIgnore
 	@ManyToOne( fetch = FetchType.LAZY )
 	@JoinColumn( name = "tracker_id" )
-	private Tracker tracker; 
+	private Tracker tracker;
+	
+	@Transient
+	public String[] reserved_name = {"user","id","order","by","group","date","select","from","where","asc","desc","ct"};
 	
 	@Transient
 	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User","HasMany"};
