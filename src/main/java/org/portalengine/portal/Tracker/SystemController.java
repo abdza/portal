@@ -230,7 +230,7 @@ public class SystemController {
 		Sheet sheet = wb.createSheet();		
 		
 		Row headerRow = sheet.createRow(0);
-		List<TrackerField> flist = trackerService.field_list(tracker,"list",null);
+		List<TrackerField> flist = trackerService.field_list(tracker,"excel",null);
 		for(int i=0;i<flist.size();i++) {
 			Cell cell = headerRow.createCell(i);
 			cell.setCellValue(flist.get(i).getLabel());

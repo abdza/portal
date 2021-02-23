@@ -128,6 +128,13 @@ public class TrackerService {
 		switch(list_name) {
 		case "filter":
 			return fields(tracker,tracker.getFilterFields());
+		case "excel":
+			if(tracker.getExcelFields()!=null && tracker.getExcelFields().length()>0) {
+				return fields(tracker,tracker.getExcelFields());
+			}
+			else {			
+				return fields(tracker,tracker.getListFields());
+			}
 		case "list":
 			return fields(tracker,tracker.getListFields());
 		case "form":

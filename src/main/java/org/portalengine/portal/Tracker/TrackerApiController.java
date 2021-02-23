@@ -38,7 +38,7 @@ public class TrackerApiController {
 	@GetMapping("/{tracker_id}/fields")
 	public Object fieldsList(@PathVariable Long tracker_id,HttpServletRequest request, Model model) {
 			Tracker tracker = service.getRepo().getOne(tracker_id);
-			List<TrackerField> fields = service.getFieldRepo().findByTracker(tracker);
+			List<TrackerField> fields = service.getFieldRepo().findByTrackerAndNameContainingIgnoreCase(tracker,request.getParameter("q"));
 			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
 			fields.forEach(cfield->{
 				Map<String,String> map = new HashMap<String,String>();

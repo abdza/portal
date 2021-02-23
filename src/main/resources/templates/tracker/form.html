@@ -44,6 +44,12 @@
                 </div>
             </div>
             <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Excel Fields</label></div>
+                <div class='col-sm-9'>
+                <textarea class="form-control col-sm-8 col-md-6 tokeninput fieldselection" th:field="*{excelFields}"></textarea>
+                </div>
+            </div>
+            <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Form Fields</label></div>
                 <div class='col-sm-9'>
                     <textarea class="form-control col-sm-8 col-md-6 tokeninput fieldselection" th:field="*{formFields}"></textarea>

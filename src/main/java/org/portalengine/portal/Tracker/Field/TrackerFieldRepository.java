@@ -9,4 +9,5 @@ public interface TrackerFieldRepository extends JpaRepository<TrackerField, Long
 
 		List<TrackerField> findByTracker(Tracker tracker);
 		TrackerField findByTrackerAndName(Tracker tracker, String name);
+		List<TrackerField> findByTrackerAndNameContainingIgnoreCase(Tracker tracker, String name);
 }

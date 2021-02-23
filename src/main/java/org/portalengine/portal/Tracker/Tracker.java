@@ -50,6 +50,7 @@ public class Tracker extends Auditable<String> {
 	private String updatesTable;
 	private String trackerType;
 	private String listFields;
+	private String excelFields;
 	private String formFields;
 	private String displayFields;
 	private String searchFields;
@@ -88,6 +89,7 @@ public class Tracker extends Auditable<String> {
 		newtracker.trackerType = this.trackerType;
 		newtracker.listFields = this.listFields;
 		newtracker.formFields = this.formFields;
+		newtracker.excelFields = this.excelFields;
 		newtracker.searchFields = this.searchFields;
 		newtracker.filterFields = this.filterFields;
 		newtracker.displayFields = this.displayFields;
