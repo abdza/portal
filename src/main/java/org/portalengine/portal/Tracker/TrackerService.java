@@ -23,8 +23,10 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.portalengine.portal.DataUpdate.DataUpdateService;
+import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageService;
+import org.portalengine.portal.Setting.SettingService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
@@ -41,6 +43,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -56,6 +59,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import lombok.Data;
 
 @Service
@@ -90,6 +95,12 @@ public class TrackerService {
 	private UserService userService;
 	
 	@Autowired
+	private SettingService settingService;
+	
+	@Autowired
+	private FileLinkService fileService;
+	
+	@Autowired
 	private NamedParameterJdbcTemplate namedjdbctemplate;
 	
 	@Autowired
@@ -100,6 +111,12 @@ public class TrackerService {
 	
 	@Value("${spring.datasource.url}")
     private String dataURL;
+	
+	/* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	public TrackerService() {
@@ -953,22 +970,47 @@ public class TrackerService {
 		});
 		
 		submittedfields.forEach(tf->{
+			System.out.println("Doing:" + tf.getName());
 			try {
+				String dval = postdata.get("val_" + tf.getName())[0];
+				if(dval.equals("auto_field")) {
+					System.out.println("Processing auto field");
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",this);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("settingService", settingService);
+					binding.setVariable("env", env);
+					System.out.println("Done binding");
+					try {
+						dval = (String)shell.evaluate(tf.getAutoValue());
+						System.out.println("Content:" + dval);
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				
 				switch(tf.getFieldType()) {
 				case "String":
-					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.VARCHAR);					
+					paramsource.addValue(tf.getName(), dval,Types.VARCHAR);					
 					break;
 				case "Text":
-					paramsource.addValue(tf.getName(), postdata.get("val_" + tf.getName())[0],Types.LONGVARCHAR);					
+					paramsource.addValue(tf.getName(), dval,Types.LONGVARCHAR);					
 					break;
 				case "TrackerType":
 				case "TreeNode":
 				case "Integer":
 				case "User":
-					paramsource.addValue(tf.getName(), Integer.parseInt(postdata.get("val_" + tf.getName())[0]),Types.NUMERIC);
+					paramsource.addValue(tf.getName(), Integer.parseInt(dval),Types.NUMERIC);
 					break;
 				case "Number":
-					paramsource.addValue(tf.getName(), Double.parseDouble(postdata.get("val_" + tf.getName())[0]),Types.NUMERIC);
+					paramsource.addValue(tf.getName(), Double.parseDouble(dval),Types.NUMERIC);
 					break;
 				case "Date":
 				case "DateTime":
@@ -981,7 +1023,7 @@ public class TrackerService {
 					}
 					Date date;
 	
-					date = format.parse(postdata.get("val_" + tf.getName())[0]);
+					date = format.parse(dval);
 					if(date!=null) {
 						if(tf.getFieldType().equals("Date")) {
 							paramsource.addValue(tf.getName(), date, Types.DATE);

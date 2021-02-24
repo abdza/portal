@@ -20,7 +20,10 @@
 <input type='hidden' name='transition_id' th:value="${transition.id}" th:if="${transition!=null}"/>
 
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}">
+<input th:if="${field.fieldWidget=='Auto'}" type='hidden' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" value="auto_field"/>
+<th:block th:unless="${field.fieldWidget=='Auto'}">
 <div th:replace="tracker/trackerbase::dataformfield(tracker=${tracker},datas=${datas},field=${field})"></div>
+</th:block>
 </div>
 
 <div class='form-group row'>
@@ -62,7 +65,7 @@ $('#val_[(${field.name})]').datetimepicker({
 [/]
 
 
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User'}"]
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User' && field.fieldWidget!='Auto'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
     url: /*[[@{/api/users}]]*/'/dummy/api/users',
@@ -118,23 +121,25 @@ $('#val_[(${field.name})]').select2({
 </script>
 
 <div th:fragment="dataformfield(tracker,datas,field)" class="dataform form-group row">
-<div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0' th:text="${field.label}">Module</label></div>
-<div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
-<th:block th:if="${field.fieldWidget=='Default'}">
-<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
-	<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
-</select>
-<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User' && field.fieldType!='Text'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
-<input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
-<textarea th:if="${field.fieldType=='Text'}" th:class="${fieldclass + field.typeClass()}" th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:text="${@trackerService.display(field,datas)}">
-</textarea>
-</th:block>
-<th:block th:if="${field.fieldWidget=='DropDown'}">
-<select th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
-	<option th:each="val,iter: ${@trackerService.field_options(field)}" th:value="${val['val']}" th:text="${val['label']}" th:selected="${datas?.get(field.name)?.toString()==val['val']}">option</option>
-</select>
-</th:block>
-</div>
+	<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+		<label class='mb-0' th:text="${field.label}">Module</label>
+	</div>
+	<div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
+		<th:block th:if="${field.fieldWidget=='Default'}">
+		<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+			<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
+		</select>
+		<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User' && field.fieldType!='Text'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
+		<input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}"/>
+		<textarea th:if="${field.fieldType=='Text'}" th:class="${fieldclass + field.typeClass()}" th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:text="${@trackerService.display(field,datas)}">
+		</textarea>
+		</th:block>
+		<th:block th:if="${field.fieldWidget=='DropDown'}">
+		<select th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
+			<option th:each="val,iter: ${@trackerService.field_options(field)}" th:value="${val['val']}" th:text="${val['label']}" th:selected="${datas?.get(field.name)?.toString()==val['val']}">option</option>
+		</select>
+		</th:block>	
+	</div>
 </div>
 
 <div th:fragment="datadisplay(tracker,datas)" class='datadisplay'>
