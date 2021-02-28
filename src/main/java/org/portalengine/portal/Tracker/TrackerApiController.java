@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.portalengine.portal.Tracker.Field.TrackerField;
+import org.portalengine.portal.Tracker.Role.TrackerRole;
+import org.portalengine.portal.Tracker.Status.TrackerStatus;
 import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserApiController;
 import org.portalengine.portal.User.UserService;
@@ -41,6 +43,37 @@ public class TrackerApiController {
 			List<TrackerField> fields = service.getFieldRepo().findByTrackerAndNameContainingIgnoreCase(tracker,request.getParameter("q"));
 			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
 			fields.forEach(cfield->{
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("id",cfield.getName());
+				map.put("name",cfield.getName());
+				jfields.add(map);
+			});
+			return jfields;
+	}
+	
+	@GetMapping("/{tracker_id}/roles")
+	public Object rolesList(@PathVariable Long tracker_id,HttpServletRequest request, Model model) {
+			Tracker tracker = service.getRepo().getOne(tracker_id);
+			List<TrackerRole> roles = service.getRoleRepo().findByTrackerAndNameContainingIgnoreCase(tracker,request.getParameter("q"));
+			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
+			roles.forEach(cfield->{
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("id",cfield.getName());
+				map.put("name",cfield.getName());
+				jfields.add(map);
+			});
+			return jfields;
+	}
+	
+	@GetMapping("/{tracker_id}/status")
+	public Object statusList(@PathVariable Long tracker_id,HttpServletRequest request, Model model) {
+			Tracker tracker = service.getRepo().getOne(tracker_id);
+			System.out.println("status function");
+			List<TrackerStatus> statuslist = service.getStatusRepo().findByTrackerAndNameContainingIgnoreCase(tracker,request.getParameter("q"));
+			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
+			System.out.println("found:" + String.valueOf(statuslist.size()));
+			statuslist.forEach(cfield->{	
+				System.out.println("name:" + cfield.getName());
 				Map<String,String> map = new HashMap<String,String>();
 				map.put("id",cfield.getName());
 				map.put("name",cfield.getName());

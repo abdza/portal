@@ -351,8 +351,7 @@ public class ModuleService {
 		try {			
 			Path path = Paths.get(mod_path + "pages.json");
 			byte[] data = objectMapper.writer(printer).writeValueAsBytes(pages);		
-			Files.write(path, data);
-			
+			Files.write(path, data);			
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
