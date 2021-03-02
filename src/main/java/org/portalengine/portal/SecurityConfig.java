@@ -1,9 +1,9 @@
 package org.portalengine.portal;
 
-import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,34 +13,47 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired
-	private UserService userService;
+public class SecurityConfig {
 	
 	@Bean
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
+	}	
+	
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) { 
 	}
 	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService)
-		.passwordEncoder(encoder());
+	@Configuration
+	@Order(1)                                                       
+	public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {		
+		
+		protected void configure(HttpSecurity http) throws Exception {
+			http
+				.antMatcher("/api/**")                               
+				.authorizeRequests()
+				.anyRequest().authenticated()
+				.and()
+				.httpBasic();
+		}
 	}
 	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-		.authorizeRequests()
-		.antMatchers("/","/register","/login","/logout","/libs/**","/images/**").permitAll()
-		.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
-		.and()
-		.formLogin()
-		.loginPage("/login")
-		.and()
-		.logout()
-		.logoutSuccessUrl("/")
-		;
+	@Configuration                                                  
+	public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {		
+		
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http
+			.authorizeRequests()
+			.antMatchers("/","/register","/login","/logout","/libs/**","/images/**").permitAll()
+			.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
+			.and()
+			.formLogin()
+			.loginPage("/login")
+			.and()
+			.logout()
+			.logoutSuccessUrl("/")
+			;
+		}
 	}
 }
