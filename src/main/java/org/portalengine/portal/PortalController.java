@@ -320,7 +320,8 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/view/{slug}","/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })	
+	@RequestMapping(path={"/view/{slug}","/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
 	public String viewPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
 		
 		if(module==null) {

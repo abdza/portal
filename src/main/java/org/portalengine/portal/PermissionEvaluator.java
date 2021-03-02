@@ -25,11 +25,5 @@ public class PermissionEvaluator implements org.springframework.security.access.
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	public boolean hasPermission(Authentication authentication, String objtype, String module, String slug) {
-		// TODO Auto-generated method stub
-		System.out.println("In has permission for " + objtype + " for module:" + module + " and slug:" + slug);
-		return true;
-	}
 
 }
