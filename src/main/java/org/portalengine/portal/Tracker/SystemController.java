@@ -102,6 +102,7 @@ public class SystemController {
 	}
 	
 	@GetMapping("/{module}/{slug}/create")
+	@PreAuthorize("trackerPermission(#module,#slug,'add')")
 	public String createdata(@PathVariable String module, @PathVariable String slug, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {

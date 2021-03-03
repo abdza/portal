@@ -66,6 +66,9 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 				if(fname.equals("All")) {
 					return true;
 				}
+				else if(fname.equals("None")) {
+					return false;
+				}
 				else if(fname.equals("Authenticated")) {
 					if(curuser instanceof User) {
 						return true;

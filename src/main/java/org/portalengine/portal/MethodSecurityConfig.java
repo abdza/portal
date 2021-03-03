@@ -37,5 +37,6 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
           new CustomMethodSecurityExpressionHandler(pageRepository,fileRepository,trackerRepository,treeRepository,settingRepository);
         expressionHandler.setPermissionEvaluator(new PermissionEvaluator());
         return expressionHandler;
-    }
+    }   
+    
 }
