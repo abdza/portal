@@ -56,6 +56,15 @@ public class TrackerApiController {
 			Tracker tracker = service.getRepo().getOne(tracker_id);
 			List<TrackerRole> roles = service.getRoleRepo().findByTrackerAndNameContainingIgnoreCase(tracker,request.getParameter("q"));
 			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
+			String[] userroles = {"All","Authenticated"};
+			
+			for(String cfield:userroles) {
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("id",cfield);
+				map.put("name",cfield);
+				jfields.add(map);
+			};
+			
 			roles.forEach(cfield->{
 				Map<String,String> map = new HashMap<String,String>();
 				map.put("id",cfield.getName());

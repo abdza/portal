@@ -54,6 +54,20 @@
 			<div class='col-sm font-bold text-sm-right'>Node:</div>
 			<div class='col-sm' th:text="${tracker.nodeId}">tail_table</div>
 		</div>
+		
+		<div class='row'>
+			<div class='col-sm font-bold text-sm-right'>View List Roles:</div>
+			<div class='col-sm' th:text="${tracker.viewListRoles}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>New Record Roles:</div>
+			<div class='col-sm' th:text="${tracker.addRoles}">tail_table</div>
+		</div>
+		
+		<div class='row'>
+			<div class='col-sm font-bold text-sm-right'>View Detail Roles:</div>
+			<div class='col-sm' th:text="${tracker.detailRoles}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>Default Status:</div>
+			<div class='col-sm' th:text="${tracker.defaultStatus}">tail_table</div>
+		</div>
 
 		<div class='row'>
 			<div class='col-sm font-bold text-sm-right'>List Fields:</div>

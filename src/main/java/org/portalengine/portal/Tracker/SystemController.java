@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -198,8 +199,9 @@ public class SystemController {
 			return "404";
 		}
 	}
-	
+		
 	@GetMapping("/{module}/{slug}/list")
+	@PreAuthorize("trackerPermission(#module,#slug,'list')")
 	public String list(@PathVariable String module, @PathVariable String slug, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		model.addAttribute("tracker", tracker);
@@ -218,6 +220,7 @@ public class SystemController {
 	}
 	
 	@GetMapping("/{module}/{slug}/excel")
+	@PreAuthorize("trackerPermission(#module,#slug,'list')")
 	@ResponseBody
 	public ResponseEntity<StreamingResponseBody> excel(@PathVariable String module, @PathVariable String slug, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);

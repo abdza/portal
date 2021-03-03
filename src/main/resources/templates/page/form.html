@@ -57,6 +57,22 @@ form .ace_editor {
             
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0' for="require_login1">Require Login</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='checkbox' th:field="*{requireLogin}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Allowed Roles</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{allowedRoles}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0' for="runable1">Runable</label></div>
                 <div class='col-sm-9'>
                     <input class="form-control col-sm-8 col-md-6" type='checkbox' th:field="*{runable}" />

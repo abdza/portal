@@ -57,6 +57,10 @@ public class Tracker extends Auditable<String> {
 	private String filterFields;
 	private String initialStatus;
 	private Long nodeId;
+	private String viewListRoles;
+	private String addRoles;
+	private String detailRoles;
+	private String defaultStatus;
 	
 	@OneToMany(
 			mappedBy = "tracker",

@@ -36,6 +36,10 @@ public class Page extends Auditable<String> {
 	
 	private Boolean runable;
 	
+	private Boolean requireLogin;
+	
+	private String allowedRoles;
+	
 	@NotNull
 	@org.hibernate.annotations.Type( type = "text" )
 	private String content;	

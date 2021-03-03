@@ -4,7 +4,9 @@ import org.portalengine.portal.FileLink.FileLinkRepository;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageRepository;
 import org.portalengine.portal.Setting.SettingRepository;
+import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerRepository;
+import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tree.TreeRepository;
 import org.portalengine.portal.User.User;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -33,6 +35,51 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
       this.settingRepository = settingRepository;
   }
   
+    public boolean trackerPermission(String module, String slug, String permission) {
+    	Tracker curtracker = trackerRepository.findOneByModuleAndSlug(module, slug);
+    	
+    	if(curtracker!=null) {
+    		String rolelist="";
+    		
+    		if(permission.equals("list")) {
+    			rolelist = curtracker.getViewListRoles();    			
+    		}
+    		else if(permission.equals("add")) {
+    			rolelist = curtracker.getAddRoles();
+    		}
+    		else if(permission.equals("detail")) {
+    			rolelist = curtracker.getDetailRoles();
+    		}
+    		if(rolelist==null) {
+				rolelist = "Authenticated";
+			}
+    		
+    		Object curuser = this.authentication.getPrincipal();
+			if(curuser instanceof String) {
+				System.out.println("User is anon");				
+			}
+			else if(curuser instanceof User) {
+				System.out.println("Got user");
+			}
+			
+			for(String fname:rolelist.split(",")) {
+				if(fname.equals("All")) {
+					return true;
+				}
+				else if(fname.equals("Authenticated")) {
+					if(curuser instanceof User) {
+						return true;
+					}
+				}
+				else {
+					// Need to check user roles here
+				}
+			}
+    	}
+    	
+    	return false;
+    }
+  
 	public boolean pagePermission(String module, String slug) {
 		// TODO Auto-generated method stub
 		//System.out.println(this.authentication.getPrincipal());
@@ -40,15 +87,18 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 		Page curpage = pageRepository.findOneByModuleAndSlug(module, slug);
 		
 		if(curpage!=null) {
-			if(!curpage.getPublished()) {
+			if(curpage.getPublished()!=true) {
 				return false;
 			}
 			Object curuser = this.authentication.getPrincipal();
 			if(curuser instanceof String) {
-				System.out.println("is string");
+				System.out.println("User is anon");
+				if(curpage.getRequireLogin()) {
+					return false;
+				}
 			}
 			else if(curuser instanceof User) {
-				System.out.println("in user");
+				System.out.println("Got user");
 			}
 			if(curpage!=null) {
 				System.out.println("Got page:" + curpage.getTitle());

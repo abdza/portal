@@ -37,6 +37,39 @@
                     </select>
                 </div>
             </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Default Status</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6 tokeninput statusselection" data-tokenlimit='1' type='text' th:field="*{defaultStatus}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>View List Roles</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6 tokeninput roleselection" type='text' th:field="*{viewListRoles}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>New Record Roles</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6 tokeninput roleselection" type='text' th:field="*{addRoles}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>View Detail Roles</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6 tokeninput roleselection" type='text' th:field="*{detailRoles}" />
+                </div>
+            </div>
+            
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>List Fields</label></div>
                 <div class='col-sm-9'>
@@ -117,21 +150,35 @@ function splitval(val) {
 	return toreturn;
 };
 
-$(".fieldselection").each(function(){
-	var curval = $(this).val();
+function tokenselection(item,url) {
+	var curval = item.val();
 	if(curval.length>0){
 		var pp = splitval(curval);	
 	}
 	else{
 		var pp = null;
 	}
-	$(this).tokenInput(
-			"[[@{/api/trackers/{tracker_id}/fields(tracker_id=${tracker.id})}]]",
+	console.log('tl:' + item.data('tokenlimit'));
+	item.tokenInput(
+			url,
 			{
 				prePopulate: pp,
-				preventDuplicates: true
+				preventDuplicates: true,
+				tokenLimit: item.data('tokenlimit')
 			}
 	);
+}
+
+$(".fieldselection").each(function(){
+	tokenselection($(this),"[[@{/api/trackers/{tracker_id}/fields(tracker_id=${tracker.id})}]]");	
+});
+
+$(".roleselection").each(function(){
+	tokenselection($(this),"[[@{/api/trackers/{tracker_id}/roles(tracker_id=${tracker.id})}]]");
+});
+
+$(".statusselection").each(function(){
+	tokenselection($(this),"[[@{/api/trackers/{tracker_id}/status(tracker_id=${tracker.id})}]]");
 });
 </script>
 </th:block>
