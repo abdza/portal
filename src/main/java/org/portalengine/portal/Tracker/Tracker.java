@@ -60,6 +60,8 @@ public class Tracker extends Auditable<String> {
 	private String viewListRoles;
 	private String addRoles;
 	private String detailRoles;
+	private String deleteRoles;
+	private String editRoles;
 	private String defaultStatus;
 	
 	@OneToMany(

@@ -120,6 +120,7 @@ public class SystemController {
 	}
 	
 	@GetMapping("/{module}/{slug}/display/{id}")
+	@PreAuthorize("trackerPermission(#module,#slug,'detail')")
 	public String displaydata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {
@@ -144,6 +145,7 @@ public class SystemController {
 	}
 	
 	@PostMapping("/{module}/{slug}/delete/{id}")
+	@PreAuthorize("trackerPermission(#module,#slug,'delete')")
 	public String deletedata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -153,6 +155,7 @@ public class SystemController {
 	}
 	
 	@GetMapping("/{module}/{slug}/edit/{id}")
+	@PreAuthorize("trackerPermission(#module,#slug,'edit')")
 	public String editdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		if(tracker!=null) {

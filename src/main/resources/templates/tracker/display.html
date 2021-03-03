@@ -63,6 +63,13 @@
 		</div>
 		
 		<div class='row'>
+			<div class='col-sm font-bold text-sm-right'>Edit Roles:</div>
+			<div class='col-sm' th:text="${tracker.editRoles}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>Delete Roles:</div>
+			<div class='col-sm' th:text="${tracker.deleteRoles}">tail_table</div>
+		</div>
+		
+		<div class='row'>
 			<div class='col-sm font-bold text-sm-right'>View Detail Roles:</div>
 			<div class='col-sm' th:text="${tracker.detailRoles}">dataTable</div>
 			<div class='col-sm font-bold text-sm-right'>Default Status:</div>
