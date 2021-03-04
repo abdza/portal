@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+
+
+<style th:utext="${@trackerService.css_head(tracker,'list')}">
+</style>
+
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
 
     <div class='content'>

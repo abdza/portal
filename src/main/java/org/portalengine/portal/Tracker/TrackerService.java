@@ -141,6 +141,17 @@ public class TrackerService {
 		}
 	}
 	
+	public String css_head(Tracker tracker, String list_name) {
+		List<TrackerField> fields = field_list(tracker,list_name,null);
+		List<String> toreturn = new ArrayList<String>();
+		int count = 2;
+		for(TrackerField field:fields) {
+			toreturn.add("td:nth-of-type(" + String.valueOf(count) + "):before { content:'" + field.getLabel() + "'; }");
+			count++;
+		};
+		return "@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  { " + String.join(" ",toreturn) + "}";
+	}
+	
 	public List<TrackerField> field_list(Tracker tracker, String list_name, TrackerTransition transition) {
 		switch(list_name) {
 		case "filter":
