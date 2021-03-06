@@ -146,7 +146,7 @@ public class TrackerService {
 		List<String> toreturn = new ArrayList<String>();
 		int count = 2;
 		for(TrackerField field:fields) {
-			toreturn.add("td:nth-of-type(" + String.valueOf(count) + "):before { content:'" + field.getLabel() + "'; }");
+			toreturn.add(".responsive td:nth-of-type(" + String.valueOf(count) + "):before { content:'" + field.getLabel() + "'; }");
 			count++;
 		};
 		return "@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  { " + String.join(" ",toreturn) + "}";

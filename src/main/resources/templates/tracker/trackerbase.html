@@ -1,4 +1,4 @@
-<table th:fragment="datatable(tracker,dataset)" class="table trackertable">
+<table th:fragment="datatable(tracker,dataset)" class="table responsive">
 <thead>
 <tr><th>#</th>
 <th th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${field.label}">Module</th>
