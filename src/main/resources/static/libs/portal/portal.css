@@ -4,6 +4,13 @@
 	display: inline;
 }
 
+.pagination {
+	flex-wrap: wrap;
+}
+
+.paginate_button {
+	display: inline-block;
+}
 
 
 /* 
