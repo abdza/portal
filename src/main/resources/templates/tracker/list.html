@@ -1,10 +1,23 @@
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+<style>
+@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  {
+	.responsive td:nth-of-type(1):before { content:'#'; }
+	.responsive td:nth-of-type(2):before { content:'Module'; }
+	.responsive td:nth-of-type(3):before { content:'Slug'; }
+	.responsive td:nth-of-type(4):before { content:'Name'; }
+	.responsive td:nth-of-type(5):before { content:'Node'; }
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Tracker Listing</h1>
         <a href="#" th:href="@{/admin/trackers/create}" class="btn btn-primary">Add</a>
-        <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
+        <table class="table responsive table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer">
+        	<thead>
             <tr>
                 <th>#</th>
                 <th>Module</th>
@@ -12,6 +25,7 @@
                 <th>Name</th>
                 <th>Node</th>
             </tr>
+            </thead>
             <tr th:each="tracker,iter: ${trackers}">
                 <td><a href='#' th:href='@{/admin/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
                 </td>
