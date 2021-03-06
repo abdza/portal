@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+<style>
+@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  {
+	.responsive td:nth-of-type(1):before { content:'#'; }
+	.responsive td:nth-of-type(2):before { content:'Module'; }
+	.responsive td:nth-of-type(3):before { content:'Slug'; }
+	.responsive td:nth-of-type(4):before { content:'Title'; }	
+	.responsive td:nth-of-type(5):before { content:'Runable'; }
+	.responsive td:nth-of-type(6):before { content:'Published'; }
+	.responsive td:nth-of-type(7):before { content:'Date Created'; }
+	.responsive td:nth-of-type(8):before { content:'Last Updated'; }
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
 	<div class='content'>
 		<h1>Page Listing</h1>
 		<a href="#" th:href="@{/admin/pages/create}" class="btn btn-primary">Add</a>
-		<table class="table">
+		<table class="table responsive">
+			<thead>
 			<tr>
 				<th>#</th>
 				<th>Module</th>
@@ -17,6 +33,7 @@
 				<th>Last Updated</th>
 				<th>&nbsp;</th>
 			</tr>
+			</thead>
 			<tr th:each="portalpage,iter: ${pages}">
 				<td><a href='#'
 					th:href='@{/admin/pages/edit/{id}(id=${portalpage.id})}'

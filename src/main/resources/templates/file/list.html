@@ -1,11 +1,27 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+<style>
+@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  {
+	.responsive td:nth-of-type(1):before { content:'#'; }
+	.responsive td:nth-of-type(2):before { content:'Module'; }
+	.responsive td:nth-of-type(3):before { content:'Slug'; }
+	.responsive td:nth-of-type(4):before { content:'Name'; }	
+	.responsive td:nth-of-type(5):before { content:'Path'; }
+	.responsive td:nth-of-type(6):before { content:'Filegroup'; }
+	.responsive td:nth-of-type(7):before { content:'Allowed Roles'; }
+	.responsive td:nth-of-type(8):before { content:'Sort Num'; }
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>File Listing</h1>
         <a href="#" th:href="@{/admin/files/create}" class="btn btn-primary">Add</a>
-        <table class="table">
+        <table class="table responsive">
+        	<thead>
             <tr>
                 <th>#</th>
                 <th>Module</th>
@@ -17,6 +33,7 @@
                 <th>Sort Num</th>
                 <th>&nbsp;</th>
             </tr>
+            </thead>
             <tr th:each="filelink,iter: ${files}">
                 <td><a href='#' th:href='@{/admin/files/edit/{id}(id=${filelink.id})}' th:text="${iter.index + 1}">2</a></td>
                 <td><a href='#' th:href='@{/download/{module}/{slug}(module=${filelink.module},slug=${filelink.slug})}'

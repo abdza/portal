@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+<style>
+@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  {
+	.responsive td:nth-of-type(1):before { content:'#'; }
+	.responsive td:nth-of-type(2):before { content:'Module'; }
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
 	<div class='content'>
 		<h1>Modules Listing</h1>
 		<a href="#" th:href="@{/admin/modules/update}" class="btn btn-primary">Update</a>
-		<table class="table">
+		<table class="table responsive">
+			<thead>
 			<tr>
 				<th>#</th>
 				<th>Module</th>
 				<th>&nbsp;</th>
 			</tr>
+			</thead>
 			<tr th:each="module,iter: ${modules}">
 				<td><a href='#'
 					th:href='@{/admin/modules/edit/{id}(id=${module.id})}'

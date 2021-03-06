@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-context">
+<style>
+@media only screen and (max-width: 760px),(min-device-width: 768px) and (max-device-width: 1024px)  {
+	.responsive td:nth-of-type(1):before { content:'#'; }
+	.responsive td:nth-of-type(2):before { content:'Module'; }
+	.responsive td:nth-of-type(3):before { content:'Slug'; }
+	.responsive td:nth-of-type(4):before { content:'Name'; }	
+}
+</style>
+</th:block>
+
 <section layout:fragment="content" class='tree-content'>
 	<div class='content'>
 		<h1>Tree Listing</h1>
 		<a href="#" th:href="@{/admin/trees/create}" class="btn btn-primary">Add</a>
-		<table class="table">
+		<table class="table responsive">
+			<thead>
 			<tr>
 				<th>#</th>
 				<th>Module</th>
@@ -13,6 +25,7 @@
 				<th>Name</th>
 				<th>&nbsp;</th>
 			</tr>
+			</thead>
 			<tr th:each="portaltree,iter: ${trees}">
 				<td><a href='#'
 					th:href='@{/admin/trees/edit/{id}(id=${portaltree.id})}'
