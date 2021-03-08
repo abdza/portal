@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.portalengine.portal.Auditable;
+import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;
@@ -63,6 +64,9 @@ public class Tracker extends Auditable<String> {
 	private String deleteRoles;
 	private String editRoles;
 	private String defaultStatus;
+	private String postCreate;
+	private String postEdit;
+	private String postDelete;
 	
 	@OneToMany(
 			mappedBy = "tracker",

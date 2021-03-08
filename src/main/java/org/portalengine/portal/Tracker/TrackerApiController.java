@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;
@@ -36,6 +37,9 @@ public class TrackerApiController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PageService pageService;
 	
 	@GetMapping("/{tracker_id}/fields")
 	public Object fieldsList(@PathVariable Long tracker_id,HttpServletRequest request, Model model) {
@@ -86,6 +90,24 @@ public class TrackerApiController {
 				Map<String,String> map = new HashMap<String,String>();
 				map.put("id",cfield.getName());
 				map.put("name",cfield.getName());
+				jfields.add(map);
+			});
+			return jfields;
+	}
+	
+	@GetMapping("/{tracker_id}/pages")
+	public Object pagesList(@PathVariable Long tracker_id,HttpServletRequest request, Model model) {
+			Tracker tracker = service.getRepo().getOne(tracker_id);
+			System.out.println("page function");
+			String q = "%" + request.getParameter("q") + "%";
+			List<org.portalengine.portal.Page.Page> pageslist = pageService.getRepo().findAllByModuleAndQ(tracker.getModule(), q);
+			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
+			System.out.println("found:" + String.valueOf(pageslist.size()));
+			pageslist.forEach(cpage->{	
+				System.out.println("name:" + cpage.getTitle());
+				Map<String,String> map = new HashMap<String,String>();
+				map.put("id",cpage.getSlug());
+				map.put("name",cpage.getTitle());
 				jfields.add(map);
 			});
 			return jfields;

@@ -7,7 +7,9 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tree.Tree;
 import org.portalengine.portal.Tree.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -92,7 +94,20 @@ public class UserController {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
 		model.addAttribute("pageTitle","User Listing");
-		model.addAttribute("users", service.getRepo().findAll(PageRequest.of(page, size)));
+		
+		String search = "";
+		Page<User> toreturn = null;
+		if(request.getParameter("q")!=null) {
+			search = "%" + request.getParameter("q").replace(" " , "%") + "%";		
+			Pageable pageable = PageRequest.of(page, size);
+			toreturn = service.getRepo().apiquery(search,pageable);
+		}
+		else {
+			toreturn = service.getRepo().findAll(PageRequest.of(page, size));
+		}
+		
+		model.addAttribute("users", toreturn);
+		
 		return "user/list.html";
 	}
 	

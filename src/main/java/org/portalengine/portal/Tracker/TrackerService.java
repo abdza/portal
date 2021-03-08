@@ -145,6 +145,7 @@ public class TrackerService {
 		List<TrackerField> fields = field_list(tracker,list_name,null);
 		List<String> toreturn = new ArrayList<String>();
 		int count = 2;
+		toreturn.add(".responsive td:nth-of-type(1):before { content:'#'; }");
 		for(TrackerField field:fields) {
 			toreturn.add(".responsive td:nth-of-type(" + String.valueOf(count) + "):before { content:'" + field.getLabel() + "'; }");
 			count++;

@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.portalengine.portal.PoiExcel;
 import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,9 @@ public class TrackerController {
 		
 		@Autowired
 		private FileLinkService fileservice;
+		
+		@Autowired
+		private PageService pageService;
 		
 		private DataSource datasource;
 		
@@ -76,6 +80,9 @@ public class TrackerController {
 				Tracker tracker = service.getRepo().getOne(id);
 				model.addAttribute("pageTitle","Edit Tracker - " + tracker.getName());
 				model.addAttribute("tracker", tracker);
+				model.addAttribute("postCreate",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostCreate()));
+				model.addAttribute("postEdit",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostEdit()));
+				model.addAttribute("postDelete",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostDelete()));
 			}
 			else {
 				model.addAttribute("pageTitle","Create Tracker");

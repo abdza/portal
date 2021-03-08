@@ -75,6 +75,18 @@
 			<div class='col-sm font-bold text-sm-right'>Default Status:</div>
 			<div class='col-sm' th:text="${tracker.defaultStatus}">tail_table</div>
 		</div>
+		
+		<div class='row'>
+			<div class='col-sm font-bold text-sm-right'>Post Create:</div>
+			<div class='col-sm' th:text="${tracker.postCreate}">dataTable</div>
+			<div class='col-sm font-bold text-sm-right'>Post Edit:</div>
+			<div class='col-sm' th:text="${tracker.postEdit}">tail_table</div>
+		</div>
+		
+		<div class='row'>
+			<div class='col-sm font-bold text-sm-right'>Post Delete:</div>
+			<div class='col-sm-9' th:text="${tracker.postDelete}">dataTable</div>			
+		</div>
 
 		<div class='row'>
 			<div class='col-sm font-bold text-sm-right'>List Fields:</div>

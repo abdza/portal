@@ -128,6 +128,34 @@
                     <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{initialStatus}"/>
                 </div>
             </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Post Create</label></div>
+                <div class='col-sm-9'>
+                    <input th:if="${postCreate}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" th:attr="data-id=${postCreate.slug},data-value=${postCreate.title}" data-tokenlimit='1' type='text' th:field="*{postCreate}" />
+                    <input th:unless="${postCreate}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" data-tokenlimit='1' type='text' th:field="*{postCreate}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Post Edit</label></div>
+                <div class='col-sm-9'>
+                    <input th:if="${postEdit}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" th:attr="data-id=${postEdit.slug},data-value=${postEdit.title}" data-tokenlimit='1' type='text' th:field="*{postEdit}" />
+                    <input th:unless="${postEdit}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" data-tokenlimit='1' type='text' th:field="*{postEdit}" />
+                </div>
+            </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Post Delete</label></div>
+                <div class='col-sm-9'>
+                    <input th:if="${postDelete}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" th:attr="data-id=${postDelete.slug},data-value=${postDelete.title}" data-tokenlimit='1' type='text' th:field="*{postDelete}" />
+                    <input th:unless="${postDelete}" class="form-control col-sm-8 col-md-6 tokeninput pageselection" data-tokenlimit='1' type='text' th:field="*{postDelete}" />
+                </div>
+            </div>
+            
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'><label class='mb-0'>Data Table</label></div>
                 <div class='col-sm-9'>
@@ -168,13 +196,15 @@ function splitval(val) {
 
 function tokenselection(item,url) {
 	var curval = item.val();
-	if(curval.length>0){
+	if(item.data('id')&&item.data('value')){	
+		var pp = [{"id":item.data('id'),"name":item.data('value')}];
+	}
+	else if(curval.length>0){
 		var pp = splitval(curval);	
 	}
 	else{
 		var pp = null;
 	}
-	console.log('tl:' + item.data('tokenlimit'));
 	item.tokenInput(
 			url,
 			{
@@ -196,6 +226,11 @@ $(".roleselection").each(function(){
 $(".statusselection").each(function(){
 	tokenselection($(this),"[[@{/api/trackers/{tracker_id}/status(tracker_id=${tracker.id})}]]");
 });
+
+$(".pageselection").each(function(){
+	tokenselection($(this),"[[@{/api/trackers/{tracker_id}/pages(tracker_id=${tracker.id})}]]");
+});
+
 </script>
 </th:block>
 </html>

@@ -13,4 +13,7 @@ public interface PageRepository extends JpaRepository<Page, Long> {
 	List<Page> findAllByQ(String search);
 	
 	List<Page> findAllByModule(String module);
+	
+	@Query("from Page pg where pg.module = :#{#module} and (pg.title like :#{#search} or pg.content like :#{#search} or pg.slug like :#{#search})")
+	List<Page> findAllByModuleAndQ(String module, String search);
 }
