@@ -151,7 +151,13 @@ public class SystemController {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
 		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where id=:id", paramsource);
-		return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
+		Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostDelete());
+		if(postpage!=null) {
+			return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug();
+		}
+		else {
+			return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
+		}		
 	}
 	
 	@GetMapping("/{module}/{slug}/edit/{id}")
@@ -187,16 +193,28 @@ public class SystemController {
 				curuser = (User)authentication.getPrincipal();
 			}
 			
-			trackerService.saveForm(tracker,curuser);
+			Long curid = trackerService.saveForm(tracker,curuser);
 			Map<String, String[]> postdata = request.getParameterMap();
 			if(postdata.get("transition_id")!=null) {
 				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}
-			if(postdata.get("id")!=null) {
-				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/display/" + postdata.get("id")[0].toString();
+			if(postdata.get("id")!=null) {				
+				Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostEdit());
+				if(postpage!=null) {
+					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + postdata.get("id")[0].toString();
+				}
+				else {
+					return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/display/" + postdata.get("id")[0].toString();
+				}
 			}
 			else {			
-				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
+				Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostCreate());
+				if(postpage!=null) {
+					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + String.valueOf(curid);
+				}
+				else {
+					return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
+				}
 			}
 		} 
 		else {
