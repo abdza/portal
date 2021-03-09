@@ -55,6 +55,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.tags.Param;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 
@@ -192,6 +195,7 @@ public class PortalController {
 						binding.setVariable("userService",userService);
 						binding.setVariable("fileService",fileService);
 						binding.setVariable("settingService", settingService);
+						binding.setVariable("javaMailSender", javaMailSender);
 						binding.setVariable("env", env);				
 						Object content = null;
 						try {
@@ -250,6 +254,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("javaMailSender", javaMailSender);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -295,6 +300,7 @@ public class PortalController {
 				binding.setVariable("userService",userService);
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
+				binding.setVariable("javaMailSender", javaMailSender);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -346,6 +352,7 @@ public class PortalController {
 					binding.setVariable("userService",userService);
 					binding.setVariable("fileService",fileService);
 					binding.setVariable("settingService", settingService);	
+					binding.setVariable("javaMailSender", javaMailSender);
 					binding.setVariable("env", env);
 					binding.setVariable("arg1", arg1);
 					binding.setVariable("arg2", arg2);
