@@ -115,3 +115,17 @@ Create the payment tracker
        #. Widget: Default
 
      As a tracker type, we need to specify which tracker this particular field will be connected to. That is done by updating the "Option Source" field. First we need to change the root node to "object", then add "String" with the name "module" and value "club". Then add "String" with name "slug" and value "member". The module and slug is the tracker the field is connected to. Then we specify which field will be used to display the selection for when the user type into the field. Add a "String" with the name "name_column" and value "name". Then we need to specify how to query for the values to select. Add an "Object" with the name "query". In the object add an "Array" with the name "like". Then add a "String" with the value "name".
+  #. Next we want to add information on what fees is currently being paid. Click on the "Add" button to add a new field. Then fill in the following values:
+       #. Name: fee
+       #. Label: Fee
+       #. Type: TrackerType
+       #. Widget: Default
+
+     As a tracker type, we need to specify which tracker this particular field will be connected to. That is done by updating the "Option Source" field. First we need to change the root node to "object", then add "String" with the name "module" and value "club". Then add "String" with name "slug" and value "fees_type". The module and slug is the tracker the field is connected to. Then we specify which field will be used to display the selection for when the user type into the field. Add a "String" with the name "name_column" and value "name". Then we need to specify how to query for the values to select. Add an "Object" with the name "query". In the object add an "Array" with the name "like". Then add a "String" with the value "name".
+  #. Click on the "Add" button to add a new field. Then fill in the following values:
+       #. Name: amount
+       #. Label: Amount
+       #. Type: Number
+       #. Widget: Default
+  #. Once all there fields have been added, update the database table. Click on the "Details" tab, then on the "Update DB" button to update the database table.
+  #. Next we need to specify the fields display in the default listing. Click on the "Edit" button. Add the values "payment_date, member, fee, amount" to the "List Fields" value. The click on the "Save" button.
