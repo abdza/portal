@@ -81,6 +81,9 @@ public class PageService {
 				if(toreturn.length()>0) {
 					return toreturn;
 				}
+				else {
+					return "<!-- -->";
+				}
 			}
 		}
 		catch(Exception exp) {

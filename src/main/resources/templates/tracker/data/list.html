@@ -23,7 +23,7 @@
         <a th:unless="${pnode}" href="#" th:href="@{/{module}/{slug}/create(module=${tracker.module},slug=${tracker.slug})}"
             class="btn btn-primary">Add</a>
         
-        <div th:replace="tracker/trackerbase::trackerfilter(tracker=${tracker})"></div>
+        <div th:replace="tracker/trackerbase::trackerfilter(tracker=${tracker})"></div>sss
         <table class="table table-border-y text-dark-m2 text-95 border-y-1 brc-secondary-l1 dataTable no-footer"
             th:replace="tracker/trackerbase::datatable(tracker=${tracker},dataset=${dataset})">
             <tr>

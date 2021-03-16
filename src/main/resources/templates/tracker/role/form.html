@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
+<th:block layout:fragment="head-end">
+
+<style type="text/css" media="screen">
+form .ace_editor { 
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+</style>
+
+</th:block>
+
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Role Tracker</h1>
         <form method='post' th:action='@{/admin/trackers/roles/{tracker_id}/save(tracker_id=${tracker.id})}'
-            th:object="${tracker_role}">
+        	id='fieldForm' th:object="${tracker_role}">
             <input type='hidden' name='id' th:value='${tracker_role.id}' />
             <input type='hidden' name='tracker_id' th:value='${tracker.id}' />
             <div class='form-group row'>
@@ -33,9 +47,10 @@
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
-                    <label class='mb-0'>Role Rule</label></div>
-                <div class='col-sm-9'>
-                    <textarea class='input' name='roleRule' th:text="${tracker_role.roleRule}">
+                    <label class='mb-0'>Role Rule</label></div>                
+                <div class='col-sm-9' style="min-height: 25em;">
+                	<input type='hidden' th:field="*{roleRule}"/>                    
+                    <textarea class='textarea col-12' rows="15" id='contenteditor' th:text="${tracker_role.roleRule}">
                     </textarea>
                 </div>
             </div>
@@ -52,3 +67,17 @@
 </section>
 
 </html>
+
+<th:block layout:fragment="page-javascript">
+<script th:src="@{/libs/ace-editor/ace.js}" type="text/javascript" charset="utf-8"></script>
+<script>
+var aceeditor = ace.edit("contenteditor");
+aceeditor.setTheme("ace/theme/chrome");
+aceeditor.session.setMode("ace/mode/groovy");
+
+$('#fieldForm').on('submit',function(){	
+	$('#roleRule').val(aceeditor.getValue());
+});
+</script>
+
+</th:block>

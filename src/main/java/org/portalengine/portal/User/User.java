@@ -10,11 +10,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.portalengine.portal.Auditable;
+import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +31,8 @@ import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import org.portalengine.portal.User.Role.UserRole;
 
 @Entity
 @Data
@@ -67,6 +71,11 @@ public class User extends Auditable<String> implements UserDetails {
 		this.password = password;
 		this.isAdmin = isAdmin;
 	}
+	
+	@OneToMany(
+			mappedBy = "user",
+			orphanRemoval = true)
+	private List<UserRole> roles = new ArrayList<>();
 	
 	@JsonIgnore
 	@Override

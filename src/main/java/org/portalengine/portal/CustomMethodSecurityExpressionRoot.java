@@ -56,7 +56,7 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
     		else if(permission.equals("edit")) {
     			rolelist = curtracker.getEditRoles();
     		}
-    		if(rolelist==null) {
+    		if(rolelist==null || rolelist.length()==0) {
 				rolelist = "Authenticated";
 			}
     		

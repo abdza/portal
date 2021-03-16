@@ -39,6 +39,7 @@ import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
+import org.portalengine.portal.User.Role.UserRole;
 import org.springframework.ui.Model;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -477,12 +478,60 @@ public class TrackerService {
 		}
 	}
 	
+	public List<UserRole> module_roles(Tracker tracker, User user) {
+		List<UserRole> roles = new ArrayList<UserRole>();
+		for(TrackerRole tr:tracker.getRoles()) {
+			if(tr.getRoleType().equals("User Role")) {
+				for(UserRole ur:user.getRoles()) {
+					if(ur.getModule().equals(tracker.getModule()) && ur.getRole().equals(tr.getName()) ) {
+						roles.add(ur);
+					}
+				}
+			}
+		}
+		return roles;
+	}
+	
+	public String role_query(Tracker tracker, User user) {
+		List<String> dquery = new ArrayList<String>();		
+		for(TrackerRole tr:tracker.getRoles()) {
+			if(tr.getRoleType().equals("Data Compare")) {
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();												
+				binding.setVariable("request", request);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("trackerService",this);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);				
+				binding.setVariable("settingService", settingService);				
+				binding.setVariable("env", env);
+				String content = null;
+				try {
+					content = (String) shell.evaluate(tr.getRoleRule());
+					if(content!=null && content.length()>0) {
+						dquery.add(" (" + content + ") ");
+					}
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+			}
+		}
+		if(dquery.size()>0) {
+			return "(" + String.join(" or ",dquery) + ")";
+		}
+		else {
+			return "";
+		}
+	}
+	
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		String basequery = "select * from " + tracker.getDataTable() + " ct ";
 		String filterquery = "";
-		String orderby = null;;
+		String orderby = null;
 		if(search!=null) {
 			/*
 			 * search is a JsonNode with the following children
@@ -525,10 +574,27 @@ public class TrackerService {
 			curquery = jsonquery(tracker, search, null, paramsource,"or");
 			orderby = (String) curquery.get("orderby");
 			filterquery = (String) curquery.get("filterquery");
+			
 			if(filterquery!=null && filterquery.length()>0) {
 				filterquery = " where " + filterquery;
 			}
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");			
+		}
+		String userfilter = " 1=1 ";
+		
+		User curuser = userService.currentUser();
+		List<UserRole> mr = this.module_roles(tracker, curuser);		
+		if(mr.size()==0) {			
+			String rq = role_query(tracker,curuser);
+			if(rq.length()>0) {
+				userfilter = rq;
+			}
+			if(filterquery!=null && filterquery.length()>0) {
+				filterquery = filterquery + " and " + userfilter;
+			}
+			else {
+				filterquery = " where " + userfilter;
+			}
 		}
 		Integer size = 10;
 		Integer page = 0;

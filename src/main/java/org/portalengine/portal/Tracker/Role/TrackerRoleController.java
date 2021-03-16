@@ -49,12 +49,13 @@ public class TrackerRoleController {
 		Tracker tracker = service.getRepo().getOne(tracker_id);
 		if(role_id!=null) {
 			TrackerRole role = service.getRoleRepo().getOne(role_id);
-			model.addAttribute("pageTitle","Edit Role - " + role.getName());
+			model.addAttribute("pageTitle","Edit Role - " + role.getName());			
 			model.addAttribute("tracker_role", role);	
 		}
 		else {
 			model.addAttribute("pageTitle","Create Role - " + tracker.getName());
-			model.addAttribute("tracker_role", new TrackerRole());	
+			TrackerRole tr = new TrackerRole();			
+			model.addAttribute("tracker_role", tr);	
 		}
 		model.addAttribute("tracker", tracker);
 		
