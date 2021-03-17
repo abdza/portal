@@ -21,6 +21,8 @@ import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
+import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.Role.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -165,6 +167,20 @@ public class Tracker extends Auditable<String> {
 	public void remove(TrackerTransition transition) {
 		transitions.remove(transition);
 		transition.setTracker(null);
+	}
+	
+	public List<UserRole> module_roles(User user) {
+		List<UserRole> roles = new ArrayList<UserRole>();
+		for(TrackerRole tr:this.getRoles()) {
+			if(tr.getRoleType().equals("User Role")) {
+				for(UserRole ur:user.getRoles()) {
+					if(ur.getModule().equals(this.getModule()) && ur.getRole().equals(tr.getName()) ) {
+						roles.add(ur);
+					}
+				}
+			}
+		}
+		return roles;
 	}
 	
 	@PrePersist

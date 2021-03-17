@@ -478,20 +478,6 @@ public class TrackerService {
 		}
 	}
 	
-	public List<UserRole> module_roles(Tracker tracker, User user) {
-		List<UserRole> roles = new ArrayList<UserRole>();
-		for(TrackerRole tr:tracker.getRoles()) {
-			if(tr.getRoleType().equals("User Role")) {
-				for(UserRole ur:user.getRoles()) {
-					if(ur.getModule().equals(tracker.getModule()) && ur.getRole().equals(tr.getName()) ) {
-						roles.add(ur);
-					}
-				}
-			}
-		}
-		return roles;
-	}
-	
 	public String role_query(Tracker tracker, User user) {
 		List<String> dquery = new ArrayList<String>();		
 		for(TrackerRole tr:tracker.getRoles()) {
@@ -583,7 +569,7 @@ public class TrackerService {
 		String userfilter = " 1=1 ";
 		
 		User curuser = userService.currentUser();
-		List<UserRole> mr = this.module_roles(tracker, curuser);		
+		List<UserRole> mr = tracker.module_roles(curuser);		
 		if(mr.size()==0) {			
 			String rq = role_query(tracker,curuser);
 			if(rq.length()>0) {

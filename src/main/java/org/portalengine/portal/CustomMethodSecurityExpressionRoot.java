@@ -1,5 +1,7 @@
 package org.portalengine.portal;
 
+import java.util.List;
+
 import org.portalengine.portal.FileLink.FileLinkRepository;
 import org.portalengine.portal.Page.Page;
 import org.portalengine.portal.Page.PageRepository;
@@ -9,6 +11,7 @@ import org.portalengine.portal.Tracker.TrackerRepository;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tree.TreeRepository;
 import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.Role.UserRole;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -17,26 +20,16 @@ public class CustomMethodSecurityExpressionRoot
 extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 	
 	private Authentication authentication;	
-	private PageRepository pageRepository;
-	private FileLinkRepository fileRepository;
-	private	TrackerRepository trackerRepository;
-	private TreeRepository treeRepository;
-	private	SettingRepository settingRepository;
+	private RepoCollection repos;
 	
-  public CustomMethodSecurityExpressionRoot(Authentication authentication,PageRepository pageRepository,
-		  FileLinkRepository fileRepository,TrackerRepository trackerRepository,TreeRepository treeRepository,
-		  SettingRepository settingRepository) {	  
+  public CustomMethodSecurityExpressionRoot(Authentication authentication, RepoCollection repos) {	  
       super(authentication);
       this.authentication = authentication;
-      this.pageRepository = pageRepository;
-      this.fileRepository = fileRepository;
-      this.trackerRepository = trackerRepository;
-      this.treeRepository = treeRepository;
-      this.settingRepository = settingRepository;
+      this.repos = repos;
   }
   
     public boolean trackerPermission(String module, String slug, String permission) {
-    	Tracker curtracker = trackerRepository.findOneByModuleAndSlug(module, slug);
+    	Tracker curtracker = repos.getTrackerRepository().findOneByModuleAndSlug(module, slug);
     	
     	if(curtracker!=null) {
     		String rolelist="";
@@ -61,11 +54,13 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 			}
     		
     		Object curuser = this.authentication.getPrincipal();
+    		List<UserRole> mr = null;
 			if(curuser instanceof String) {
 				System.out.println("User is anon");				
 			}
 			else if(curuser instanceof User) {
 				System.out.println("Got user");
+				mr = this.repos.getUserRoleRepository().findByUserAndModule((User)curuser, curtracker.getModule());				
 			}
 			
 			for(String fname:rolelist.split(",")) {
@@ -80,8 +75,15 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 						return true;
 					}
 				}
-				else {
+				else {						
 					// Need to check user roles here
+					if(mr.size()>0) {						
+						for(UserRole cr:mr) {
+							if(fname.equals(cr.getRole())) {
+								return true;
+							}
+						}
+					}
 				}
 			}
     	}
@@ -93,7 +95,7 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 		// TODO Auto-generated method stub
 		//System.out.println(this.authentication.getPrincipal());
 		
-		Page curpage = pageRepository.findOneByModuleAndSlug(module, slug);
+		Page curpage = repos.getPageRepository().findOneByModuleAndSlug(module, slug);
 		
 		if(curpage!=null) {
 			if(curpage.getPublished()!=true) {
