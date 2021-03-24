@@ -7,6 +7,7 @@ import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tree.Tree;
 import org.portalengine.portal.Tree.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,10 +27,12 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
+	/* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
 	@Autowired
-	public UserController() {
-	}
-	
+	private Environment env;
+		
 	@GetMapping("/update_password")
 	public String updatePassword(UpdatePasswordForm updatePasswordForm, Model model) {
 		model.addAttribute("pageTitle","User Profile");
@@ -73,8 +76,14 @@ public class UserController {
 	
 	@GetMapping("/register")
 	public String registerPage(Model model) {
+		String enable_register = env.getProperty("jpf.enable_register");
+		if(enable_register!=null && enable_register.toLowerCase().trim().equals("true")) {
 		model.addAttribute("pageTitle","New User Registration");
-		return "user/register.html";
+			return "user/register.html";
+		}
+		else {
+			return "redirect:/";
+		}
 	}
 	
 	@PostMapping("/register")

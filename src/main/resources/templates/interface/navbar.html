@@ -86,7 +86,7 @@
                             <i class="fa fa-power-off text-success-d1 text-105 mr-1"></i>
                             Login
                         </button>
-                        <a class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100"
+                        <a th:if="${@environment.getProperty('jpf.enable_register')}" class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100"
                             th:href="@{/register}"> 
                             <i class="fa fa-address-card text-info-d1 text-105 mr-1"></i>
                             Register </a>
