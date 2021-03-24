@@ -1101,8 +1101,10 @@ public class TrackerService {
 				submittednames.add(tf.getName());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
+				System.out.println("In parse error");
 				e.printStackTrace();
 			} catch (NumberFormatException e) {
+				System.out.println("In number exception error");
 				e.printStackTrace();
 			}
 		});
@@ -1292,42 +1294,52 @@ public class TrackerService {
 	
 	public String display(TrackerField field, HashMap<String,Object> datas) {
 		try {
-			if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
-				DateFormat format;
-				if(field.getFieldType().equals("Date")) {
-					format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-				}
-				else {
-					format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-				}
-				return format.format((Date)datas.get(field.getName()));
-			}
-			else if(field.getFieldType().equals("User")) {
-				if(datas.get(field.getName())!=null) {
-					Long targetid = ((BigDecimal)datas.get(field.getName())).longValue() ;
-					User data = userService.getRepo().getOne(targetid);
-					if(data!=null) {
-						return data.getName();
+			if(datas!=null) {
+				Object fdata = datas.get(field.getName());
+				if(field.getFieldType().equals("Date") || field.getFieldType().equals("DateTime")) {
+					if(fdata!=null) {
+						DateFormat format;
+						if(field.getFieldType().equals("Date")) {
+							format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+						}
+						else {
+							format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+						}
+						return format.format((Date)fdata);
+					}
+					else {
+						return "";
 					}
 				}
-				else {
-					return "";
+				else if(field.getFieldType().equals("User")) {
+					if(fdata!=null) {
+						Long targetid = ((BigDecimal)fdata).longValue() ;
+						User data = userService.getRepo().getOne(targetid);
+						if(data!=null) {
+							return data.getName();
+						}
+					}
+					else {
+						return "";
+					}
 				}
-			}
-			else if(field.getFieldType().equals("TrackerType")) {				
-				JsonNode foptions = field.optionsJson();
-				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {					
-					String module = foptions.get("module").textValue();
-					String slug = foptions.get("slug").textValue();
-					String name_column = foptions.get("name_column").textValue();
-					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
-					if(targetTracker!=null && datas.get(field.getName())!=null) {						
-						BigDecimal cdata = (BigDecimal)datas.get(field.getName());						
-						if(cdata!=null) {
-							Long targetid = cdata.longValue() ;												
-							HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
-							if(targetdatas!=null && targetdatas.get(name_column)!=null) {
-								return targetdatas.get(name_column).toString();
+				else if(field.getFieldType().equals("TrackerType")) {				
+					JsonNode foptions = field.optionsJson();
+					if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("name_column")!=null) {
+						if(fdata!=null) {
+							String module = foptions.get("module").textValue();
+							String slug = foptions.get("slug").textValue();
+							String name_column = foptions.get("name_column").textValue();
+							Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+							if(targetTracker!=null && fdata!=null) {						
+								BigDecimal cdata = (BigDecimal)fdata;						
+								if(cdata!=null) {
+									Long targetid = cdata.longValue() ;												
+									HashMap<String,Object> targetdatas = datarow(targetTracker, targetid);
+									if(targetdatas!=null && targetdatas.get(name_column)!=null) {
+										return targetdatas.get(name_column).toString();
+									}
+								}								
 							}
 						}
 						else {
@@ -1335,45 +1347,53 @@ public class TrackerService {
 						}
 					}
 				}
-			}
-			else if(field.getFieldType().equals("HasMany")) {				
-				JsonNode foptions = field.optionsJson();
-				String toret = "";
-				if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("fields")!=null && foptions.get("refer_field")!=null) {					
-					String module = foptions.get("module").textValue();
-					String slug = foptions.get("slug").textValue();
-					String refer_field = foptions.get("refer_field").textValue();					
-					Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
-					if(targetTracker!=null && datas.get("id")!=null) {						
-						HashMap<String,Object> curquery = new HashMap<String,Object>();
-						LinkedHashMap<String,Object> qq = new LinkedHashMap<String,Object>(curquery);
-						Long targetid = Long.valueOf((Integer)datas.get("id"));												
-						Object[] targetdatas = dataRows(targetTracker,qq);
-						toret += "<table id='data_" + field.getName() + "' class='table'>";
-						toret += "<tr><th>#</th>";
-						for(final JsonNode jfield : foptions.get("fields")) {														
-							TrackerField curf = fieldRepo.findByTrackerAndName(targetTracker, jfield.asText());
-							if(curf!=null) {								
-								toret += "<th>" + curf.getLabel() + "</th>";
-							}
-						}
-						toret += "</tr>";
-						for(int i=0;i<targetdatas.length;i++) {							
-							toret += "<tr>";
-							toret += "<td>" + String.valueOf(i+1) + "</td>";
-							for(final JsonNode jfield : foptions.get("fields")) {															
-								HashMap<String,Object> row = (HashMap<String,Object>)targetdatas[i];								
-								toret += "<td>" + row.get(jfield.asText()) + "</td>";
+				else if(field.getFieldType().equals("HasMany")) {				
+					JsonNode foptions = field.optionsJson();
+					String toret = "";
+					if(foptions.get("module")!=null && foptions.get("slug")!=null && foptions.get("fields")!=null && foptions.get("refer_field")!=null) {					
+						String module = foptions.get("module").textValue();
+						String slug = foptions.get("slug").textValue();
+						String refer_field = foptions.get("refer_field").textValue();					
+						Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
+						if(targetTracker!=null && datas.get("id")!=null) {						
+							HashMap<String,Object> curquery = new HashMap<String,Object>();
+							LinkedHashMap<String,Object> qq = new LinkedHashMap<String,Object>(curquery);
+							Long targetid = Long.valueOf((Integer)datas.get("id"));												
+							Object[] targetdatas = dataRows(targetTracker,qq);
+							toret += "<table id='data_" + field.getName() + "' class='table'>";
+							toret += "<tr><th>#</th>";
+							for(final JsonNode jfield : foptions.get("fields")) {														
+								TrackerField curf = fieldRepo.findByTrackerAndName(targetTracker, jfield.asText());
+								if(curf!=null) {								
+									toret += "<th>" + curf.getLabel() + "</th>";
+								}
 							}
 							toret += "</tr>";
+							for(int i=0;i<targetdatas.length;i++) {							
+								toret += "<tr>";
+								toret += "<td>" + String.valueOf(i+1) + "</td>";
+								for(final JsonNode jfield : foptions.get("fields")) {															
+									HashMap<String,Object> row = (HashMap<String,Object>)targetdatas[i];								
+									toret += "<td>" + row.get(jfield.asText()) + "</td>";
+								}
+								toret += "</tr>";
+							}
+							toret += "</table>";
 						}
-						toret += "</table>";
+					}
+					return toret;
+				}
+				else {
+					if(fdata!=null) {
+						return String.valueOf(fdata);
+					}
+					else {
+						return "";
 					}
 				}
-				return toret;
 			}
 			else {
-				return String.valueOf(datas.get(field.getName()));
+				return "";
 			}
 		}
 		catch(Exception exp) {

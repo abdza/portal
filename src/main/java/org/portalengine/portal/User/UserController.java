@@ -88,7 +88,10 @@ public class UserController {
 	
 	@PostMapping("/register")
 	public String register(@Valid RegistrationForm userreg, Model model) {
-		service.getRepo().save(userreg.toUser(service.getPasswordEncoder(),service));
+		String enable_register = env.getProperty("jpf.enable_register");
+		if(enable_register!=null && enable_register.toLowerCase().trim().equals("true")) {
+			service.getRepo().save(userreg.toUser(service.getPasswordEncoder(),service));
+		}
 		return "redirect:/";
 	}
 	
