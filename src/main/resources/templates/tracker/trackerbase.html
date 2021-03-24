@@ -78,11 +78,9 @@ $('#val_[(${field.name})]').select2({
     	var dat = $.map(data.content, function(obj){
     		var user = {id:obj.id,text:obj.name};
     		return user;
-    	});
-        // Transforms the top-level key of the response object from 'items' to 'results'
+    	});        
         return {results:dat};
-      }
-    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+      }    
   }
 });
 [/]
@@ -96,11 +94,9 @@ $('#val_[(${field.name})]').select2({
     	var dat = $.map(data.content, function(obj){
     		var user = {id:obj.id,text:obj.name};
     		return user;
-    	});
-        // Transforms the top-level key of the response object from 'items' to 'results'
+    	});        
         return {results:dat};
-      }
-    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+      }    
   }
 });
 [/]
@@ -114,11 +110,9 @@ $('#val_[(${field.name})]').select2({
     	var dat = $.map(data.content, function(obj){
     		var node = {id:obj.id,text:obj.name};
     		return node;
-    	});
-        // Transforms the top-level key of the response object from 'items' to 'results'
+    	});        
         return {results:dat};
-      }
-    // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+      }    
   }
 });
 [/]
@@ -134,7 +128,7 @@ $('#val_[(${field.name})]').select2({
 			<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User' && field.fieldType!='Text'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
 			
 			<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
-				<option th:value="${datas?.get(field.name)?.toString()}" th:text="${datas?.get(field.name)?.toString()}">option</option>
+				<option th:value="${datas?.get(field.name)?.toString()}" th:text="${@trackerService.display(field,datas)}">option</option>
 			</select>
 			
 			<input th:if="${field.fieldType=='Date' || field.fieldType=='DateTime'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:attr="data-target=${'#val_' + field.name}" data-toggle="datetimepicker" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
