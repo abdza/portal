@@ -78,18 +78,17 @@ public class PageService {
 			Page curpage = this.repo.findOneByModuleAndSlug("portal", slug);
 			if(curpage!=null) {
 				String toreturn = getTemplateFromMap(curpage.getContent(), null);
-				if(toreturn.length()>0) {
+				if(toreturn.trim().length()>0) {
 					return toreturn;
 				}
-				else {
+				else {					
 					return "<!-- -->";
 				}
 			}
 		}
 		catch(Exception exp) {
 			System.out.println("Slug not found:" + slug);
-		}
-		
+		}		
 		return "<!-- -->";
 	}
 	
