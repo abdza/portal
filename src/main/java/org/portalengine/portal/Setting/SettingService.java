@@ -1,5 +1,7 @@
 package org.portalengine.portal.Setting;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,30 @@ public class SettingService {
 			return setting.getTextValue();
 		}
 		return defvalue;
+	}
+	
+	public void SaveValue(String name, String module, String value) {
+		Setting setting = repo.findOneByModuleAndName(module, name);
+		if(setting!=null) {
+			setting.setTextValue(value);
+			repo.save(setting);
+		}
+	}
+	
+	public void SaveValue(String name, String module, Date value) {
+		Setting setting = repo.findOneByModuleAndName(module, name);
+		if(setting!=null) {
+			setting.setDateValue(value);
+			repo.save(setting);
+		}
+	}
+	
+	public void SaveValue(String name, String module, Long value) {
+		Setting setting = repo.findOneByModuleAndName(module, name);
+		if(setting!=null) {
+			setting.setNumberValue(value);
+			repo.save(setting);
+		}
 	}
 	
 }
