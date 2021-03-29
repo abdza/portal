@@ -7,6 +7,7 @@ import org.portalengine.portal.User.Message.UserMessage;
 import org.portalengine.portal.User.Message.UserMessageRepository;
 import org.portalengine.portal.User.Notification.UserNotification;
 import org.portalengine.portal.User.Notification.UserNotificationRepository;
+import org.portalengine.portal.User.Role.UserRole;
 import org.portalengine.portal.User.Role.UserRoleRepository;
 import org.portalengine.portal.User.Task.UserTask;
 import org.portalengine.portal.User.Task.UserTaskRepository;
@@ -56,6 +57,26 @@ public class UserService implements UserDetailsService {
 		}
 		throw new UsernameNotFoundException("User '" + username + "' not found");
 	}
+	
+	public boolean hasRole(User curuser, String module, String role) {
+		UserRole userRole = roleRepo.findByUserAndModuleAndRoleIgnoreCase(curuser, module, role);
+		if(userRole != null && userRole instanceof UserRole) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public boolean hasRole(User curuser, String module) {
+		List<UserRole> userRoles = roleRepo.findByUserAndModuleIgnoreCase(curuser, module);
+		if(userRoles.size()>0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 	public List<UserNotification> currentNotifications() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
@@ -71,9 +92,9 @@ public class UserService implements UserDetailsService {
 	
 	public User currentUser() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if(secuser!=null){
-			User duser = repo.findById(((User)secuser).getId()).orElse(null);			
-			return duser;
+		if(secuser!=null && secuser instanceof User){
+			//User duser = repo.findById(((User)secuser).getId()).orElse(null);			
+			return (User)secuser;
 		}
 		else{
 			return null;

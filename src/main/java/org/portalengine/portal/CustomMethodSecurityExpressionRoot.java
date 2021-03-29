@@ -60,7 +60,7 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 			}
 			else if(curuser instanceof User) {
 				System.out.println("Got user");
-				mr = this.repos.getUserRoleRepository().findByUserAndModule((User)curuser, curtracker.getModule());				
+				mr = this.repos.getUserRoleRepository().findByUserAndModuleIgnoreCase((User)curuser, curtracker.getModule());				
 			}
 			
 			for(String fname:rolelist.split(",")) {
