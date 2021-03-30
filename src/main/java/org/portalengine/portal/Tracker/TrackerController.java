@@ -83,6 +83,7 @@ public class TrackerController {
 				model.addAttribute("postCreate",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostCreate()));
 				model.addAttribute("postEdit",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostEdit()));
 				model.addAttribute("postDelete",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostDelete()));
+				model.addAttribute("postDataUpdate",pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(),tracker.getPostDataUpdate()));
 			}
 			else {
 				model.addAttribute("pageTitle","Create Tracker");

@@ -69,6 +69,7 @@ public class Tracker extends Auditable<String> {
 	private String postCreate;
 	private String postEdit;
 	private String postDelete;
+	private String postDataUpdate;
 	
 	@OneToMany(
 			mappedBy = "tracker",
@@ -106,6 +107,19 @@ public class Tracker extends Auditable<String> {
 		newtracker.filterFields = this.filterFields;
 		newtracker.displayFields = this.displayFields;
 		newtracker.initialStatus = this.initialStatus;
+		
+		newtracker.updatesTable = this.updatesTable;		
+		newtracker.viewListRoles = this.viewListRoles;
+		newtracker.addRoles = this.addRoles;
+		newtracker.detailRoles = this.detailRoles;
+		newtracker.deleteRoles = this.deleteRoles;
+		newtracker.editRoles = this.editRoles;
+		newtracker.defaultStatus = this.defaultStatus;
+		newtracker.postCreate = this.postCreate;
+		newtracker.postEdit = this.postEdit;
+		newtracker.postDelete = this.postDelete;
+		newtracker.postDataUpdate = this.postDataUpdate;
+		
 		newtracker.dataTable = this.dataTable + "_" + newNodeId.toString();
 		if(this.updatesTable.length()>0) {
 			newtracker.updatesTable = this.updatesTable + "_" + newNodeId.toString();
@@ -187,11 +201,11 @@ public class Tracker extends Auditable<String> {
 	@PreUpdate
 	void checkTables() {
 		if(this.dataTable.length()==0) {
-			this.dataTable = "trak_" + this.slug + "_data";
+			this.dataTable = "trak_" + this.module + "_" + this.slug + "_data";
 			this.dataTable = this.dataTable.toLowerCase();
 		}
 		if(this.trackerType.equals("Trailed Tracker") && this.updatesTable.length()==0) {
-			this.updatesTable = "trak_" + this.slug + "_updates";
+			this.updatesTable = "trak_" + this.module + "_" + this.slug + "_updates";
 			this.updatesTable = this.updatesTable.toLowerCase();
 		}
 	}

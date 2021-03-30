@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.portalengine.portal.PoiExcel;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Tracker;
 import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,9 @@ public class DataUpdateController {
 	
 	@Autowired
 	private TrackerService trackerService;
+	
+	@Autowired
+	private PageService pageService;
 	
 	@Autowired
 	private FileLinkService fileService;
@@ -175,8 +180,14 @@ public class DataUpdateController {
 	@GetMapping("/runupdate/{id}")
 	public String runupdate(@PathVariable Long id, Model model) {		
 		DataUpdate dataupdate = service.getRepo().getOne(id);
-		service.runupdate(dataupdate);
-		return "redirect:/dataupdates/display/" + id.toString();
+		service.runupdate(dataupdate);		
+		Page postpage = pageService.getRepo().findOneByModuleAndSlug(dataupdate.getTracker().getModule(),dataupdate.getTracker().getPostDataUpdate());
+		if(postpage!=null) {			
+			return "redirect:/view/" + dataupdate.getTracker().getModule() + "/" + postpage.getSlug() + "/" + id.toString();
+		}
+		else {			
+			return "redirect:/dataupdates/display/" + id.toString();
+		}
 	}
 	
 	@GetMapping("/setparam/{id}")
