@@ -13,9 +13,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	
+	User findByStaffid(String staffid);
+	
 	User findOneByStaffid(String staffid);
 	
 	User findByUsername(String username);
+	
+	User findOneByUsername(String username);
 
 	@Query("from User tt where tt.name like :#{#search} or tt.email like :#{#search} or tt.staffid like :#{#search}")
 	Page<User> apiquery(String search, Pageable pageable);

@@ -92,8 +92,7 @@ public class UserService implements UserDetailsService {
 	
 	public User currentUser() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if(secuser!=null && secuser instanceof User){
-			//User duser = repo.findById(((User)secuser).getId()).orElse(null);			
+		if(secuser!=null && secuser instanceof User){	
 			return (User)secuser;
 		}
 		else{

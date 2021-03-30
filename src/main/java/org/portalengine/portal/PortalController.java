@@ -196,6 +196,7 @@ public class PortalController {
 						binding.setVariable("fileService",fileService);
 						binding.setVariable("settingService", settingService);
 						binding.setVariable("javaMailSender", javaMailSender);
+						binding.setVariable("passwordEncoder", passwordEncoder);
 						binding.setVariable("env", env);				
 						Object content = null;
 						try {
@@ -255,6 +256,7 @@ public class PortalController {
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
 				binding.setVariable("javaMailSender", javaMailSender);
+				binding.setVariable("passwordEncoder", passwordEncoder);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -301,6 +303,7 @@ public class PortalController {
 				binding.setVariable("fileService",fileService);
 				binding.setVariable("settingService", settingService);
 				binding.setVariable("javaMailSender", javaMailSender);
+				binding.setVariable("passwordEncoder", passwordEncoder);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -353,6 +356,7 @@ public class PortalController {
 					binding.setVariable("fileService",fileService);
 					binding.setVariable("settingService", settingService);	
 					binding.setVariable("javaMailSender", javaMailSender);
+					binding.setVariable("passwordEncoder", passwordEncoder);
 					binding.setVariable("env", env);
 					binding.setVariable("arg1", arg1);
 					binding.setVariable("arg2", arg2);

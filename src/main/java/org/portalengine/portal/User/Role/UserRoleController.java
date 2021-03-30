@@ -1,5 +1,7 @@
 package org.portalengine.portal.User.Role;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import javax.validation.Valid;
@@ -67,12 +69,18 @@ public class UserRoleController {
 	}
 
 	@PostMapping("/delete/{role_id}")
-	public String delete_status(@PathVariable Long role_id, Model model) {
+	public String delete_status(@PathVariable Long role_id, Model model,HttpServletRequest request) {
+		Map<String, String[]> postdata = request.getParameterMap();
 		UserRole user_role = service.getRoleRepo().getOne(role_id);
 		if(user_role!=null) {
 			service.getRoleRepo().deleteById(role_id);
 		}
-		return "redirect:/admin/users/roles";
+		if(postdata.containsKey("return_url")) {
+			return "redirect:" + postdata.get("return_url")[0];
+		}
+		else {
+			return "redirect:/admin/users/roles";
+		}
 	}
 
 	@PostMapping("/save")
