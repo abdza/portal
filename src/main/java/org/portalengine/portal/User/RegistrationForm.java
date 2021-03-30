@@ -16,8 +16,7 @@ public class RegistrationForm {
 	private String password;
 	private String confirm;
 	
-	public User toUser(PasswordEncoder passwordEncoder, UserService service) {
-		username=staffid;
+	public User toUser(PasswordEncoder passwordEncoder, UserService service) {		
 		if(id!=null) {
 			User curuser = service.getRepo().getOne((long)id);
 			curuser.setName(name);

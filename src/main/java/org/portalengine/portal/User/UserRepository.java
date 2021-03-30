@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	User findOneByUsername(String username);
 
-	@Query("from User tt where tt.name like :#{#search} or tt.email like :#{#search} or tt.staffid like :#{#search}")
+	@Query("from User tt where tt.username like :#{#search} or tt.name like :#{#search} or tt.email like :#{#search} or tt.staffid like :#{#search}")
 	Page<User> apiquery(String search, Pageable pageable);
 
 }

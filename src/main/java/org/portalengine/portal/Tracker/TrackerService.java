@@ -811,7 +811,7 @@ public class TrackerService {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode qjson = null;
 		try {
-			qjson = mapper.readTree(mapper.writeValueAsString(search));
+			qjson = mapper.readTree(mapper.writeValueAsString(search));			
 		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
