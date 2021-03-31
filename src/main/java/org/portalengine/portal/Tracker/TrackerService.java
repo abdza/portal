@@ -120,7 +120,7 @@ public class TrackerService {
 	private Environment env;
 	
 	@Autowired
-	public TrackerService() {
+	public TrackerService() {		
 	}
 	
 	public String slugify(String data) {

@@ -31,6 +31,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -91,6 +92,9 @@ public class PortalController {
 	
 	@Autowired
 	private SettingService settingService;
+	
+	@Autowired
+	private NamedParameterJdbcTemplate namedjdbctemplate;
 	
 	@Autowired
     private JavaMailSender javaMailSender;
@@ -197,6 +201,7 @@ public class PortalController {
 						binding.setVariable("settingService", settingService);
 						binding.setVariable("javaMailSender", javaMailSender);
 						binding.setVariable("passwordEncoder", passwordEncoder);
+						binding.setVariable("namedjdbctemplate", namedjdbctemplate);
 						binding.setVariable("env", env);				
 						Object content = null;
 						try {
@@ -257,6 +262,7 @@ public class PortalController {
 				binding.setVariable("settingService", settingService);
 				binding.setVariable("javaMailSender", javaMailSender);
 				binding.setVariable("passwordEncoder", passwordEncoder);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -304,6 +310,7 @@ public class PortalController {
 				binding.setVariable("settingService", settingService);
 				binding.setVariable("javaMailSender", javaMailSender);
 				binding.setVariable("passwordEncoder", passwordEncoder);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
 				binding.setVariable("env", env);
 				binding.setVariable("arg1", arg1);
 				binding.setVariable("arg2", arg2);
@@ -357,6 +364,7 @@ public class PortalController {
 					binding.setVariable("settingService", settingService);	
 					binding.setVariable("javaMailSender", javaMailSender);
 					binding.setVariable("passwordEncoder", passwordEncoder);
+					binding.setVariable("namedjdbctemplate", namedjdbctemplate);
 					binding.setVariable("env", env);
 					binding.setVariable("arg1", arg1);
 					binding.setVariable("arg2", arg2);
