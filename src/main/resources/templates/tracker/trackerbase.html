@@ -123,9 +123,12 @@ $('#val_[(${field.name})]').select2({
 		<label class='mb-0' th:text="${field.label}">Module</label>
 	</div>
 	<div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
-		<th:block th:if="${field.fieldWidget=='Default'}">
+		<th:block th:if="${field.fieldWidget=='Default'}" th:with="normalfield = ${ {'TreeNode','Date','DateTime','TrackerType','User','Text','Checkbox'} }">
 			
-			<input th:if="${field.fieldType!='TreeNode' && field.fieldType!='Date' && field.fieldType!='DateTime' && field.fieldType!='TrackerType' && field.fieldType!='User' && field.fieldType!='Text'}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
+			<input th:if="${!#arrays.contains(normalfield, field.fieldType)}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
+			
+			<input th:if="${field.fieldType=='Checkbox'}" th:class="${fieldclass + field.typeClass()}" type='checkbox' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:checked="${@trackerService.display(field,datas)=='true'}"/>
+			<input th:if="${field.fieldType=='Checkbox'}" type='hidden' th:id="${'_val_' + field.name}" th:name="${'_val_' + field.name}" value="off"/>
 			
 			<select th:if="${field.fieldType=='TreeNode' || field.fieldType=='TrackerType' || field.fieldType=='User'}" th:class="${fieldclass}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}">
 				<option th:value="${datas?.get(field.name)?.toString()}" th:text="${@trackerService.display(field,datas)}">option</option>

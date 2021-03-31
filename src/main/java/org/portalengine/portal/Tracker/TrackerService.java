@@ -121,6 +121,7 @@ public class TrackerService {
 	
 	@Autowired
 	public TrackerService() {		
+		
 	}
 	
 	public String slugify(String data) {
@@ -1010,12 +1011,12 @@ public class TrackerService {
 		final List<TrackerField> ftfields = tfields;
 		
 		final HashMap<String,Object> fcurobject = curobject;
-		postdata.forEach((fieldname,fieldval)->{
+		postdata.forEach((fieldname,fieldval)->{			
 			if(fieldname.length()>4 && fieldname.substring(0, 4).equals("val_")) {
 				String curfieldname = fieldname.substring(4);
 				TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,curfieldname);
 				if(tfield!=null) {
-					if(ftfields!=null) {
+					if(ftfields!=null) {   // list of fields from transition is not null
 						if(ftfields.contains(tfield)) {
 							submittedfields.add(tfield);
 							if(fcurobject!=null) {
@@ -1023,7 +1024,7 @@ public class TrackerService {
 							}
 						}
 					}
-					else {						
+					else {	// list of fields from transition is null (ie just a statement)
 						submittedfields.add(tfield);
 						if(fcurobject!=null) {
 							changes.add(tfield.getLabel() + " is changed from " + fcurobject.get(tfield.getName()) + " to " + postdata.get("val_" + tfield.getName())[0].toString());
@@ -1033,12 +1034,42 @@ public class TrackerService {
 			}
 		});
 		
-		submittedfields.forEach(tf->{
-			System.out.println("Doing:" + tf.getName());
+		postdata.forEach((fieldname,fieldval)->{   // this time loop again to look for missing fields (ie checkbox hidden fields)
+			if(fieldname.length()>5 && fieldname.substring(0, 5).equals("_val_")) {
+				String curfieldname = fieldname.substring(5);
+				TrackerField tfield = fieldRepo.findByTrackerAndName(tracker,curfieldname);
+				if(tfield!=null) {
+					if(ftfields!=null) {   // list of fields from transition is not null
+						if(ftfields.contains(tfield)) {
+							if(!submittedfields.contains(tfield)) {								
+								submittedfields.add(tfield);
+								if(fcurobject!=null) {
+									changes.add(tfield.getLabel() + " is changed from " + fcurobject.get(tfield.getName()) + " to " + postdata.get("_val_" + tfield.getName())[0].toString());
+								}
+							}
+						}
+					}
+					else { // list of fields from transition is null (ie just a statement)
+						if(!submittedfields.contains(tfield)) {
+							submittedfields.add(tfield);
+							if(fcurobject!=null) {
+								changes.add(tfield.getLabel() + " is changed from " + fcurobject.get(tfield.getName()) + " to " + postdata.get("_val_" + tfield.getName())[0].toString());
+							}						
+						}
+					}
+				}
+			}
+		});
+		
+		submittedfields.forEach(tf->{			
 			try {
-				String dval = postdata.get("val_" + tf.getName())[0];
-				if(dval.equals("auto_field")) {
-					System.out.println("Processing auto field");
+				String dval=null;
+				try {
+					dval = postdata.get("val_" + tf.getName())[0];
+				} catch (NullPointerException e) {
+					dval = postdata.get("_val_" + tf.getName())[0];
+				}
+				if(dval.equals("auto_field")) {					
 					Binding binding = new Binding();		
 					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
 					binding.setVariable("pageService",pageService);
@@ -1050,7 +1081,6 @@ public class TrackerService {
 					binding.setVariable("fileService",fileService);
 					binding.setVariable("settingService", settingService);
 					binding.setVariable("env", env);
-					System.out.println("Done binding");
 					try {
 						dval = (String)shell.evaluate(tf.getAutoValue());
 						System.out.println("Content:" + dval);
@@ -1061,20 +1091,30 @@ public class TrackerService {
 				}
 				
 				switch(tf.getFieldType()) {
+				case "Checkbox":
+					boolean curval;
+					if(dval.equals("on")) {
+						curval = true;						
+					}
+					else {
+						curval = false;
+					}
+					paramsource.addValue(tf.getName(), curval, Types.SMALLINT);
+					break;
 				case "String":
-					paramsource.addValue(tf.getName(), dval,Types.VARCHAR);					
+					paramsource.addValue(tf.getName(), dval, Types.VARCHAR);					
 					break;
 				case "Text":
-					paramsource.addValue(tf.getName(), dval,Types.LONGVARCHAR);					
+					paramsource.addValue(tf.getName(), dval, Types.LONGVARCHAR);					
 					break;
 				case "TrackerType":
 				case "TreeNode":
 				case "Integer":
 				case "User":
-					paramsource.addValue(tf.getName(), Integer.parseInt(dval),Types.NUMERIC);
+					paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
 					break;
 				case "Number":
-					paramsource.addValue(tf.getName(), Double.parseDouble(dval),Types.NUMERIC);
+					paramsource.addValue(tf.getName(), Double.parseDouble(dval), Types.NUMERIC);
 					break;
 				case "Date":
 				case "DateTime":
@@ -1383,6 +1423,14 @@ public class TrackerService {
 					}
 					return toret;
 				}
+				else if(field.getFieldType().equals("Checkbox")) {					
+					if(fdata!=null && (fdata.equals("1") || (Integer)fdata==1)) {
+						return "true";
+					}
+					else {
+						return "false";
+					}
+				}
 				else {
 					if(fdata!=null) {
 						return String.valueOf(fdata);
@@ -1433,7 +1481,7 @@ public class TrackerService {
 				}
 				break;
 			case "Checkbox":
-				sqltype = "bit";
+				sqltype = "smallint";
 				break;
 			}
 		}
