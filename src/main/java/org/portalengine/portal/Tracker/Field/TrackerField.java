@@ -64,12 +64,15 @@ public class TrackerField extends Auditable<String> {
 	@JoinColumn( name = "tracker_id" )
 	private Tracker tracker;
 	
+	@JsonIgnore
 	@Transient
 	public String[] reserved_name = {"user","id","order","by","group","date","select","from","where","asc","desc","ct"};
 	
+	@JsonIgnore
 	@Transient
 	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User","HasMany"};
 	
+	@JsonIgnore
 	@Transient
 	public String[] widgetOptions = {"Default","DropDown","Auto"};
 	

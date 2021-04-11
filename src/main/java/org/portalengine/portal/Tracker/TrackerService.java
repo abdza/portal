@@ -352,6 +352,7 @@ public class TrackerService {
 				}
 			}
 			if(!foundstatus && !tracker.getTrackerType().equals("Statement")) {
+				// If tracker is actually a tracker, return record status even when not asked for it
 				currow.put("record_status", toret.getObject("record_status"));
 			}
 		}
@@ -617,7 +618,8 @@ public class TrackerService {
 			totalPages += 1;
 		}
 		dataset.setTotalPages(totalPages);
-		// System.out.println("final query:" + basequery + filterquery + pagequery);
+		System.out.println("final query:" + basequery + filterquery + pagequery);
+		System.out.println(paramsource);
 		SqlRowSet toret = namedjdbctemplate.queryForRowSet(basequery + filterquery + pagequery, paramsource);
 		ArrayList<HashMap<String,Object>> rows = new ArrayList<HashMap<String,Object>>(); 
 		while(toret.next()) {
