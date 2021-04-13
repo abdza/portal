@@ -193,8 +193,12 @@ public class SystemController {
 				curuser = (User)authentication.getPrincipal();
 			}
 			
-			Long curid = trackerService.saveForm(tracker,curuser);
 			Map<String, String[]> postdata = request.getParameterMap();
+			Long curid = null;
+			if(!postdata.containsKey("cancel")) {				
+				curid = trackerService.saveForm(tracker,curuser);
+			}
+			
 			if(postdata.get("transition_id")!=null) {
 				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}

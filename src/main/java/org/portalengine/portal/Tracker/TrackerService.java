@@ -1113,10 +1113,20 @@ public class TrackerService {
 				case "TreeNode":
 				case "Integer":
 				case "User":
-					paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
+					if(dval.length()>0) {
+						paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
+					}
+					else {
+						paramsource.addValue(tf.getName(),null);
+					}
 					break;
 				case "Number":
-					paramsource.addValue(tf.getName(), Double.parseDouble(dval), Types.NUMERIC);
+					if(dval.length()>0) {
+						paramsource.addValue(tf.getName(), Double.parseDouble(dval), Types.NUMERIC);
+					}
+					else {
+						paramsource.addValue(tf.getName(),null);
+					}
 					break;
 				case "Date":
 				case "DateTime":
@@ -1129,14 +1139,19 @@ public class TrackerService {
 					}
 					Date date;
 	
-					date = format.parse(dval);
-					if(date!=null) {
-						if(tf.getFieldType().equals("Date")) {
-							paramsource.addValue(tf.getName(), date, Types.DATE);
+					if(dval.length()>0) {
+						date = format.parse(dval);
+						if(date!=null) {
+							if(tf.getFieldType().equals("Date")) {
+								paramsource.addValue(tf.getName(), date, Types.DATE);
+							}
+							else {
+								paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+							}
 						}
-						else {
-							paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
-						}
+					}
+					else {
+						paramsource.addValue(tf.getName(),null);
 					}
 	
 				}

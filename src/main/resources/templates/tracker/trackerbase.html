@@ -88,12 +88,17 @@ $('#val_[(${field.name})]').select2({
 [# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
 $('#val_[(${field.name})]').select2({
   ajax: {
+	[# th:if="${datas?.get('id')!=null}"]
+	url: /*[[@{/api/trackers/query_field/{field_id}/{data_id}(field_id=${field.id},data_id=${datas?.get('id')})}]]*/'/dummy/api/users',
+	[/]
+	[# th:if="${datas?.get('id')==null}"]
     url: /*[[@{/api/trackers/query_field/{field_id}(field_id=${field.id})}]]*/'/dummy/api/users',
+    [/]
     dataType: 'json',
     processResults: function (data) {
     	var dat = $.map(data.content, function(obj){
-    		var user = {id:obj.id,text:obj.name};
-    		return user;
+    		var record = {id:obj.id,text:obj.name};
+    		return record;
     	});        
         return {results:dat};
       }    

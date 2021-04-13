@@ -63,10 +63,30 @@ form .ace_editor {
             </div>
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Option Source Type</label></div>
+                <div class='col-sm-9'>
+                    <select class='input' name='optionSourceType' th:value="${tracker_field.optionSourceType}">
+                        <option th:each="opt,iter: ${tracker_field.optionSourceTypeOptions}" th:text="${opt}" th:value="${opt}"
+                            th:selected="${tracker_field.optionSourceType==opt}">
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Option Source</label></div>
                 <div class='col-sm-9'>
                     <input type='hidden' th:field="*{optionSource}"/>
                     <div class="form-control col-sm-8 col-md-6" style="width: 400px; height: 400px;" id="jsonEditor"></div>
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Option Source Groovy</label></div>
+                <div class='col-sm-9' style="min-height: 25em;">
+                	<input type='hidden' th:field="*{optionSourceGroovy}"/>                    
+                    <textarea class='textarea col-12' rows="15" id='groovycontenteditor' th:text="${tracker_field.optionSourceGroovy}">
+                    </textarea>
                 </div>
             </div>
             <div class='form-group row'>
@@ -105,9 +125,14 @@ var aceeditor = ace.edit("contenteditor");
 aceeditor.setTheme("ace/theme/chrome");
 aceeditor.session.setMode("ace/mode/groovy");
 
+var groovyeditor = ace.edit("groovycontenteditor");
+groovyeditor.setTheme("ace/theme/chrome");
+groovyeditor.session.setMode("ace/mode/groovy");
+
 $('#fieldForm').on('submit',function(){
 	$('#optionSource').val(JSON.stringify(editor.get()));
 	$('#autoValue').val(aceeditor.getValue());
+	$('#optionSourceGroovy').val(groovyeditor.getValue());
 });
 </script>
 

@@ -52,9 +52,13 @@ public class TrackerField extends Auditable<String> {
 	
 	private String fieldType;
 	private String fieldWidget;
+	private String optionSourceType;
 	
 	@org.hibernate.annotations.Type( type = "text" )
 	private String optionSource;
+	
+	@org.hibernate.annotations.Type( type = "text" )
+	private String optionSourceGroovy;
 	
 	@org.hibernate.annotations.Type( type = "text" )
 	private String autoValue;
@@ -75,6 +79,10 @@ public class TrackerField extends Auditable<String> {
 	@JsonIgnore
 	@Transient
 	public String[] widgetOptions = {"Default","DropDown","Auto"};
+	
+	@JsonIgnore
+	@Transient
+	public String[] optionSourceTypeOptions = {"JSON","Groovy"};
 	
 	public TrackerField copy(Tracker destTracker) {
 		TrackerField newfield = new TrackerField();
