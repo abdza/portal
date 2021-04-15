@@ -313,7 +313,7 @@ public class TrackerService {
 							HashMap<String,Object> dataobj = datarow(targetTracker,Long.valueOf(options.getString(field.getName())));
 							if(dataobj!=null) {
 								toin.put("val", opt);
-								opt = (String) dataobj.get(name_column);
+								opt = String.valueOf(dataobj.get(name_column));
 							}
 						}
 					}
@@ -334,6 +334,26 @@ public class TrackerService {
 		else {
 			return null;
 		}
+	}
+	
+	public HashMap<String,Object> datarow(String module, String slug, LinkedHashMap<String,Object> search) {
+		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		if(tracker!=null) {
+			return datarow(tracker,search);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public HashMap<String,Object> datarow(Tracker tracker, LinkedHashMap<String,Object> search) {
+		
+		Object[] results = hashMapData(tracker,search,false).getDataRows();
+		if(results.length>0) {	
+			return (HashMap<String,Object>)results[0];
+		}
+		return null;
+		
 	}
 	
 	public HashMap<String,Object> datarow(Tracker tracker, Long id) {
@@ -653,7 +673,14 @@ public class TrackerService {
 			subquery = jsonquery(tracker, search.get("or"), filterquery, paramsource,"or");
 			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
 			filterquery = (String) subquery.get("filterquery");
-		}				
+		}
+		if(search.get("not") != null) {			
+			subquery = jsonquery(tracker, search.get("not"), filterquery, paramsource,"not");
+			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
+			filterquery = " not " + (String) subquery.get("filterquery");
+			System.out.println("Got not in the query");
+			System.out.println(filterquery);
+		}
 		if(combinor==null) {
 			combinor = "or";
 		}
@@ -772,7 +799,7 @@ public class TrackerService {
 				}
 			}
 			else {
-				// System.out.println("what on earth " + search.get("order").getClass());
+				System.out.println("what on earth " + search.get("order").getClass());
 			}			
 		}
 		curquery.put("orderby", orderby);		
