@@ -58,7 +58,8 @@ public class PageController {
 			
 			String search = "";
 			Page<PortalPage> toreturn = null;
-			if(request.getParameter("q")!=null&&!request.getParameter("module").equals("All")) {
+			if(request.getParameter("q")!=null||(request.getParameter("module")!=null && !request.getParameter("module").equals("All"))) {
+				System.out.println("doing query");
 				String module = request.getParameter("module");
 				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
 				Pageable pageable = PageRequest.of(page, size);
