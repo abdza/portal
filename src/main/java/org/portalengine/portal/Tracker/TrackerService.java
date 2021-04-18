@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.portalengine.portal.DataUpdate.DataUpdateService;
 import org.portalengine.portal.FileLink.FileLinkService;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Setting.SettingService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
@@ -378,6 +378,21 @@ public class TrackerService {
 		}
 
 		return currow;
+	}
+	
+	public SqlRowSet customquery(String query) {
+		return customquery(query,null);
+	}
+	
+	public SqlRowSet customquery(String query, Map<String, Object> mapdata) {
+		CustomQuery cquery = new CustomQuery(namedjdbctemplate);
+		if(mapdata!=null) {
+			mapdata.forEach((fieldname,fieldval)->{
+				cquery.addValue(fieldname,fieldval);			
+			});	
+		}
+		SqlRowSet qheaders = cquery.query(query);
+	    return qheaders;
 	}
 	
 	public DataSet dataset(Tracker tracker) {

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Module.ModuleService;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Setting.SettingService;
 import org.portalengine.portal.Tracker.Tracker;
@@ -132,7 +132,7 @@ public class PortalController {
 	
 	@GetMapping("/")
 	public String home(Model model) {
-		Page curpage = pageService.getRepo().findOneByModuleAndSlug("portal", "home");
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug("portal", "home");
 		model.addAttribute("pageTitle",settingService.StringSetting("home_title", "Home"));
 		if(curpage!=null) {			
 			model.addAttribute("page", curpage);
@@ -183,7 +183,7 @@ public class PortalController {
 				for(Tracker tracker : trackers) {					
 					trackerService.updateDb(tracker);
 				}	
-				Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, "post_module_import");
+				PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, "post_module_import");
 				if(curpage!=null) {
 					System.out.println("Found post import page for " + module);
 					if(curpage.getRunable()) {				
@@ -231,7 +231,7 @@ public class PortalController {
 			else {
 				slg = post_setup_page.trim();
 			}			
-			Page curpage = pageService.getRepo().findOneByModuleAndSlug(mdl, slg);
+			PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(mdl, slg);
 			if(curpage!=null) {			
 				return "redirect:/view/" + mdl + "/" + slg;
 			}
@@ -246,7 +246,7 @@ public class PortalController {
 		if(module==null) {
 			module = "portal";
 		}
-		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
 				Binding binding = new Binding();		
@@ -294,7 +294,7 @@ public class PortalController {
 		if(module==null) {
 			module = "portal";
 		}
-		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable()) {				
 				Binding binding = new Binding();		
@@ -343,7 +343,7 @@ public class PortalController {
 		if(module==null) {
 			module = "portal";
 		}
-		Page curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);
 				
 		if(curpage!=null) {
 			if(curpage.getPublished()!=null && curpage.getPublished()==true) {

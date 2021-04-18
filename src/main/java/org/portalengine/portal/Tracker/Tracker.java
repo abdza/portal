@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.portalengine.portal.Auditable;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Role.TrackerRole;
 import org.portalengine.portal.Tracker.Status.TrackerStatus;

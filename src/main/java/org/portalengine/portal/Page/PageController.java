@@ -1,9 +1,6 @@
 package org.portalengine.portal.Page;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,20 +11,15 @@ import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 
 @Controller
 @RequestMapping("/admin/pages")
@@ -63,27 +55,46 @@ public class PageController {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
 			model.addAttribute("pageTitle","Page Listing");
-			model.addAttribute("pages", service.getRepo().findAll(PageRequest.of(page, size)));
+			
+			String search = "";
+			Page<PortalPage> toreturn = null;
+			if(request.getParameter("q")!=null&&!request.getParameter("module").equals("All")) {
+				String module = request.getParameter("module");
+				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
+				Pageable pageable = PageRequest.of(page, size);
+				if(module.equals("All")) {
+					toreturn = service.getRepo().apiquery(search,pageable);
+				}
+				else {
+					toreturn = service.getRepo().apimodulequery(search, module, pageable);
+				}
+			}
+			else {
+				toreturn = service.getRepo().findAll(PageRequest.of(page, size));
+			}
+			
+			model.addAttribute("pages", toreturn);
+			
 			return "page/list.html";
 		}
 		
 		@GetMapping(value= {"/create","/edit/{id}"})
 		public String edit(@PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
-				Page curpage = service.getRepo().getOne(id);
+				PortalPage curpage = service.getRepo().getOne(id);
 				model.addAttribute("pageTitle","Edit Page - " + curpage.getTitle());
 				model.addAttribute("page", curpage);
 			}
 			else {
 				model.addAttribute("pageTitle","Create Page");
-				model.addAttribute("page", new Page());
+				model.addAttribute("page", new PortalPage());
 			}
 			
 			return "page/form.html";
 		}
 		
 		@PostMapping("/save")
-		public String save(@Valid Page page,Model model,HttpServletRequest request) {			
+		public String save(@Valid PortalPage page,Model model,HttpServletRequest request) {			
 			Map<String, String[]> postdata = request.getParameterMap();
 			service.getRepo().save(page);
 			if(postdata.containsKey("update")) {

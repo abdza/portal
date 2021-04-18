@@ -119,7 +119,7 @@ public class TrackerApiController {
 			Tracker tracker = service.getRepo().getOne(tracker_id);
 			System.out.println("page function");
 			String q = "%" + request.getParameter("q") + "%";
-			List<org.portalengine.portal.Page.Page> pageslist = pageService.getRepo().findAllByModuleAndQ(tracker.getModule(), q);
+			List<org.portalengine.portal.Page.PortalPage> pageslist = pageService.getRepo().findAllByModuleAndQ(tracker.getModule(), q);
 			ArrayList<Map<String,String>> jfields = new ArrayList<Map<String,String>>();
 			System.out.println("found:" + String.valueOf(pageslist.size()));
 			pageslist.forEach(cpage->{	

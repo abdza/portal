@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.math3.linear.NonPositiveDefiniteOperatorException;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Setting.Setting;
 import org.portalengine.portal.Setting.SettingService;
@@ -143,14 +143,14 @@ public class ModuleService {
 			mpf.mkdirs();
 		}
 		
-		List<Page> pages = null;
+		List<PortalPage> pages = null;
 		try {
 			File pagefile = new File(mod_path + "pages.json");
 			if(pagefile.exists()){
-				pages = objectMapper.readValue(pagefile, new TypeReference<List<Page>>() {});
+				pages = objectMapper.readValue(pagefile, new TypeReference<List<PortalPage>>() {});
 				if(pages.size()>0) {
 					pages.forEach(page -> {					
-						Page curp = pageService.getRepo().findOneByModuleAndSlug(page.getModule(), page.getSlug());
+						PortalPage curp = pageService.getRepo().findOneByModuleAndSlug(page.getModule(), page.getSlug());
 						if(curp!=null) {
 							page.setId(curp.getId());
 						}
@@ -347,7 +347,7 @@ public class ModuleService {
 			mpf.mkdirs();
 		}
 		
-		List<Page> pages = pageService.getRepo().findAllByModule(module);
+		List<PortalPage> pages = pageService.getRepo().findAllByModule(module);
 		try {			
 			Path path = Paths.get(mod_path + "pages.json");
 			byte[] data = objectMapper.writer(printer).writeValueAsBytes(pages);		
@@ -426,6 +426,11 @@ public class ModuleService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public List<Module> list() {
+		System.out.println("got here though");
+		return repo.findAll();
 	}
 	
 	public void updatelisting() {		

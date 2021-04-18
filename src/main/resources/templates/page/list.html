@@ -20,6 +20,31 @@
 	<div class='content'>
 		<h1>Page Listing</h1>
 		<a href="#" th:href="@{/admin/pages/create}" class="btn btn-primary">Add</a>
+		
+		<div class="card-body px-3 pb-1">
+		  <form class="mt-lg-3">
+		  	<div class="form-group row">
+		  		<div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">        	
+		  			<label><span>Module</span>:</label>
+		  		</div>
+		  		<div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
+		  			<select name="module" id="module" onchange="submit();">
+		  				<option>All</option>
+		  				<option th:each="module:${@moduleService.list()}" th:value="${module.name}" th:text="${module.name}" th:selected="${param.module.toString()==module.name.toString()}">All</option>  				
+		  			</select>
+		  		</div>
+		  	</div>
+		  	<div class="form-group row">
+		  		<div class="mb-1 mb-sm-0 col-sm-3 col-form-label text-sm-right pr-0">        	
+		  			<label>Search:</label>
+		  		</div>
+		  		<div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
+		  			<input type='text' name='q' th:value="${param.q}"/><button class="btn btn-primary m-1">Search</button>
+		  		</div>
+		  	</div>
+		  </form>
+		 </div>
+		
 		<table class="table responsive">
 			<thead>
 			<tr>

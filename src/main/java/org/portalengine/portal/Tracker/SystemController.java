@@ -18,7 +18,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.portalengine.portal.FileLink.FileLinkService;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
@@ -88,7 +88,7 @@ public class SystemController {
 			model.addAttribute("formtitle",formtitle);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, data_id);
 			model.addAttribute("datas", datarow);
-			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerService.slugify(transition.getName()));
+			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerService.slugify(transition.getName()));
 			if(pp!=null) {
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
@@ -131,7 +131,7 @@ public class SystemController {
 			System.out.println("Title:" + datatitle);
 			model.addAttribute("datatitle",datatitle);
 			model.addAttribute("pageTitle",datatitle);
-			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
+			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
@@ -151,7 +151,7 @@ public class SystemController {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
 		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where id=:id", paramsource);
-		Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostDelete());
+		PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostDelete());
 		if(postpage!=null) {
 			return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug();
 		}
@@ -171,7 +171,7 @@ public class SystemController {
 			model.addAttribute("pageTitle",formtitle);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
 			model.addAttribute("datas", datarow);
-			Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
+			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
 			if(pp!=null) {
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
@@ -203,7 +203,7 @@ public class SystemController {
 				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
 			}
 			if(postdata.get("id")!=null) {				
-				Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostEdit());
+				PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostEdit());
 				if(postpage!=null) {
 					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + postdata.get("id")[0].toString();
 				}
@@ -212,7 +212,7 @@ public class SystemController {
 				}
 			}
 			else {			
-				Page postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostCreate());
+				PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostCreate());
 				if(postpage!=null) {
 					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + String.valueOf(curid);
 				}
@@ -236,7 +236,7 @@ public class SystemController {
 		model.addAttribute("dataset",dataset);
 		model.addAttribute("listtitle",listtitle);
 		model.addAttribute("pageTitle",listtitle);
-		Page pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
+		PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
 		if(pp!=null) {
 			model.addAttribute("page",pp);
 			model.addAttribute("content", pp.getContent());				

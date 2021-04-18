@@ -33,7 +33,7 @@ public class CustomQuery {
 		this.paramsource.addValue(name, data);
 	}
 	
-	public SqlRowSet query(String query) {		
+	public SqlRowSet query(String query) {
 		SqlRowSet toret = this.namedjdbctemplate.queryForRowSet(query, this.paramsource);
 		return toret;
 	}

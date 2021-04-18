@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Setting.Setting;
 import org.portalengine.portal.Setting.SettingService;
@@ -192,7 +192,7 @@ public class TreeController {
 			tosearch = "%" + tosearch.replaceAll(" ", "%") + "%";
 			System.out.println("Searching:" + tosearch);
 			if(searchType.equals("page")) {
-				List<Page> pages = pageService.getRepo().findAllByQ(tosearch);
+				List<PortalPage> pages = pageService.getRepo().findAllByQ(tosearch);
 				model.addAttribute("pages",pages);
 			}
 			else if(searchType.equals("treenode")) {

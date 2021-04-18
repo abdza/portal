@@ -75,7 +75,7 @@ public class PageService {
 	
 	public String renderPage(String slug) {		
 		try {
-			Page curpage = this.repo.findOneByModuleAndSlug("portal", slug);
+			PortalPage curpage = this.repo.findOneByModuleAndSlug("portal", slug);
 			if(curpage!=null) {
 				String toreturn = getTemplateFromMap(curpage.getContent(), null);
 				if(toreturn.trim().length()>0) {
@@ -94,7 +94,7 @@ public class PageService {
 	
 	public boolean pageExist(String slug) {
 		try {
-			Page curpage = this.repo.findOneByModuleAndSlug("portal", slug);
+			PortalPage curpage = this.repo.findOneByModuleAndSlug("portal", slug);
 			if(curpage!=null) {
 				return true;
 			}

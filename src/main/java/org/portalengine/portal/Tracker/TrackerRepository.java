@@ -2,7 +2,7 @@ package org.portalengine.portal.Tracker;
 
 import java.util.List;
 
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -3,7 +3,7 @@ package org.portalengine.portal;
 import java.util.List;
 
 import org.portalengine.portal.FileLink.FileLinkRepository;
-import org.portalengine.portal.Page.Page;
+import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageRepository;
 import org.portalengine.portal.Setting.SettingRepository;
 import org.portalengine.portal.Tracker.Tracker;
@@ -95,7 +95,7 @@ extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 		// TODO Auto-generated method stub
 		//System.out.println(this.authentication.getPrincipal());
 		
-		Page curpage = repos.getPageRepository().findOneByModuleAndSlug(module, slug);
+		PortalPage curpage = repos.getPageRepository().findOneByModuleAndSlug(module, slug);
 		
 		if(curpage!=null) {
 			if(curpage.getPublished()!=true) {
