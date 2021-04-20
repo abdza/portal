@@ -391,7 +391,8 @@ public class TrackerService {
 				cquery.addValue(fieldname,fieldval);			
 			});	
 		}
-		SqlRowSet qheaders = cquery.query(query);
+		SqlRowSet qheaders = cquery.query(query);		
+		qheaders.next();
 	    return qheaders;
 	}
 	

@@ -3,9 +3,12 @@ package org.portalengine.portal.FileLink;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.portalengine.portal.Tracker.Tracker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +44,28 @@ public class FileLinkController {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
 			model.addAttribute("pageTitle","File Listing");
-			model.addAttribute("files", service.getRepo().findAll(PageRequest.of(page, size)));
+			
+			String search = "";
+			Page<FileLink> toreturn = null;
+			if(request.getParameter("q")!=null||(request.getParameter("module")!=null && !request.getParameter("module").equals("All"))) {
+				System.out.println("doing query");
+				String module = request.getParameter("module");
+				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
+				Pageable pageable = PageRequest.of(page, size);
+				if(module.equals("All")) {
+					toreturn = service.getRepo().apiquery(search,pageable);
+				}
+				else {
+					toreturn = service.getRepo().apimodulequery(search, module, pageable);
+				}
+			}
+			else {
+				toreturn = service.getRepo().findAll(PageRequest.of(page, size));
+			}
+			
+			model.addAttribute("files", toreturn);
+			
+			//model.addAttribute("files", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "file/list.html";
 		}
 		

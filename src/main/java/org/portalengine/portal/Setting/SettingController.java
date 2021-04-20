@@ -3,8 +3,11 @@ package org.portalengine.portal.Setting;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.portalengine.portal.FileLink.FileLink;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +37,28 @@ public class SettingController {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
 			model.addAttribute("pageTitle","Setting Listing");
-			model.addAttribute("settings", service.getRepo().findAll(PageRequest.of(page, size)));
+			
+			String search = "";
+			Page<Setting> toreturn = null;
+			if(request.getParameter("q")!=null||(request.getParameter("module")!=null && !request.getParameter("module").equals("All"))) {
+				System.out.println("doing query");
+				String module = request.getParameter("module");
+				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
+				Pageable pageable = PageRequest.of(page, size);
+				if(module.equals("All")) {
+					toreturn = service.getRepo().apiquery(search,pageable);
+				}
+				else {
+					toreturn = service.getRepo().apimodulequery(search, module, pageable);
+				}
+			}
+			else {
+				toreturn = service.getRepo().findAll(PageRequest.of(page, size));
+			}
+			
+			model.addAttribute("settings", toreturn);
+			
+			//model.addAttribute("settings", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "setting/list.html";
 		}
 		

@@ -37,7 +37,7 @@ How to filter the query to the tracker
 
 You would use a `query json <../trackers/query_node.html>`_ in your dataRows method. For example::
 
-  <div th:each="question : ${@trackerService.dataRows('survey','question',{'equal':{'survey':survey.id},'order':['pos_num asc']})}">
+  <div th:each="question : ${@trackerService.dataRows('survey','question',{'equal':{'survey':survey.id},'order':{'pos_num asc'}})}">
 
 The above code would filter the tracker with module 'survey' and slug 'question', where the variable survey in the tracker(question) is equal to the variable id in the current survey variable. The results would be ordered by the column pos_num in ascending order. It would loop over each row and assigning the results into the variable question.
 
