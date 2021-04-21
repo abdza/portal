@@ -379,6 +379,8 @@ public class PortalController {
 						System.out.println("Error in page:" + e.toString());
 					}
 					if(curpage.getPage_type().equals("Template")) {
+						System.out.println("in template running");
+						System.out.println(content);
 						model.addAttribute("pageTitle","Running " + curpage.getTitle());
 						model.addAttribute("page", curpage);
 						model.addAttribute("content",content);
@@ -396,8 +398,38 @@ public class PortalController {
 					}
 				}
 				else {
+					Object pdata = null;
+					if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
+						Binding binding = new Binding();		
+						GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+						Map<String, String[]> postdata = request.getParameterMap();
+						binding.setVariable("pageService",pageService);
+						binding.setVariable("postdata", postdata);
+						binding.setVariable("request", request);
+						binding.setVariable("trackerService",trackerService);
+						binding.setVariable("treeService",treeService);
+						binding.setVariable("userService",userService);
+						binding.setVariable("fileService",fileService);
+						binding.setVariable("settingService", settingService);
+						binding.setVariable("javaMailSender", javaMailSender);
+						binding.setVariable("passwordEncoder", passwordEncoder);
+						binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+						binding.setVariable("env", env);
+						binding.setVariable("arg1", arg1);
+						binding.setVariable("arg2", arg2);
+						binding.setVariable("arg3", arg3);
+						binding.setVariable("arg4", arg4);
+						binding.setVariable("arg5", arg5);
+						try {
+							pdata = shell.evaluate(curpage.getPageData());
+						}
+						catch(Exception e) {
+							System.out.println("Error in page:" + e.toString());
+						}
+					}
 					model.addAttribute("pageTitle",curpage.getTitle());
 					model.addAttribute("page", curpage);
+					model.addAttribute("pdata", pdata);
 					model.addAttribute("content", curpage.getContent());
 					model.addAttribute("env", env);
 					model.addAttribute("arg1",arg1);

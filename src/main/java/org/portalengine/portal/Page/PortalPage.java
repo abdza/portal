@@ -42,7 +42,10 @@ public class PortalPage extends Auditable<String> {
 	
 	@NotNull
 	@org.hibernate.annotations.Type( type = "text" )
-	private String content;	
+	private String content;
+	
+	@org.hibernate.annotations.Type( type = "text" )
+	private String pageData;
 	
 	private Boolean published;
 	

@@ -22,7 +22,9 @@ import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
+import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
+import org.portalengine.portal.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -44,6 +46,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 @Controller
 @RequestMapping("/")
 public class SystemController {
@@ -56,6 +61,12 @@ public class SystemController {
 	
 	@Autowired
 	private FileLinkService fileService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private TreeService treeService;
 	
 	@Autowired
 	private TrackerService trackerService;
@@ -90,6 +101,29 @@ public class SystemController {
 			model.addAttribute("datas", datarow);
 			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_" + trackerService.slugify(transition.getName()));
 			if(pp!=null) {
+				
+				Object pdata = null;
+				if(pp.getPageData()!=null && pp.getPageData().length()>0) {
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",trackerService);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+					binding.setVariable("env", env);
+					try {
+						pdata = shell.evaluate(pp.getPageData());
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				model.addAttribute("pdata",pdata);
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
@@ -112,6 +146,35 @@ public class SystemController {
 			model.addAttribute("formtitle",formtitle);			
 			model.addAttribute("pageTitle",formtitle);
 			model.addAttribute("transition",trackerService.create_transition(tracker));
+			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_create");
+			if(pp!=null) {
+				Object pdata = null;
+				if(pp.getPageData()!=null && pp.getPageData().length()>0) {
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",trackerService);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+					binding.setVariable("env", env);
+					try {
+						pdata = shell.evaluate(pp.getPageData());
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				model.addAttribute("pdata",pdata);
+				model.addAttribute("page",pp);
+				model.addAttribute("content", pp.getContent());				
+				return "page/plain.html";
+			}
+			
 			return "tracker/data/form.html";
 		}
 		else {
@@ -133,6 +196,28 @@ public class SystemController {
 			model.addAttribute("pageTitle",datatitle);
 			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_display");
 			if(pp!=null) {
+				Object pdata = null;
+				if(pp.getPageData()!=null && pp.getPageData().length()>0) {
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",trackerService);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+					binding.setVariable("env", env);
+					try {
+						pdata = shell.evaluate(pp.getPageData());
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				model.addAttribute("pdata",pdata);
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
@@ -173,6 +258,28 @@ public class SystemController {
 			model.addAttribute("datas", datarow);
 			PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_edit");
 			if(pp!=null) {
+				Object pdata = null;
+				if(pp.getPageData()!=null && pp.getPageData().length()>0) {
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("pageService",pageService);
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					binding.setVariable("trackerService",trackerService);
+					binding.setVariable("treeService",treeService);
+					binding.setVariable("userService",userService);
+					binding.setVariable("fileService",fileService);
+					binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+					binding.setVariable("env", env);
+					try {
+						pdata = shell.evaluate(pp.getPageData());
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				model.addAttribute("pdata",pdata);
 				model.addAttribute("page",pp);
 				model.addAttribute("content", pp.getContent());				
 				return "page/plain.html";
@@ -238,6 +345,28 @@ public class SystemController {
 		model.addAttribute("pageTitle",listtitle);
 		PortalPage pp = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getSlug() + "_list");
 		if(pp!=null) {
+			Object pdata = null;
+			if(pp.getPageData()!=null && pp.getPageData().length()>0) {
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+				binding.setVariable("env", env);
+				try {
+					pdata = shell.evaluate(pp.getPageData());
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+			}
+			model.addAttribute("pdata",pdata);
 			model.addAttribute("page",pp);
 			model.addAttribute("content", pp.getContent());				
 			return "page/plain.html";

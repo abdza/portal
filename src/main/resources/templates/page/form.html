@@ -96,6 +96,17 @@ form .ace_editor {
                     </textarea>
                 </div>
             </div>
+            
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Page Data</label></div>
+                <div class='col-sm-9' style="min-height: 50em;">
+                	<input type='hidden' th:field="*{pageData}"/>
+                    <textarea class='textarea col-12' rows="30" id='dataeditor' th:text="${page.pageData}">
+                    </textarea>
+                </div>
+            </div>
+            
             <div class='form-group row'>
                 <div class="offset-md-3 col-md-9">
                     <button class='btn btn-info' name='save'>Save</button>
@@ -140,10 +151,14 @@ form .ace_editor {
 			editor.session.setMode("ace/mode/html");
 		}
 	});
+	
+	var dataeditor = ace.edit("dataeditor");
+    dataeditor.setTheme("ace/theme/chrome");
+    dataeditor.session.setMode("ace/mode/groovy");
 
     $('#pageform').on('submit',function(){    	
 		$('#content').val(editor.getValue());
-		
+		$('#pageData').val(dataeditor.getValue());
 	});
 </script>
 </th:block>
