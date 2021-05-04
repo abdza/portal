@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.tags.Param;
 
@@ -241,6 +240,7 @@ public class PortalController {
 	}
 	
 	@RequestMapping(path={"/img/{slug}","/img/{module}/{slug}","/img/{module}/{slug}/{arg1}","/img/{module}/{slug}/{arg1}/{arg2}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/img/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.IMAGE_PNG_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
 	@ResponseBody
 	public Object pngPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
 		if(module==null) {
@@ -288,15 +288,17 @@ public class PortalController {
 		}
 	}
 	
-	@RequestMapping(path={"/json/{slug}","/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(path={"/api/{slug}","/api/{module}/{slug}","/api/{module}/{slug}/{arg1}","/api/{module}/{slug}/{arg1}/{arg2}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
 	@ResponseBody
-	public Object jsonPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+	public Object apiPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
 		if(module==null) {
 			module = "portal";
 		}
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
-			if(curpage.getRunable()) {				
+			if(curpage.getRunable()) {
+				System.out.println("In api page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 				Map<String, String[]> postdata = request.getParameterMap();
@@ -320,7 +322,7 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
-					System.out.println("Content:" + content);
+					System.out.println("api Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -328,10 +330,64 @@ public class PortalController {
 				return content;				
 			}
 			else {
+				System.out.println("api page not runable");
 				return null;
 			}
 		}
 		else {
+			System.out.println("api page not found");
+			return null;
+		}
+	}
+	
+	@RequestMapping(path={"/json/{slug}","/json/{module}/{slug}","/json/{module}/{slug}/{arg1}","/json/{module}/{slug}/{arg1}/{arg2}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/json/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
+	@ResponseBody
+	public Object jsonPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+		if(module==null) {
+			module = "portal";
+		}
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		if(curpage!=null) {
+			if(curpage.getRunable()) {
+				System.out.println("In json page");
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
+				binding.setVariable("javaMailSender", javaMailSender);
+				binding.setVariable("passwordEncoder", passwordEncoder);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+				binding.setVariable("env", env);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
+				Object content = null;
+				try {
+					content = shell.evaluate(curpage.getContent());
+					System.out.println("Json Content:" + content);
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return content;				
+			}
+			else {
+				System.out.println("Json page not runable");
+				return null;
+			}
+		}
+		else {
+			System.out.println("Json page not found");
 			return null;
 		}
 	}
@@ -449,7 +505,7 @@ public class PortalController {
 		}
 	}	
 	
-	@GetMapping(path={"/download/{slug}","/download/{module}/{slug}"})
+	@GetMapping(path={"/download/{slug}","/download/{module}/{slug}"})	
 	@ResponseBody
 	public ResponseEntity<Resource> downloadFile(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request) {
 		if(module==null) {
