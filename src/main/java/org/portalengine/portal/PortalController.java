@@ -297,7 +297,7 @@ public class PortalController {
 		}
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
-			if(curpage.getRunable()) {
+			if(curpage.getRunable() && curpage.getPage_type().toLowerCase().equals("api")) {
 				System.out.println("In api page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
@@ -330,7 +330,7 @@ public class PortalController {
 				return content;				
 			}
 			else {
-				System.out.println("api page not runable");
+				System.out.println("api page not runable or not api type");
 				return null;
 			}
 		}
@@ -349,7 +349,7 @@ public class PortalController {
 		}
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
-			if(curpage.getRunable()) {
+			if(curpage.getRunable() && curpage.getPage_type().toLowerCase().equals("json")) {
 				System.out.println("In json page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
@@ -382,7 +382,7 @@ public class PortalController {
 				return content;				
 			}
 			else {
-				System.out.println("Json page not runable");
+				System.out.println("Json page not runable or not json type");
 				return null;
 			}
 		}
@@ -404,7 +404,7 @@ public class PortalController {
 		if(curpage!=null) {
 			if(curpage.getPublished()!=null && curpage.getPublished()==true) {
 				if(curpage.getRunable()) {
-					if(curpage.getPage_type().equals("JSON")) {
+					if(curpage.getPage_type().toLowerCase().equals("json")) {
 						return "redirect:/json/" + module + "/" + slug;
 					}
 					Binding binding = new Binding();		
@@ -434,7 +434,7 @@ public class PortalController {
 					catch(Exception e) {
 						System.out.println("Error in page:" + e.toString());
 					}
-					if(curpage.getPage_type().equals("Template")) {
+					if(curpage.getPage_type().toLowerCase().equals("template")) {
 						System.out.println("in template running");
 						System.out.println(content);
 						model.addAttribute("pageTitle","Running " + curpage.getTitle());
@@ -453,7 +453,7 @@ public class PortalController {
 						return content;
 					}
 				}
-				else {
+				else {  // page is not runable
 					Object pdata = null;
 					if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
 						Binding binding = new Binding();		
