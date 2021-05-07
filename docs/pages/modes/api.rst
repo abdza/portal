@@ -1,7 +1,12 @@
-JPF Page Redirect Mode
-======================
+JPF Page API Mode
+==================
 
-A JPF in redirect mode require to be marked as runable. A page marked as runable and the type is redirect will run the contents of the content field using groovy and use the return value as a string to redirect to. An example use case of this is for example you create a page to process a form submission. So you can write the processing of the page submission (it will be made available in a hashmap variable named postdata) to create whatever object you need or start whatever process you require, then once all is done, redirect to another page which could very well be a template page saying thank you to the user for their submission.
+A JPF in api mode require to be marked as runable. A page marked as runable and the type is api will run the contents of the content field using groovy and return the return value as a json object.  An example use case of this is for example you create a page to provide data for an ajax process. Typically a json page would be accessed using the following url:
+  http://<server_root>/api/<module>/<slug>/<arg1>/<arg2>/<arg3>/<arg4>/<arg5>
+
+Where the arg1 until arg5 is just optional. 
+
+The main difference between an API page and a JSON page is the way form submission is handled. The JSON page will only accept form data that is protected by csrf. But the API page will ignore csrf requirement for forms. But an API page will use the basic auth header to verify the user identity. This allows for POST submission to be sent to the endpoint even from a mobile app or other sources.
 
 The variables made available for the developer are:
 
