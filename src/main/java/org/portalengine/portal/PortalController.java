@@ -406,6 +406,9 @@ public class PortalController {
 				if(curpage.getRunable()) {
 					if(curpage.getPage_type().toLowerCase().equals("json")) {
 						return "redirect:/json/" + module + "/" + slug;
+					} 
+					else if(curpage.getPage_type().toLowerCase().equals("api")) {
+						return "redirect:/api/" + module + "/" + slug;
 					}
 					Binding binding = new Binding();		
 					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
