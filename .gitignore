@@ -41,3 +41,4 @@ src/main/resources/application.properties
 /custom_modules
 
 docs/_build/
+upload/
