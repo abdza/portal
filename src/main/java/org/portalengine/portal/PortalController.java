@@ -392,6 +392,58 @@ public class PortalController {
 		}
 	}
 	
+	@RequestMapping(path={"/data/{slug}","/data/{module}/{slug}","/data/{module}/{slug}/{arg1}","/data/{module}/{slug}/{arg1}/{arg2}","/data/{module}/{slug}/{arg1}/{arg2}/{arg3}","/data/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/data/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
+	@ResponseBody
+	public Object dataPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+		if(module==null) {
+			module = "portal";
+		}
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		if(curpage!=null) {
+			if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
+				System.out.println("In data page");
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
+				binding.setVariable("javaMailSender", javaMailSender);
+				binding.setVariable("passwordEncoder", passwordEncoder);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+				binding.setVariable("env", env);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
+				Object content = null;
+				try {
+					content = shell.evaluate(curpage.getPageData());
+					System.out.println("data Content:" + content);
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return content;				
+			}
+			else {
+				System.out.println("page data does not exists");
+				return null;
+			}
+		}
+		else {
+			System.out.println("data page not found");
+			return null;
+		}
+	}
+	
 	@RequestMapping(path={"/view/{slug}","/view/{module}/{slug}","/view/{module}/{slug}/{arg1}","/view/{module}/{slug}/{arg1}/{arg2}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/view/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"},method={ RequestMethod.GET, RequestMethod.POST })
 	@PreAuthorize("pagePermission(#module,#slug)")
 	public String viewPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
