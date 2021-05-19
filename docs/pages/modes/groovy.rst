@@ -6,7 +6,7 @@ A JPF Page that can be run, will be run using groovy. Since groovy is a superset
 The variables made available for the developer are:
 
   #. postdata :- the POST value submitted by the user
-  #. arg1,arg2,arg3,arg4,arg5 :- Additional variables the developer can use optionally in the url
+  #. arg1,arg2,arg3,arg4,arg5 :- Additional variables the developer can use optionally from the url
   #. request :- the request object of this current request
   #. env :- the enviroment object of this current request. Can be used to access variables set in the runtime environment or even application.properties settings
   #. namedjdbctemplate :- the namedjdbctemplate object which the developer can use to run custom queries to the database
