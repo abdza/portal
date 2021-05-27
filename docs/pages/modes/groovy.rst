@@ -17,3 +17,21 @@ The variables made available for the developer are:
   #. settingService :- the service to manage and use settings
   #. fileService :- the service to manage and use files uploaded as FileLink
   #. treeService :- the service used to manage and manipulate tree structures in the portal
+
+Manipulating Excel Output
+-------------------------
+
+If the page is accessed through url http://<server>/excel/<module>/<slug> would allow for an excel file to be customised. The template would already have variable wb and sheet for the workbook and excel sheet::
+
+  import org.apache.poi.ss.usermodel.Row;
+  import org.apache.poi.ss.usermodel.Cell;
+
+  Row headerRow = sheet.createRow(0);
+
+  def headers = ['Name','Group','Test'];
+  for(int i=0;i<headers.size();i++) {
+    Cell cell = headerRow.createCell(i);
+    cell.setCellValue(headers[i]);
+  }
+
+The above example would create a simple excel file with 3 columns.

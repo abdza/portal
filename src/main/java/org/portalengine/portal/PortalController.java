@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Module.ModuleService;
@@ -53,6 +55,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.tags.Param;
 
 import org.springframework.mail.SimpleMailMessage;
@@ -278,6 +281,64 @@ public class PortalController {
 					System.out.println("Error in page:" + e.toString());
 				}
 				return content;				
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
+	
+	@RequestMapping(path={"/excel/{slug}","/excel/{module}/{slug}","/excel/{module}/{slug}/{arg1}","/excel/{module}/{slug}/{arg1}/{arg2}","/excel/{module}/{slug}/{arg1}/{arg2}/{arg3}","/excel/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/excel/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE , method={ RequestMethod.GET, RequestMethod.POST })
+	@PreAuthorize("pagePermission(#module,#slug)")
+	@ResponseBody
+	public ResponseEntity<StreamingResponseBody> xlsxPage(@PathVariable(required=false) String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+		if(module==null) {
+			module = "portal";
+		}
+		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
+		if(curpage!=null) {
+			if(curpage.getRunable()) {		
+				SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+				Sheet sheet = wb.createSheet();
+				String exceltitle = curpage.getTitle().toLowerCase().replace(" ", "_") + ".xlsx";
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("wb",wb);
+				binding.setVariable("sheet", sheet);
+				binding.setVariable("pageService",pageService);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
+				binding.setVariable("trackerService",trackerService);
+				binding.setVariable("treeService",treeService);
+				binding.setVariable("userService",userService);
+				binding.setVariable("fileService",fileService);
+				binding.setVariable("settingService", settingService);
+				binding.setVariable("javaMailSender", javaMailSender);
+				binding.setVariable("passwordEncoder", passwordEncoder);
+				binding.setVariable("namedjdbctemplate", namedjdbctemplate);
+				binding.setVariable("env", env);
+				binding.setVariable("arg1", arg1);
+				binding.setVariable("arg2", arg2);
+				binding.setVariable("arg3", arg3);
+				binding.setVariable("arg4", arg4);
+				binding.setVariable("arg5", arg5);
+				Object content = null;
+				try {
+					content = shell.evaluate(curpage.getContent());
+					System.out.println("Content:" + content);
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return ResponseEntity
+					    .ok()
+					    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+					    .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + exceltitle + "\"")
+					    .body(wb::write);			
 			}
 			else {
 				return null;
