@@ -19,6 +19,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<milton.version>2.7.2.4</milton.version>
 	</properties>
 
 	<dependencies>
@@ -54,6 +55,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
 		</dependency>
 
 		<dependency>

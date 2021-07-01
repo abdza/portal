@@ -1,6 +1,7 @@
 package org.portalengine.portal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -10,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
+
+
 
 @Configuration
 @EnableWebSecurity
@@ -47,16 +51,16 @@ public class SecurityConfig {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http
-			.authorizeRequests()
-			.antMatchers("/","/register","/login","/logout","/libs/**","/images/**").permitAll()
-			.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
+				.authorizeRequests()
+				.antMatchers("/","/register","/login","/logout","/libs/**","/images/**").permitAll()
+				.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
 			.and()
-			.formLogin()
-			.loginPage("/login")
+				.formLogin()
+				.loginPage("/login")
 			.and()
-			.logout()
-			.logoutSuccessUrl("/")
+				.logout()
+				.logoutSuccessUrl("/")
 			;
 		}
-	}
+	}	
 }

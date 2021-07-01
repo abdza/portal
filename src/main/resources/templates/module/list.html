@@ -27,21 +27,24 @@
 					th:href='@{/admin/modules/edit/{id}(id=${module.id})}'
 					th:text="${iter.index + 1}">2</a></td>
 				<td th:text="${module.name}">module</td>				
-				<td>
+				<td class='row'>
 					<form method='post'
+						class='form-inline'
 						th:action='@{/admin/modules/export/{id}(id=${module.id})}'
 						th:object="${module}">
-						<input type='submit' class='button danger'
+						<input type='submit' class='btn btn-success mx-2'
 							th:onClick='return confirm("Confirm export module " + this.getAttribute("data-fname") + "?");'
 							th:attr="data-fname=${module.name}" value='Export' />
 					</form>
 					<form method='post'
+						class='form-inline'
 						th:action='@{/admin/modules/import/{id}(id=${module.id})}'
 						th:object="${module}">
-						<input type='submit' class='button danger'
+						<input type='submit' class='btn btn-danger mx-2'
 							th:onClick='return confirm("Confirm import module " + this.getAttribute("data-fname") + "?");'
 							th:attr="data-fname=${module.name}" value='Import' />
 					</form>
+					<a th:href="@{/admin/modules/copy/{id}(id=${module.id})}" class='btn btn-info mx-2'>Copy</a>
 				</td>
 			</tr>
 		</table>

@@ -2,6 +2,7 @@ package org.portalengine.portal.Module;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -69,6 +70,21 @@ public class ModuleController {
 		public String importModule(@PathVariable Long id, Model model) {
 			Module module = service.getRepo().getOne(id);
 			service.importModule(module.getName());
+			return "redirect:/admin/modules";
+		}
+		
+		@GetMapping("/copy/{id}")
+		public String copy(@PathVariable Long id, Model model) {
+			Module module = service.getRepo().getOne(id);			
+			model.addAttribute("module",module);
+			return "module/copy.html";
+		}
+		
+		@PostMapping("/copy/{id}")
+		public String docopy(@PathVariable Long id, Model model, HttpServletRequest request) {
+			Module module = service.getRepo().getOne(id);
+			//Map<String, String[]> postdata = request.getParameterMap();
+			service.copyModule(module.getName(),request.getParameter("new_module"));
 			return "redirect:/admin/modules";
 		}
 }

@@ -493,4 +493,158 @@ public class ModuleService {
 		});
 	}
 	
+	public void copyModule(String module, String new_module) {
+		ObjectMapper objectMapper = new ObjectMapper();
+				
+		List<PortalPage> pages = null;
+		pages = pageService.getRepo().findAllByModule(module);
+		if(pages.size()>0) {
+			pages.forEach(page -> {					
+				PortalPage curp = new PortalPage();
+				curp.setAllowedRoles(page.getAllowedRoles());
+				curp.setContent(page.getContent());
+				curp.setCreatedBy(page.getCreatedBy());
+				curp.setCreatedDate(page.getCreatedDate());
+				curp.setModule(new_module);
+				curp.setSlug(page.getSlug());
+				curp.setPage_type(page.getPage_type());
+				curp.setPageData(page.getPageData());
+				curp.setPublished(page.getPublished());
+				curp.setRequireLogin(page.getRequireLogin());
+				curp.setRunable(page.getRunable());
+				curp.setTitle(page.getTitle());
+				pageService.getRepo().save(curp);					
+			});
+			pageService.getRepo().flush();
+		}		
+		
+		List<Tracker> trackers = null;
+		trackers = trackerService.getRepo().findAllByModule(module);
+		 if(trackers.size()>0) {
+			 trackers.forEach(ctracker -> {
+				 Tracker newtracker = new Tracker();
+				 
+				 newtracker.setAddRoles(ctracker.getAddRoles());
+				 newtracker.setDataTable(ctracker.getDataTable());
+				 newtracker.setDefaultStatus(ctracker.getDefaultStatus());
+				 newtracker.setDeleteRoles(ctracker.getDeleteRoles());
+				 newtracker.setDetailRoles(ctracker.getDetailRoles());
+				 newtracker.setDisplayFields(ctracker.getDisplayFields());
+				 newtracker.setEditRoles(ctracker.getEditRoles());
+				 newtracker.setExcelFields(ctracker.getExcelFields());
+				 newtracker.setFilterFields(ctracker.getFilterFields());
+				 newtracker.setFormFields(ctracker.getFormFields());
+				 newtracker.setInitialStatus(ctracker.getInitialStatus());
+				 newtracker.setListFields(ctracker.getListFields());
+				 newtracker.setModule(new_module);
+				 newtracker.setName(ctracker.getName());
+				 newtracker.setNodeId(ctracker.getNodeId());
+				 newtracker.setPostCreate(ctracker.getPostCreate());
+				 newtracker.setPostDataUpdate(ctracker.getPostDataUpdate());
+				 newtracker.setPostDelete(ctracker.getPostDelete());
+				 newtracker.setPostEdit(ctracker.getPostEdit());
+				 newtracker.setSearchFields(ctracker.getSearchFields());
+				 newtracker.setSlug(ctracker.getSlug());
+				 newtracker.setTrackerType(ctracker.getTrackerType());
+				 newtracker.setUpdatesTable(ctracker.getUpdatesTable());
+				 newtracker.setViewListRoles(ctracker.getViewListRoles());
+				 trackerService.getRepo().save(newtracker);
+				 trackerService.getRepo().flush();
+				 
+				 ctracker.getFields().forEach( cfield-> {
+					 TrackerField newfield = new TrackerField();
+					 newfield.setTracker(newtracker);
+					 newfield.setAutoValue(cfield.getAutoValue());
+					 newfield.setFieldType(cfield.getFieldType());
+					 newfield.setFieldWidget(cfield.getFieldWidget());
+					 newfield.setLabel(cfield.getLabel());
+					 newfield.setName(cfield.getName());
+					 newfield.setOptionSource(cfield.getOptionSource());
+					 newfield.setOptionSourceGroovy(cfield.getOptionSourceGroovy());
+					 newfield.setOptionSourceType(cfield.getOptionSourceType());
+					 trackerService.getFieldRepo().save(newfield);
+					 trackerService.getFieldRepo().flush();
+				 });					 					 
+			 });				 
+		 }		
+		
+		List<Setting> settings = null;
+		settings = settingService.getRepo().findAllByModule(module);
+		if(settings.size()>0) {
+			settings.forEach(csetting -> {
+				
+				Setting cc = new Setting();
+				cc.setDateValue(csetting.getDateValue());
+				cc.setModule(new_module);
+				cc.setName(csetting.getName());
+				cc.setNumberValue(csetting.getNumberValue());
+				cc.setTextValue(csetting.getTextValue());
+				cc.setType(csetting.getType());
+				
+				settingService.getRepo().save(cc);
+				settingService.getRepo().flush();
+			});				
+		}
+			
+		/* List<Tree> trees = null;
+		try {
+			File treefile = new File(mod_path + "trees.json");
+			if(treefile.exists()) {
+				trees = objectMapper.readValue(treefile, new TypeReference<List<Tree>>() {});
+				if(trees.size()>0) {
+					trees.forEach(ctree -> {
+						Tree cctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
+						if(cctree!=null) {
+							ctree.setId(cctree.getId());
+						}
+						
+						List<TreeNode> nodes = new ArrayList<TreeNode>();					
+						ctree.getNodes().forEach(cnode -> {						
+							if(cctree!=null) {
+								TreeNode prevnode = treeService.getNodeRepo().findBySlugAndParent(cnode.getSlug(), cnode.getParent());
+								if(prevnode!=null) {
+									treeService.getNodeRepo().delete(prevnode);
+								}							
+							}						
+							nodes.add(cnode);						
+						});
+						
+						ctree.setNodes(new ArrayList<TreeNode>());
+						
+						treeService.getTreeRepo().save(ctree);
+						treeService.getTreeRepo().flush();
+						
+						final Tree fctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
+						nodes.forEach(cnode -> {						
+							cnode = fixNode(cnode,fctree);
+							TreeNode prevnode = treeService.getNodeRepo().findFirstByFullPathAndTree(cnode.getFullPath(), fctree);
+							if(prevnode==null) {							
+								TreeNode saved = treeService.getNodeRepo().save(cnode);
+								cnode.getChildren().forEach(child->{
+									child.setParent(saved);
+									TreeNode savedchild = treeService.getNodeRepo().save(child);
+								});
+							}
+							else {
+								cnode.getChildren().forEach(child->{
+									child.setParent(prevnode);
+									TreeNode savedchild = treeService.getNodeRepo().save(child);
+								});
+							}
+						});					
+						treeService.getNodeRepo().flush();
+					});
+				}
+			}
+		} catch (JsonMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JsonProcessingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	*/	
+	}
 }
