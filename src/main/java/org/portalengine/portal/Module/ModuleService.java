@@ -525,7 +525,7 @@ public class ModuleService {
 				 Tracker newtracker = new Tracker();
 				 
 				 newtracker.setAddRoles(ctracker.getAddRoles());
-				 newtracker.setDataTable(ctracker.getDataTable());
+				 newtracker.setDataTable(ctracker.getDataTable().replace(module + "_" + ctracker.getSlug(),new_module + "_" + ctracker.getSlug()));
 				 newtracker.setDefaultStatus(ctracker.getDefaultStatus());
 				 newtracker.setDeleteRoles(ctracker.getDeleteRoles());
 				 newtracker.setDetailRoles(ctracker.getDetailRoles());
@@ -546,7 +546,7 @@ public class ModuleService {
 				 newtracker.setSearchFields(ctracker.getSearchFields());
 				 newtracker.setSlug(ctracker.getSlug());
 				 newtracker.setTrackerType(ctracker.getTrackerType());
-				 newtracker.setUpdatesTable(ctracker.getUpdatesTable());
+				 newtracker.setUpdatesTable(ctracker.getUpdatesTable().replace(module + "_" + ctracker.getSlug(),new_module + "_" + ctracker.getSlug()));
 				 newtracker.setViewListRoles(ctracker.getViewListRoles());
 				 trackerService.getRepo().save(newtracker);
 				 trackerService.getRepo().flush();
