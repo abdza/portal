@@ -486,7 +486,7 @@ public class PoiExcel {
 										Double curval = Double.parseDouble((String)curdata);
 										qparam.addValue(field.getName(),curval);
 									}
-									else if(field.getFieldType().equals("Integer")){
+									else if(field.getFieldType().equals("Integer") || field.getFieldType().equals("TrackerType") || field.getFieldType().equals("User") || field.getFieldType().equals("TreeNode")){
 										Integer curval = Integer.parseInt((String)curdata);
 										qparam.addValue(field.getName(),curval);
 									}
