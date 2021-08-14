@@ -391,9 +391,14 @@ public class TrackerService {
 				cquery.addValue(fieldname,fieldval);			
 			});	
 		}
-		SqlRowSet qheaders = cquery.query(query);		
-		qheaders.next();
-	    return qheaders;
+		try {
+			SqlRowSet qheaders = cquery.query(query);		
+			qheaders.next();
+			return qheaders;
+		}
+		catch(Exception e) {
+			return null;
+		}
 	}
 	
 	public DataSet dataset(Tracker tracker) {

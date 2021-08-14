@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.tags.Param;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -352,7 +358,7 @@ public class PortalController {
 	@RequestMapping(path={"/api/{slug}","/api/{module}/{slug}","/api/{module}/{slug}/{arg1}","/api/{module}/{slug}/{arg1}/{arg2}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}","/api/{module}/{slug}/{arg1}/{arg2}/{arg3}/{arg4}/{arg5}"}, produces = MediaType.APPLICATION_JSON_VALUE, method={ RequestMethod.GET, RequestMethod.POST })
 	@PreAuthorize("pagePermission(#module,#slug)")
 	@ResponseBody
-	public Object apiPage(@PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
+	public Object apiPage(HttpEntity<String> httpEntity, @PathVariable(required=false)  String module, @PathVariable String slug, Model model,HttpServletRequest request,@PathVariable(required=false) String arg1,@PathVariable(required=false) String arg2,@PathVariable(required=false) String arg3,@PathVariable(required=false) String arg4,@PathVariable(required=false) String arg5) {
 		if(module==null) {
 			module = "portal";
 		}
@@ -363,8 +369,23 @@ public class PortalController {
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 				Map<String, String[]> postdata = request.getParameterMap();
+				String json = httpEntity.getBody();
+				ObjectMapper mapper = new ObjectMapper();
+			    JsonNode qjson = null;
+			    if(json!=null) {
+					try {				
+						qjson = mapper.readTree(json.replace('`', '"'));				
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonProcessingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
 				binding.setVariable("pageService",pageService);
 				binding.setVariable("postdata", postdata);
+				binding.setVariable("json", qjson);
 				binding.setVariable("request", request);
 				binding.setVariable("trackerService",trackerService);
 				binding.setVariable("treeService",treeService);

@@ -3,13 +3,41 @@
 
 <th:block layout:fragment="head-end">
 <style type="text/css" media="screen">
-form .ace_editor { 
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-}
+form .ace_editor {
+        position: relative !important;
+        border: 1px solid lightgray;
+        margin: auto;
+        height: 50em;
+        width: 80%;
+    }
+
+   form .ace_editor.fullScreen {
+        height: auto;
+        width: auto;
+        border: 0;
+        margin: 0;
+        position: fixed !important;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100000;
+    }
+    
+    .scrollmargin {
+        height: 500px;
+        text-align: center;
+    }
+    
+    body.fullScreen {
+        overflow: hidden;
+        /*transform breaks position fixed*/
+        transform: none!important;
+    }
+    
+    body {
+        transform: translateZ(0);
+    }
 </style>
 </th:block>
 
@@ -91,7 +119,7 @@ form .ace_editor {
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Content</label></div>
-                <div class='col-sm-9' style="min-height: 50em;">
+                <div id="contenteditordiv" class='col-sm-9' style="min-height: 30em;">
                 	<input type='hidden' th:field="*{content}"/>
                     <textarea class='textarea col-12' rows="30" id='contenteditor' th:text="${page.content}">
                     </textarea>
@@ -101,7 +129,7 @@ form .ace_editor {
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>
                     <label class='mb-0'>Page Data</label></div>
-                <div class='col-sm-9' style="min-height: 50em;">
+                <div id="dataeditordiv" class='col-sm-9' style="min-height: 30em;">
                 	<input type='hidden' th:field="*{pageData}"/>
                     <textarea class='textarea col-12' rows="30" id='dataeditor' th:text="${page.pageData}">
                     </textarea>
@@ -130,10 +158,25 @@ form .ace_editor {
     </div>
 </section>
 <th:block layout:fragment="page-javascript">
+<script th:src="@{/libs/ace-editor/require.js}" type="text/javascript" charset="utf-8"></script>
 <script th:src="@{/libs/ace-editor/ace.js}" type="text/javascript" charset="utf-8"></script>
 <script th:inline="javascript">
+
+
     var editor = ace.edit("contenteditor");
     editor.setTheme("ace/theme/chrome");
+  	
+  	editor.commands.addCommand({
+	  name: "Toggle Fullscreen",
+  	  bindKey: "F11",
+  	  exec: function(editor) {
+  		  $('body').toggleClass('fullScreen');
+  		  $('#contenteditordiv .ace_editor').toggleClass('fullScreen');
+  		  var fullScreen = $('body').is('.fullScreen');
+        	editor.setAutoScrollEditorIntoView(true);
+        	editor.resize();
+  	  }
+  	});
     
     [# th:if="${page.runable==true}"]
     	editor.session.setMode("ace/mode/groovy");
@@ -156,6 +199,18 @@ form .ace_editor {
 	var dataeditor = ace.edit("dataeditor");
     dataeditor.setTheme("ace/theme/chrome");
     dataeditor.session.setMode("ace/mode/groovy");
+    
+    dataeditor.commands.addCommand({
+  	  name: "Toggle Fullscreen",
+    	  bindKey: "F11",
+    	  exec: function(dataeditor) {
+    		  $('body').toggleClass('fullScreen');
+    		  $('#dataeditordiv .ace_editor').toggleClass('fullScreen');
+    		  var fullScreen = $('body').is('.fullScreen');
+          	dataeditor.setAutoScrollEditorIntoView(true);
+          	dataeditor.resize();
+    	  }
+    	});
 
     $('#pageform').on('submit',function(){    	
 		$('#content').val(editor.getValue());
