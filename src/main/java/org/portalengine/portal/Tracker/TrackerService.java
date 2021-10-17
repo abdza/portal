@@ -21,6 +21,8 @@ import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.serial.SerialClob;
+import javax.sql.rowset.serial.SerialException;
 
 import org.portalengine.portal.DataUpdate.DataUpdateService;
 import org.portalengine.portal.FileLink.FileLinkService;
@@ -292,7 +294,7 @@ public class TrackerService {
 		ArrayList<HashMap<String,String>> toret = new ArrayList<HashMap<String,String>>();
 		
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();		
-		SqlRowSet options = namedjdbctemplate.queryForRowSet("select distinct " + field.getName() + " from " + field.getTracker().getDataTable() + " order by " + field.getName(), paramsource);
+		SqlRowSet options = namedjdbctemplate.queryForRowSet("select distinct " + dbEscapeColumn(field.getName()) + " from " + field.getTracker().getDataTable() + " order by " + dbEscapeColumn(field.getName()), paramsource);
 		HashMap<String,String> dtoin = new HashMap<String,String>();
 		dtoin.put("val", "All");
 		dtoin.put("label", "All");
@@ -359,14 +361,28 @@ public class TrackerService {
 	public HashMap<String,Object> datarow(Tracker tracker, Long id) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
-		SqlRowSet toret = namedjdbctemplate.queryForRowSet("select * from " + tracker.getDataTable() + " where id=:id", paramsource);
+		SqlRowSet toret = namedjdbctemplate.queryForRowSet("select * from " + tracker.getDataTable() + " where " + dbEscapeColumn("id") + "=:id", paramsource);
 	
 		HashMap<String,Object> currow = new HashMap<String,Object>();
 		while(toret.next()) {
 			currow.put("id", toret.getObject("id"));
 			boolean foundstatus = false;
 			for(TrackerField tf:tracker.getFields()) {
-				currow.put(tf.getName(), toret.getObject(tf.getName()));
+				Object returned = toret.getObject(tf.getName());
+				if(returned!=null) {
+					if(returned.getClass().getName().equals("javax.sql.rowset.serial.SerialClob")) {
+						SerialClob clobdata = (SerialClob) returned;
+						try {
+							currow.put(tf.getName(),clobdata.getSubString(1, (int) clobdata.length()));
+						} catch (SerialException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					else {
+						currow.put(tf.getName(),returned);
+					}
+				}
 				if(tf.getName().equals("record_status")) {
 					foundstatus = true;
 				}
@@ -397,6 +413,7 @@ public class TrackerService {
 			return qheaders;
 		}
 		catch(Exception e) {
+			System.out.println("Error custom query:" + e.toString());
 			return null;
 		}
 	}
@@ -609,6 +626,7 @@ public class TrackerService {
 			}
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");			
 		}
+		System.out.println("Filterquery:" + filterquery);
 		String userfilter = " 1=1 ";
 		
 		User curuser = userService.currentUser();
@@ -635,18 +653,18 @@ public class TrackerService {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
 		Integer offset = page * size;
-		String pagequery = " order by id";
+		String pagequery = " order by " + dbEscapeColumn("id");
 		if(orderby!=null && orderby.length()>1) {
-			pagequery = " order by " + orderby + ",id";
+			pagequery = " order by " + orderby + "," + dbEscapeColumn("id");
 		}
 		if(pagelimit) {
 			pagequery += " offset " + offset.toString() + " rows fetch next " + size.toString() + " rows only";	
 		}
 		
 		if(dataURL.contains("jdbc:mysql")) {
-			pagequery = " order by id";
+			pagequery = " order by " + dbEscapeColumn("id");
 			if(orderby!=null && orderby.length()>1) {
-				pagequery = " order by " + orderby + ",id";
+				pagequery = " order by " + orderby + "," + dbEscapeColumn("id");
 			}
 			if(pagelimit) {
 				pagequery += " limit " + offset.toString() + "," + size.toString();
@@ -666,7 +684,21 @@ public class TrackerService {
 		while(toret.next()) {
 			HashMap<String,Object> datarow = new HashMap<String,Object>();
 			for(TrackerField tf:tracker.getFields()) {
-				datarow.put(tf.getName(),toret.getObject(tf.getName()));
+				Object returned = toret.getObject(tf.getName());
+				if(returned!=null) {
+					if(returned.getClass().getName().equals("javax.sql.rowset.serial.SerialClob")) {
+						SerialClob clobdata = (SerialClob) returned;
+						try {
+							datarow.put(tf.getName(),clobdata.getSubString(1, (int) clobdata.length()));
+						} catch (SerialException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					else {
+						datarow.put(tf.getName(),returned);
+					}
+				}				
 			}
 			datarow.put("id", toret.getObject("id"));
 			rows.add(datarow);
@@ -1000,18 +1032,10 @@ public class TrackerService {
 		Long curid = null;
 		if(mapdata.get("id")!=null) {
 			ArrayList<String> updatenames = new ArrayList<String>();
-			submittednames.forEach(sname->{				
-				if(dataURL.contains("jdbc:mysql")) {
-					updatenames.add('`' + sname + '`' + "=:" + sname);
-				}
-				else if(dataURL.contains("jdbc:postgresql")) {
-					updatenames.add('"' + sname + '"' + "=:" + sname);
-				}
-				else {
-					updatenames.add('[' + sname + ']' + "=:" + sname);
-				}
+			submittednames.forEach(sname->{
+				updatenames.add(dbEscapeColumn(sname) + "=:" + sname);
 			});
-			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where id=:id";
+			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where " + dbEscapeColumn("id") + "=:id";
 			try {
 				curid = Long.parseLong((String) mapdata.get("id"));
 			}
@@ -1021,15 +1045,11 @@ public class TrackerService {
 			paramsource.addValue("id", curid);
 		}
 		else {
-			if(dataURL.contains("jdbc:mysql")) {
-				dquery = "insert into " + tracker.getDataTable() + " (`" + String.join("`,`", submittednames) + "`) values (:" + String.join(",:" , submittednames) + ")";
-			}
-			else if(dataURL.contains("jdbc:postgresql")) {			
-				dquery = "insert into " + tracker.getDataTable() + " (\"" + String.join("\",\"", submittednames) + "\") values (:" + String.join(",:" , submittednames) + ")";
-			}
-			else {
-				dquery = "insert into " + tracker.getDataTable() + " ([" + String.join("],[", submittednames) + "]) values (:" + String.join(",:" , submittednames) + ")";
-			}
+			ArrayList<String> safenames = new ArrayList<String>();
+			submittednames.forEach(sname->{				
+				safenames.add(dbEscapeColumn(sname));
+			});
+			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", safenames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}		
 		KeyHolder keyholder = new GeneratedKeyHolder();
 		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
@@ -1133,7 +1153,6 @@ public class TrackerService {
 					binding.setVariable("env", env);
 					try {
 						dval = (String)shell.evaluate(tf.getAutoValue());
-						System.out.println("Content:" + dval);
 					}
 					catch(Exception e) {
 						System.out.println("Error in page:" + e.toString());
@@ -1227,30 +1246,18 @@ public class TrackerService {
 		if(postdata.get("id")!=null) {
 			ArrayList<String> updatenames = new ArrayList<String>();
 			submittednames.forEach(sname->{
-				if(dataURL.contains("jdbc:mysql")) {
-					updatenames.add('`' + sname + '`' + "=:" + sname);
-				}
-				else if(dataURL.contains("jdbc:postgresql")) {
-					updatenames.add('"' + sname + '"' + "=:" + sname);
-				}
-				else {
-					updatenames.add('[' + sname + ']' + "=:" + sname);
-				}
+				updatenames.add(dbEscapeColumn(sname) + "=:" + sname);
 			});
-			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where id=:id";
+			dquery = "update " + tracker.getDataTable() + " set " + String.join(",", updatenames) + " where " + dbEscapeColumn("id") + "=:id";
 			curid = Long.parseLong(postdata.get("id")[0]);
 			paramsource.addValue("id", curid);
 		}
 		else {
-			if(dataURL.contains("jdbc:mysql")) {
-				dquery = "insert into " + tracker.getDataTable() + " (`" + String.join("`,`", submittednames) + "`) values (:" + String.join(",:" , submittednames) + ")";
-			}
-			else if(dataURL.contains("jdbc:postgresql")) {			
-				dquery = "insert into " + tracker.getDataTable() + " (\"" + String.join("\",\"", submittednames) + "\") values (:" + String.join(",:" , submittednames) + ")";
-			}
-			else {
-				dquery = "insert into " + tracker.getDataTable() + " ([" + String.join("],[", submittednames) + "]) values (:" + String.join(",:" , submittednames) + ")";
-			}
+			ArrayList<String> safenames = new ArrayList<String>();
+			submittednames.forEach(sname->{				
+				safenames.add(dbEscapeColumn(sname));
+			});
+			dquery = "insert into " + tracker.getDataTable() + " (" + String.join(",", safenames) + ") values (:" + String.join(",:" , submittednames) + ")";
 		}
 		KeyHolder keyholder = new GeneratedKeyHolder();		
 		namedjdbctemplate.update(dquery,paramsource,keyholder, new String[] { "id" });
@@ -1370,19 +1377,19 @@ public class TrackerService {
 					if(!dbTableExists(tracker.getUpdatesTable().toLowerCase())) {
 						// If updates table does not exists please create one
 						if(dataURL.contains("jdbc:mysql")) {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id INT NOT NULL AUTO_INCREMENT, "
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL AUTO_INCREMENT, "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
 									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
 						}
 						else if(dataURL.contains("jdbc:postgresql")) {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id serial PRIMARY KEY, "
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY, "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
 									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + ")");
 						}
 						else {
-							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (id INT NOT NULL IDENTITY(1,1), "
+							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL IDENTITY(1,1), "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
 									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
@@ -1498,6 +1505,8 @@ public class TrackerService {
 				}
 				else {
 					if(fdata!=null) {
+						System.out.println("fdata:");
+						System.out.println(fdata);
 						return String.valueOf(fdata);
 					}
 					else {
@@ -1552,16 +1561,7 @@ public class TrackerService {
 		}
 		
 		if(!dbFieldExists(field.getTracker().getDataTable().toLowerCase(),field.getName().toLowerCase())) {
-			String fixsql = "";
-			if(dataURL.contains("jdbc:mysql")) {
-				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add `" + field.getName().toLowerCase() + "` " + sqltype + " NULL";
-			}
-			else if(dataURL.contains("jdbc:postgresql") || dataURL.contains("jdbc:h2")) {
-				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add \"" + field.getName().toLowerCase() + "\" " + sqltype + " NULL";
-			} 
-			else {
-				fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add [" + field.getName().toLowerCase() + "] " + sqltype + " NULL";	
-			}			
+			String fixsql = "alter table " + field.getTracker().getDataTable().toLowerCase() + " add " + dbEscapeColumn(field.getName().toLowerCase()) + " " + sqltype + " NULL";	
 			jdbctemplate.execute(fixsql);
 		}
 	}

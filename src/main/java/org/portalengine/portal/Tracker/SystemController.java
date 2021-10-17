@@ -235,7 +235,7 @@ public class SystemController {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
-		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where id=:id", paramsource);
+		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where " + trackerService.dbEscapeColumn("id") + "=:id", paramsource);
 		PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostDelete());
 		if(postpage!=null) {
 			return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug();
