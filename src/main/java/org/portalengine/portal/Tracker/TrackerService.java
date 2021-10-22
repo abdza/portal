@@ -752,7 +752,7 @@ public class TrackerService {
 				qstring = "%" + qstring + "%";
 				for(final JsonNode jfield : search.get("like")) {
 					
-					squery.add(" ct." + jfield.asText() + " " + exp + " :" + jfield.asText() + " ");
+					squery.add(" ct." + dbEscapeColumn(jfield.asText()) + " " + exp + " :" + jfield.asText() + " ");
 					paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 				}
 			}
@@ -760,7 +760,7 @@ public class TrackerService {
 				Iterator<Map.Entry<String,JsonNode>> svals = search.get("like").fields();
 				while(svals.hasNext()) {
 					Entry<String, JsonNode> node = svals.next();
-					squery.add(" ct." + node.getKey() + " " + exp + " :" + node.getKey() + " ");
+					squery.add(" ct." + dbEscapeColumn(node.getKey()) + " " + exp + " :" + node.getKey() + " ");
 					paramsource = addValue(tracker,paramsource,node.getKey(),node.getValue().asText());
 				}
 			}
@@ -775,16 +775,16 @@ public class TrackerService {
 				            String fieldName = fieldNames.next();
 				            String queryval = jfield.get(fieldName).asText();
 				            if(queryval==null) {
-				            	squery.add(" ct." + fieldName + " is null ");			
+				            	squery.add(" ct." + dbEscapeColumn(fieldName) + " is null ");			
 				            }
 				            else {				            	
-								squery.add(" ct." + fieldName + " = :" + fieldName + " ");							
+								squery.add(" ct." + dbEscapeColumn(fieldName) + " = :" + fieldName + " ");							
 								paramsource = addValue(tracker,paramsource,fieldName, queryval);
 				            }
 						}						
 					}
 					else {
-						squery.add(" ct." + jfield.asText() + " = :" + jfield.asText() + " ");
+						squery.add(" ct." + dbEscapeColumn(jfield.asText()) + " = :" + jfield.asText() + " ");
 						paramsource = addValue(tracker,paramsource,jfield.asText(), qstring);
 					}
 				}
@@ -795,10 +795,10 @@ public class TrackerService {
 					Entry<String, JsonNode> node = svals.next();
 					String queryval = node.getValue().asText();					
 					if(queryval==null || queryval.equals("null")) {
-						squery.add(" ct." + node.getKey() + " is null ");
+						squery.add(" ct." + dbEscapeColumn(node.getKey()) + " is null ");
 					}
 					else {						
-						squery.add(" ct." + node.getKey() + " = :" + node.getKey() + " ");
+						squery.add(" ct." + dbEscapeColumn(node.getKey()) + " = :" + node.getKey() + " ");
 						paramsource = addValue(tracker,paramsource,node.getKey(), queryval);
 					}
 				}
