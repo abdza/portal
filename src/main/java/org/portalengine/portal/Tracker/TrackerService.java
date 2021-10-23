@@ -25,6 +25,7 @@ import javax.sql.rowset.serial.SerialClob;
 import javax.sql.rowset.serial.SerialException;
 
 import org.portalengine.portal.DataUpdate.DataUpdateService;
+import org.portalengine.portal.FileLink.FileLink;
 import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
@@ -54,6 +55,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -67,6 +69,7 @@ import groovy.lang.GroovyShell;
 import lombok.Data;
 
 @Service
+@Transactional
 @Data
 public class TrackerService {
 	
@@ -572,6 +575,25 @@ public class TrackerService {
 		}
 	}
 	
+	public List<UserRole> module_roles(Tracker tracker, User user) {
+		/* Check for user roles based on modules for this tracker
+		 * 
+		 */
+		List<UserRole> roles = new ArrayList<UserRole>();
+		if(user!=null) {
+			for(TrackerRole tr:tracker.getRoles()) {
+				if(tr.getRoleType().equals("User Role")) {
+					for(UserRole ur:userService.module_roles(user,tracker.getModule())) {
+						if(ur.getModule().equals(tracker.getModule()) && ur.getRole().equals(tr.getName()) ) {
+							roles.add(ur);
+						}
+					}
+				}
+			}
+		}
+		return roles;
+	}	
+
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
@@ -630,7 +652,7 @@ public class TrackerService {
 		String userfilter = " 1=1 ";
 		
 		User curuser = userService.currentUser();
-		List<UserRole> mr = tracker.module_roles(curuser);		
+		List<UserRole> mr = module_roles(tracker, curuser);		
 		if(mr.size()==0) {			
 			String rq = role_query(tracker,curuser);
 			if(rq.length()>0) {
@@ -953,6 +975,7 @@ public class TrackerService {
 				case "Integer":
 				case "User":				
 				case "Number":
+				case "File":
 					paramsource.addValue(tf.getName(),data,Types.NUMERIC);
 					break;
 				case "Date":
@@ -1180,6 +1203,7 @@ public class TrackerService {
 				case "TreeNode":
 				case "Integer":
 				case "User":
+				case "File":
 					if(dval.length()>0) {
 						paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
 					}
@@ -1371,6 +1395,7 @@ public class TrackerService {
 			if(!dbFieldExists(tracker.getDataTable().toLowerCase(),"dataupdate_id")) { 
 				jdbctemplate.execute("alter table " + tracker.getDataTable().toLowerCase() + " add " + dbEscapeColumn("dataupdate_id") + " numeric(24,0) NULL");
 			}
+			
 			if(tracker.getTrackerType().equals("Trailed Tracker")) {
 				// Need to check whether need to create updates table
 				if(tracker.getUpdatesTable().length()>0) {					
@@ -1380,19 +1405,23 @@ public class TrackerService {
 							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL AUTO_INCREMENT, "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
-									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
+									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 						}
 						else if(dataURL.contains("jdbc:postgresql")) {
+							System.out.println("Running query" + "create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY, "
+									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
+									+ "update_date timestamp, updater_id numeric(19,0), status varchar(255),"
+									+ "changes text, allowedroles varchar(255))");
 							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY, "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
-									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
-									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + ")");
+									+ "update_date timestamp, updater_id numeric(19,0), status varchar(255),"
+									+ "changes text, allowedroles varchar(255))");
 						}
 						else {
 							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " INT NOT NULL IDENTITY(1,1), "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date datetime, updater_id numeric(19,0), status varchar(255),"
-									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(id))");
+									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 						}
 					}
 				}
@@ -1427,6 +1456,18 @@ public class TrackerService {
 					if(fdata!=null) {
 						Long targetid = ((BigDecimal)fdata).longValue() ;
 						User data = userService.getRepo().getOne(targetid);
+						if(data!=null) {
+							return data.getName();
+						}
+					}
+					else {
+						return "";
+					}
+				}
+				else if(field.getFieldType().equals("File")) {
+					if(fdata!=null) {
+						Long targetid = ((BigDecimal)fdata).longValue() ;
+						FileLink data = fileService.getRepo().getOne(targetid);
 						if(data!=null) {
 							return data.getName();
 						}
@@ -1537,6 +1578,7 @@ public class TrackerService {
 			case "TrackerType":
 			case "TreeNode":
 			case "User":
+			case "File":
 			case "Integer":
 				sqltype = "numeric(24,0)";
 				break;

@@ -74,7 +74,7 @@ public class TrackerField extends Auditable<String> {
 	
 	@JsonIgnore
 	@Transient
-	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User","HasMany"};
+	public String[] typeOptions = {"String","Text","Integer","Number","Date","DateTime","Checkbox","TreeNode","TrackerType","User","File","HasMany"};
 	
 	@JsonIgnore
 	@Transient
@@ -103,7 +103,7 @@ public class TrackerField extends Auditable<String> {
 			if(fieldType.equals("String") || fieldType.equals("Text")) {
 				return datas.getString(name);
 			}
-			else if(fieldType.equals("Integer")||fieldType.equals("User")||fieldType.equals("TreeNode")||fieldType.equals("TrackerType")) {
+			else if(fieldType.equals("Integer")||fieldType.equals("User")||fieldType.equals("TreeNode")||fieldType.equals("TrackerType")||fieldType.equals("File")) {
 				return String.valueOf(datas.getInt(name));
 			}
 			else if(fieldType.equals("Number")) {

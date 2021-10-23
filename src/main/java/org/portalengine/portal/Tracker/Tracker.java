@@ -183,20 +183,6 @@ public class Tracker extends Auditable<String> {
 		transition.setTracker(null);
 	}
 	
-	public List<UserRole> module_roles(User user) {
-		List<UserRole> roles = new ArrayList<UserRole>();
-		for(TrackerRole tr:this.getRoles()) {
-			if(tr.getRoleType().equals("User Role")) {
-				for(UserRole ur:user.getRoles()) {
-					if(ur.getModule().equals(this.getModule()) && ur.getRole().equals(tr.getName()) ) {
-						roles.add(ur);
-					}
-				}
-			}
-		}
-		return roles;
-	}
-	
 	@PrePersist
 	@PreUpdate
 	void checkTables() {

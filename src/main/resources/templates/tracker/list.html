@@ -15,7 +15,7 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1>Tracker Listing</h1>
-        <a href="#" th:href="@{/admin/trackers/create}" class="btn btn-primary">Add</a>
+        <a href="#" th:href="@{/admin/trackers/create}" class="btn btn-primary" id="tracker_add">Add</a>
         
         <div class="card-body px-3 pb-1">
 		  <form class="mt-lg-3">
@@ -55,7 +55,7 @@
                 <td><a href='#' th:href='@{/admin/trackers/edit/{id}(id=${tracker.id})}' th:text="${iter.index + 1}">2</a>
                 </td>
                 <td th:text="${tracker.module}">module</td>
-                <td><a href='#' th:href='@{/admin/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}">slug
+                <td><a href='#' th:href='@{/admin/trackers/display/{id}(id=${tracker.id})}' th:text="${tracker.slug}" th:attr="id='tracker_' + ${tracker.slug}" >slug</a>
                 </td>
                 <td th:text="${tracker.name}">title</td>
                 <td th:text="${tracker.nodeId}">Node id</td>

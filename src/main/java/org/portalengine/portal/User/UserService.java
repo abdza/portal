@@ -1,5 +1,6 @@
 package org.portalengine.portal.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +77,11 @@ public class UserService implements UserDetailsService {
 		else {
 			return false;
 		}
+	}
+	
+	public List<UserRole> module_roles(User user, String module) {
+		List<UserRole> userRoles = roleRepo.findByUserAndModuleIgnoreCase(user, module);
+		return userRoles;
 	}
 
 	public List<UserNotification> currentNotifications() {
