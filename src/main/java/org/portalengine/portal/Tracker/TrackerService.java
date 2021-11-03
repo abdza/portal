@@ -1,6 +1,7 @@
 package org.portalengine.portal.Tracker;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -9,6 +10,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +22,7 @@ import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.rowset.serial.SerialClob;
 import javax.sql.rowset.serial.SerialException;
@@ -44,10 +47,14 @@ import org.portalengine.portal.User.User;
 import org.portalengine.portal.User.UserService;
 import org.portalengine.portal.User.Role.UserRole;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -1083,6 +1090,7 @@ public class TrackerService {
 	}
 	
 	public long saveForm(Tracker tracker,User principal) {
+		
 		Map<String, String[]> postdata = request.getParameterMap();
 		ArrayList<TrackerField> submittedfields = new ArrayList<TrackerField>();
 		ArrayList<String> submittednames = new ArrayList<String>();
@@ -1092,8 +1100,48 @@ public class TrackerService {
 		HashMap<String,Object> curobject = null;
 		ArrayList<String> changes = new ArrayList<String>();
 		
+		try {
+			System.out.println("Postdata:" + request.getParts().toString());
+		} catch (IOException | ServletException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}   
+		
 		if(postdata.get("id")!=null) {
 			curobject = datarow(tracker,Long.parseLong(postdata.get("id")[0]));
+		}
+		
+		Collection<javax.servlet.http.Part> fileParts;
+		try {
+			fileParts = request.getParts();
+			if (fileParts != null && fileParts.size() > 0) {
+			      for (javax.servlet.http.Part p : fileParts) {
+			    	  String partContentType = p.getContentType();
+			          String partName = p.getName();
+			          
+			          System.out.println("File Uploaded:" + partName);
+			          System.out.println("File name:" + p.getSubmittedFileName());
+			          System.out.println("content type:" + partContentType);
+			          
+			          if(partContentType!=null) {			        	  
+			        	  FileLink filelink = new FileLink();
+			        	  filelink.setModule(tracker.getModule() + "_data");
+			        	  filelink.setSlug(UUID.randomUUID().toString().replaceAll("-", ""));
+			        	  filelink.setName(p.getSubmittedFileName());
+			        	  filelink = fileService.SaveFile(p.getInputStream(), filelink);
+			        	  filelink = fileService.getRepo().save(filelink);
+			        	  String fieldname = partName.substring(4);
+			        	  paramsource.addValue(fieldname, filelink.getId());
+			        	  submittednames.add(fieldname);
+			          }
+			      }
+		    }
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ServletException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
 		if(postdata.get("transition_id")!=null) {
@@ -1156,12 +1204,17 @@ public class TrackerService {
 		
 		submittedfields.forEach(tf->{			
 			try {
+				System.out.println("sf:" + tf.getName());
+				
 				String dval=null;
 				try {
 					dval = postdata.get("val_" + tf.getName())[0];
 				} catch (NullPointerException e) {
 					dval = postdata.get("_val_" + tf.getName())[0];
 				}
+				
+				System.out.println("dval:" + dval);
+				
 				if(dval.equals("auto_field")) {					
 					Binding binding = new Binding();		
 					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
@@ -1469,7 +1522,7 @@ public class TrackerService {
 						Long targetid = ((BigDecimal)fdata).longValue() ;
 						FileLink data = fileService.getRepo().getOne(targetid);
 						if(data!=null) {
-							return data.getName();
+							return "<a href='/download/" + data.getModule() + "/" + data.getSlug() + "'>" + data.getName() + "</a>";
 						}
 					}
 					else {

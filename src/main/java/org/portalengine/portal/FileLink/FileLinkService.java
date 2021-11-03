@@ -2,7 +2,9 @@ package org.portalengine.portal.FileLink;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +96,41 @@ public class FileLinkService {
 			}			
 		}
 		return filepath;
+	}
+	
+	public FileLink SaveFile(InputStream file, FileLink filelink) {
+		try {
+			if(file.available()>0) {
+				String curfolder = System.getProperty("user.dir");
+				if(!Paths.get(uploadroot).isAbsolute()) {
+					uploadroot = curfolder + "/" + uploadroot;
+				}			
+				String targetpath = uploadroot + "/" + filelink.getModule();			
+				File fpath = new File(targetpath);			
+				if(!fpath.exists()) {
+					fpath.mkdirs();
+				}
+				String filepath = targetpath + "/" + filelink.getName();
+
+				System.out.println("Filepath:" + filepath);
+				FileOutputStream fout = new FileOutputStream(filepath);
+				file.transferTo(fout);
+				filelink.setPath(filepath);
+			}
+			else {
+				if(filelink.getId()!=null) {
+					FileLink cfile = repo.getOne(filelink.getId());
+					if(cfile!=null) {
+						filelink.setName(cfile.getName());
+						filelink.setPath(cfile.getPath());
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return filelink;
 	}
 	
 	public FileLink SaveFile(MultipartFile file, FileLink filelink) {

@@ -17,7 +17,7 @@
 </table>
 
 <div th:fragment="dataform(tracker,datas,transition)" class='dataform'>
-<form method='post' th:action='${pnode}?@{/{portalPath}/save(portalPath=${pnode.portalPath()})}:@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}">
+<form method='post' enctype="multipart/form-data" th:action='${pnode}?@{/{portalPath}/save(portalPath=${pnode.portalPath()})}:@{/{module}/{slug}/save(module=${tracker.module},slug=${tracker.slug})}' th:object="${tracker}" >
 <th:block  th:if="${datas?.get('id')!=null}">
 <input type='hidden' name='id' th:value="${datas.get('id')?.toString()}"/>
 </th:block>
@@ -128,9 +128,11 @@ $('#val_[(${field.name})]').select2({
 		<label class='mb-0' th:text="${field.label}">Module</label>
 	</div>
 	<div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
-		<th:block th:if="${field.fieldWidget=='Default'}" th:with="normalfield = ${ {'TreeNode','Date','DateTime','TrackerType','User','Text','Checkbox'} }">
+		<th:block th:if="${field.fieldWidget=='Default'}" th:with="normalfield = ${ {'TreeNode','Date','DateTime','TrackerType','User','Text','Checkbox','File'} }">
 			
 			<input th:if="${!#arrays.contains(normalfield, field.fieldType)}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
+			
+			<input th:if="${field.fieldType=='File'}" th:class="${fieldclass + field.typeClass()}" type='file' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
 			
 			<input th:if="${field.fieldType=='Checkbox'}" th:class="${fieldclass + field.typeClass()}" type='checkbox' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:checked="${@trackerService.display(field,datas)=='true'}"/>
 			<input th:if="${field.fieldType=='Checkbox'}" type='hidden' th:id="${'_val_' + field.name}" th:name="${'_val_' + field.name}" value="off"/>
@@ -156,8 +158,8 @@ $('#val_[(${field.name})]').select2({
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}">
 <div class='row pb-2'>
 <div class='col-2 is-one-quarter has-text-weight-bold text-right' th:text="${field.label + ':'}">Form Fields:</div>
-<div class='col-10' th:if="${field.FieldType!='HasMany'}" th:text="${@trackerService.display(field,datas)}" >data_table</div>
-<div class='col-10' th:if="${field.FieldType=='HasMany'}" th:utext="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='col-10' th:if="${!#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:text="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='col-10' th:if="${#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:utext="${@trackerService.display(field,datas)}" >data_table</div>
 </div>
 </div>
 </div>
