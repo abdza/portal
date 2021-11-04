@@ -7,7 +7,8 @@
 </thead>
 <tr th:each="datas,iter: ${dataset.dataRows}">
 <td><a href='#' th:text="${iter.count + dataset.number*10}" th:href="${pnode}?@{{requestURI}/t/display/{id}(requestURI=${#request.RequestURL},id=${datas.get('id')?.toString()})}:@{/{module}/{slug}/display/{id}(id=${datas.get('id')},module=${tracker.module},slug=${tracker.slug})}" >2</a></td>
-<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:text="${@trackerService.display(field,datas)}">module</td>
+<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:if="${!#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:text="${@trackerService.display(field,datas)}">module</td>
+<td th:each="field,iter: ${@trackerService.field_list(tracker,'list',null)}" th:if="${#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:utext="${@trackerService.display(field,datas)}">module</td>
 <td th:if="${@trackerService.listAction(tracker)}">
 <form th:if="${@trackerService.deletable(tracker,datas.get('id'))}" th:action="@{/{module}/{slug}/delete/{id}(module=${tracker.module},slug=${tracker.slug},id=${datas.get('id')})}" onsubmit="return confirm('Confirm delete?');" method="POST">
 	<button class="btn btn-danger">Delete</button>
@@ -31,7 +32,7 @@
 </div>
 
 <div class='form-group row'>
-<div class='offset-md-3 col-md-9'>
+<div class='offset-sm-4 col-sm-8'>
 <button class='btn btn-info' name='save'>Save</button>
 <button class='btn btn-secondary' name='cancel'>Cancel</button>
 </div>
@@ -42,7 +43,8 @@
 
 <script th:fragment="dataformjs(tracker,datas,transition)" th:inline="javascript">
 
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='DateTime'}"]
+[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}"]
+[# th:if="${field.fieldType=='DateTime'}"]
 $('#val_[(${field.name})]').datetimepicker({
 	[# th:if="${datas}"]date: moment('[(${@trackerService.display(field,datas)})]','DD/MM/YYYY HH:mm:ss'),[/]
 	format: 'DD/MM/YYYY HH:mm:ss',
@@ -54,85 +56,100 @@ $('#val_[(${field.name})]').datetimepicker({
     },
 });
 [/]
-
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='Date'}"]
-$('#val_[(${field.name})]').datetimepicker({
-	[# th:if="${datas}"]date: moment('[(${@trackerService.display(field,datas)})]','DD/MM/YYYY'),[/]
-	format: 'DD/MM/YYYY',
-	icons: {
-        time: "fa fa-clock",
-        date: "fa fa-calendar",
-        up: "fa fa-arrow-up",
-        down: "fa fa-arrow-down"
-    },
-});
+[# th:if="${field.fieldType=='Date'}"]
+	$('#val_[(${field.name})]').datetimepicker({
+		[# th:if="${datas}"]date: moment('[(${@trackerService.display(field,datas)})]','DD/MM/YYYY'),[/]
+		format: 'DD/MM/YYYY',
+		icons: {
+	        time: "fa fa-clock",
+	        date: "fa fa-calendar",
+	        up: "fa fa-arrow-up",
+	        down: "fa fa-arrow-down"
+	    },
+	});
 [/]
-
-
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='User' && field.fieldWidget!='Auto'}"]
-$('#val_[(${field.name})]').select2({
-  ajax: {
-    url: /*[[@{/api/users}]]*/'/dummy/api/users',
-    dataType: 'json',
-    processResults: function (data) {
-    	var dat = $.map(data.content, function(obj){
-    		var user = {id:obj.id,text:obj.name};
-    		return user;
-    	});        
-        return {results:dat};
-      }    
-  }
-});
+[# th:if="${field.fieldType=='User' && field.fieldWidget!='Auto'}"]
+	$('#val_[(${field.name})]').select2({
+	  ajax: {
+	    url: /*[[@{/api/users}]]*/'/dummy/api/users',
+	    dataType: 'json',
+	    processResults: function (data) {
+	    	var dat = $.map(data.content, function(obj){
+	    		var user = {id:obj.id,text:obj.name};
+	    		return user;
+	    	});        
+	        return {results:dat};
+	      }    
+	  }
+	});
 [/]
-
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TrackerType'}"]
-$('#val_[(${field.name})]').select2({
-  ajax: {
-	[# th:if="${datas?.get('id')!=null}"]
-	url: /*[[@{/api/trackers/query_field/{field_id}/{data_id}(field_id=${field.id},data_id=${datas?.get('id')})}]]*/'/dummy/api/users',
-	[/]
-	[# th:if="${datas?.get('id')==null}"]
-    url: /*[[@{/api/trackers/query_field/{field_id}(field_id=${field.id})}]]*/'/dummy/api/users',
-    [/]
-    dataType: 'json',
-    processResults: function (data) {
-    	var dat = $.map(data.content, function(obj){
-    		var record = {id:obj.id,text:obj.name};
-    		return record;
-    	});        
-        return {results:dat};
-      }    
-  }
-});
+[# th:if="${field.fieldType=='TrackerType'}"]
+	$('#val_[(${field.name})]').select2({
+	  ajax: {
+		[# th:if="${datas?.get('id')!=null}"]
+		url: /*[[@{/api/trackers/query_field/{field_id}/{data_id}(field_id=${field.id},data_id=${datas?.get('id')})}]]*/'/dummy/api/users',
+		[/]
+		[# th:if="${datas?.get('id')==null}"]
+	    url: /*[[@{/api/trackers/query_field/{field_id}(field_id=${field.id})}]]*/'/dummy/api/users',
+	    [/]
+	    dataType: 'json',
+	    processResults: function (data) {
+	    	var dat = $.map(data.content, function(obj){
+	    		var record = {id:obj.id,text:obj.name};
+	    		return record;
+	    	});        
+	        return {results:dat};
+	      }    
+	  }
+	});
 [/]
-	
-[# th:each="field,iter: ${@trackerService.field_list(tracker,'form',transition)}" th:if="${field.fieldType=='TreeNode'}"]
-$('#val_[(${field.name})]').select2({
-  ajax: {
-    url: /*[[@{/api/trees/nodequery}]]*/'/dummy/api/users',
-    dataType: 'json',
-    processResults: function (data) {
-    	var dat = $.map(data.content, function(obj){
-    		var node = {id:obj.id,text:obj.name};
-    		return node;
-    	});        
-        return {results:dat};
-      }    
-  }
-});
+[# th:if="${field.fieldType=='TreeNode'}"]
+	$('#val_[(${field.name})]').select2({
+	  ajax: {
+	    url: /*[[@{/api/trees/nodequery}]]*/'/dummy/api/users',
+	    dataType: 'json',
+	    processResults: function (data) {
+	    	var dat = $.map(data.content, function(obj){
+	    		var node = {id:obj.id,text:obj.name};
+	    		return node;
+	    	});        
+	        return {results:dat};
+	      }    
+	  }
+	});
+[/]
+[# th:if="${field.fieldType=='File'}"]
+	$('#delbutton_[(${field.name})]').on('click',function(){
+		 if($('#del_[(${field.name})]').val()==''){
+			 $('#del_[(${field.name})]').val('delete');
+			 $('#dellink_[(${field.name})]').toggleClass('strike');
+		 }
+		 else{
+			 $('#del_[(${field.name})]').val('');
+			 $('#dellink_[(${field.name})]').toggleClass('strike');
+		 }
+	});
+[/]
 [/]
 </script>
 
 <div th:fragment="dataformfield(tracker,datas,field)" class="dataform form-group row">
-	<div class='col-sm-3 col-form-label text-sm-right pr-0'>
+	<div class='col-sm-4 col-form-label text-sm-right pr-0'>
 		<label class='mb-0' th:text="${field.label}">Module</label>
 	</div>
-	<div class='col-sm-9' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
+	<div class='col-sm-8' th:with="fieldclass=${'form-control col-sm-8 col-md-6 '}">
 		<th:block th:if="${field.fieldWidget=='Default'}" th:with="normalfield = ${ {'TreeNode','Date','DateTime','TrackerType','User','Text','Checkbox','File'} }">
 			
 			<input th:if="${!#arrays.contains(normalfield, field.fieldType)}" th:class="${fieldclass + field.typeClass()}" type='text' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
 			
-			<input th:if="${field.fieldType=='File'}" th:class="${fieldclass + field.typeClass()}" type='file' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:value="${@trackerService.display(field,datas)}"/>
+			<th:block th:if="${field.fieldType=='File'}">
+			<input  th:class="${fieldclass + field.typeClass()}" type='file' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}"/>
+			<span th:if="${datas?.get(field.name)!=null}"  class="p-2">
+			<span th:id="${'dellink_' + field.name}" th:utext="${@trackerService.display(field,datas)}">Exist</span>
+			<input th:id="${'del_' + field.name}" th:name="${'del_' + field.name}" type='hidden'/>
+			<a th:id="${'delbutton_' + field.name}" href='#' class="p-1"><i class="far fa-window-close"></i></a>
+			</span>
+			</th:block>
 			
 			<input th:if="${field.fieldType=='Checkbox'}" th:class="${fieldclass + field.typeClass()}" type='checkbox' th:id="${'val_' + field.name}" th:name="${'val_' + field.name}" th:checked="${@trackerService.display(field,datas)=='true'}"/>
 			<input th:if="${field.fieldType=='Checkbox'}" type='hidden' th:id="${'_val_' + field.name}" th:name="${'_val_' + field.name}" value="off"/>
@@ -154,12 +171,12 @@ $('#val_[(${field.name})]').select2({
 	</div>
 </div>
 
-<div th:fragment="datadisplay(tracker,datas)" class='datadisplay m-3'>
+<div th:fragment="datadisplay(tracker,datas)" th:if="${datas}" class='datadisplay m-3'>
 <div th:each="field,iter: ${@trackerService.field_list(tracker,'display',null)}">
 <div class='row pb-2'>
-<div class='col-2 is-one-quarter has-text-weight-bold text-right' th:text="${field.label + ':'}">Form Fields:</div>
-<div class='col-10' th:if="${!#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:text="${@trackerService.display(field,datas)}" >data_table</div>
-<div class='col-10' th:if="${#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:utext="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='col-sm-4 is-one-quarter has-text-weight-bold text-sm-right' th:text="${field.label + ' :'}">Form Fields:</div>
+<div class='col-sm-8' th:if="${!#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:text="${@trackerService.display(field,datas)}" >data_table</div>
+<div class='col-sm-8' th:if="${#lists.contains({'HasMany', 'File'}, field.FieldType)}" th:utext="${@trackerService.display(field,datas)}" >data_table</div>
 </div>
 </div>
 </div>

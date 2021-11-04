@@ -4,6 +4,10 @@
 <section layout:fragment="content" class='page-content'>
     <div class='content'>
         <h1 th:text="${formtitle}">Add Data</h1>
+        
+        <div class='dataform'
+        	th:replace="tracker/trackerbase::datadisplay(tracker=${tracker},datas=${datas})">
+        </div>
 
         <div class='dataform'
             th:replace="tracker/trackerbase::dataform(tracker=${tracker},datas=${datas},transition=${transition})">

@@ -119,7 +119,6 @@ public class PortalController {
 	
 	@GetMapping("/testemail")
 	public String testemail(Model model) {
-		System.out.println("In email");
 		
 		SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo("abdullah.zainul@gmail.com");
@@ -185,7 +184,6 @@ public class PortalController {
 			String[] modules = setup_modules.split(",");
 			for(String rawmodule : modules ) {
 				String module = rawmodule.trim();
-				System.out.println("Importing " + module);
 				moduleService.importModule(module);				
 				List<Tracker> trackers = trackerService.getRepo().findAllByModule(module);
 				for(Tracker tracker : trackers) {					
@@ -193,9 +191,7 @@ public class PortalController {
 				}	
 				PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, "post_module_import");
 				if(curpage!=null) {
-					System.out.println("Found post import page for " + module);
-					if(curpage.getRunable()) {				
-						System.out.println("Page is runable");
+					if(curpage.getRunable()) {
 						Binding binding = new Binding();		
 						GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 						Map<String, String[]> postdata = request.getParameterMap();
@@ -214,12 +210,10 @@ public class PortalController {
 						Object content = null;
 						try {
 							content = shell.evaluate(curpage.getContent());
-							System.out.println("Content:" + content);
 						}
 						catch(Exception e) {
 							System.out.println("Error in page:" + e.toString());
-						}							
-						System.out.println("Done run page");
+						}
 					}
 				}
 			}
@@ -281,7 +275,6 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
-					System.out.println("Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -335,7 +328,6 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
-					System.out.println("Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -365,7 +357,6 @@ public class PortalController {
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable() && curpage.getPage_type().toLowerCase().equals("api")) {
-				System.out.println("In api page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 				Map<String, String[]> postdata = request.getParameterMap();
@@ -404,7 +395,6 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
-					System.out.println("api Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -432,7 +422,6 @@ public class PortalController {
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getRunable() && curpage.getPage_type().toLowerCase().equals("json")) {
-				System.out.println("In json page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 				Map<String, String[]> postdata = request.getParameterMap();
@@ -456,7 +445,6 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getContent());
-					System.out.println("Json Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -484,7 +472,6 @@ public class PortalController {
 		PortalPage curpage = pageService.getRepo().findOneByModuleAndSlug(module, slug);				
 		if(curpage!=null) {
 			if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
-				System.out.println("In data page");
 				Binding binding = new Binding();		
 				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
 				Map<String, String[]> postdata = request.getParameterMap();
@@ -508,7 +495,6 @@ public class PortalController {
 				Object content = null;
 				try {
 					content = shell.evaluate(curpage.getPageData());
-					System.out.println("data Content:" + content);
 				}
 				catch(Exception e) {
 					System.out.println("Error in page:" + e.toString());
@@ -572,8 +558,6 @@ public class PortalController {
 						System.out.println("Error in page:" + e.toString());
 					}
 					if(curpage.getPage_type().toLowerCase().equals("template")) {
-						System.out.println("in template running");
-						System.out.println(content);
 						model.addAttribute("pageTitle","Running " + curpage.getTitle());
 						model.addAttribute("page", curpage);
 						model.addAttribute("content",content);

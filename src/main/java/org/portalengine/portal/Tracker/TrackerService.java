@@ -655,7 +655,6 @@ public class TrackerService {
 			}
 			paramsource = (MapSqlParameterSource) curquery.get("paramsource");			
 		}
-		System.out.println("Filterquery:" + filterquery);
 		String userfilter = " 1=1 ";
 		
 		User curuser = userService.currentUser();
@@ -706,8 +705,6 @@ public class TrackerService {
 			totalPages += 1;
 		}
 		dataset.setTotalPages(totalPages);
-		System.out.println("final query:" + basequery + filterquery + pagequery);
-		System.out.println(paramsource);
 		SqlRowSet toret = namedjdbctemplate.queryForRowSet(basequery + filterquery + pagequery, paramsource);
 		ArrayList<HashMap<String,Object>> rows = new ArrayList<HashMap<String,Object>>(); 
 		while(toret.next()) {
@@ -760,8 +757,6 @@ public class TrackerService {
 			subquery = jsonquery(tracker, search.get("not"), filterquery, paramsource,"not");
 			paramsource = (MapSqlParameterSource) subquery.get("paramsource");
 			filterquery = " not " + (String) subquery.get("filterquery");
-			System.out.println("Got not in the query");
-			System.out.println(filterquery);
 		}
 		if(combinor==null) {
 			combinor = "or";
@@ -879,10 +874,7 @@ public class TrackerService {
 					orderby += node.getValue().asText();
 					curpos++;
 				}
-			}
-			else {
-				System.out.println("what on earth " + search.get("order").getClass());
-			}			
+			}		
 		}
 		curquery.put("orderby", orderby);		
 		curquery.put("filterquery", filterquery);
@@ -1100,48 +1092,8 @@ public class TrackerService {
 		HashMap<String,Object> curobject = null;
 		ArrayList<String> changes = new ArrayList<String>();
 		
-		try {
-			System.out.println("Postdata:" + request.getParts().toString());
-		} catch (IOException | ServletException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}   
-		
 		if(postdata.get("id")!=null) {
 			curobject = datarow(tracker,Long.parseLong(postdata.get("id")[0]));
-		}
-		
-		Collection<javax.servlet.http.Part> fileParts;
-		try {
-			fileParts = request.getParts();
-			if (fileParts != null && fileParts.size() > 0) {
-			      for (javax.servlet.http.Part p : fileParts) {
-			    	  String partContentType = p.getContentType();
-			          String partName = p.getName();
-			          
-			          System.out.println("File Uploaded:" + partName);
-			          System.out.println("File name:" + p.getSubmittedFileName());
-			          System.out.println("content type:" + partContentType);
-			          
-			          if(partContentType!=null) {			        	  
-			        	  FileLink filelink = new FileLink();
-			        	  filelink.setModule(tracker.getModule() + "_data");
-			        	  filelink.setSlug(UUID.randomUUID().toString().replaceAll("-", ""));
-			        	  filelink.setName(p.getSubmittedFileName());
-			        	  filelink = fileService.SaveFile(p.getInputStream(), filelink);
-			        	  filelink = fileService.getRepo().save(filelink);
-			        	  String fieldname = partName.substring(4);
-			        	  paramsource.addValue(fieldname, filelink.getId());
-			        	  submittednames.add(fieldname);
-			          }
-			      }
-		    }
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (ServletException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		
 		if(postdata.get("transition_id")!=null) {
@@ -1200,106 +1152,166 @@ public class TrackerService {
 					}
 				}
 			}
-		});
+		});		
+		
+		Collection<javax.servlet.http.Part> fileParts;
+		try {
+			fileParts = request.getParts();
+			if (fileParts != null && fileParts.size() > 0) {
+			      for (javax.servlet.http.Part p : fileParts) {
+			    	  String partContentType = p.getContentType();
+			          String partName = p.getName();
+			          String fieldName = partName;
+			          if(partName.length()>5) {
+			        	  fieldName = partName.substring(4);
+			          }
+			          
+			          Object fid = null;
+			          if(fcurobject!=null) {
+			        	  fid = fcurobject.get(fieldName);
+			          }
+			          if(partContentType!=null) {
+			        	  if(p.getSubmittedFileName().length()>0) {				   
+				        	  FileLink filelink = new FileLink();
+				        	  filelink.setModule(tracker.getModule() + "_data");
+				        	  String slug = UUID.randomUUID().toString().replaceAll("-", "");
+				        	  filelink.setSlug(slug);
+				        	  filelink.setName(p.getSubmittedFileName());
+				        	  filelink = fileService.SaveFile(p.getInputStream(), filelink);
+				        	  filelink = fileService.getRepo().save(filelink);
+				        	  paramsource.addValue(fieldName, filelink.getId());
+				        	  submittednames.add(fieldName);
+				        	  if(fid!=null) {
+				        		  fileService.deleteById(Long.valueOf(String.valueOf(fid)));
+				        	  }
+			        	  }
+			        	  else {
+				        	  try {
+				        		  String dval = postdata.get("del_" + fieldName)[0];
+				        		  if(dval.equals("delete")) {
+				        			  paramsource.addValue(fieldName, null);
+						        	  submittednames.add(fieldName);
+						        	  if(fid!=null) {
+						        		  fileService.deleteById(Long.valueOf(String.valueOf(fid)));
+						        	  }
+				        		  }
+				        	  } catch (NullPointerException edd) {
+									
+				        	  }
+			        	  }
+			          }
+			      }
+		    }
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ServletException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		submittedfields.forEach(tf->{			
-			try {
-				System.out.println("sf:" + tf.getName());
-				
+			try {			
 				String dval=null;
 				try {
 					dval = postdata.get("val_" + tf.getName())[0];
 				} catch (NullPointerException e) {
-					dval = postdata.get("_val_" + tf.getName())[0];
-				}
-				
-				System.out.println("dval:" + dval);
-				
-				if(dval.equals("auto_field")) {					
-					Binding binding = new Binding();		
-					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
-					binding.setVariable("pageService",pageService);
-					binding.setVariable("postdata", postdata);
-					binding.setVariable("request", request);
-					binding.setVariable("trackerService",this);
-					binding.setVariable("treeService",treeService);
-					binding.setVariable("userService",userService);
-					binding.setVariable("fileService",fileService);
-					binding.setVariable("settingService", settingService);
-					binding.setVariable("env", env);
 					try {
-						dval = (String)shell.evaluate(tf.getAutoValue());
-					}
-					catch(Exception e) {
-						System.out.println("Error in page:" + e.toString());
-					}
-				}
-				
-				switch(tf.getFieldType()) {
-				case "Checkbox":
-					boolean curval;
-					if(dval.equals("on")) {
-						curval = true;						
-					}
-					else {
-						curval = false;
-					}
-					paramsource.addValue(tf.getName(), curval, Types.SMALLINT);
-					break;
-				case "String":
-					paramsource.addValue(tf.getName(), dval, Types.VARCHAR);					
-					break;
-				case "Text":
-					paramsource.addValue(tf.getName(), dval, Types.LONGVARCHAR);					
-					break;
-				case "TrackerType":
-				case "TreeNode":
-				case "Integer":
-				case "User":
-				case "File":
-					if(dval.length()>0) {
-						paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
-					}
-					else {
-						paramsource.addValue(tf.getName(),null);
-					}
-					break;
-				case "Number":
-					if(dval.length()>0) {
-						paramsource.addValue(tf.getName(), Double.parseDouble(dval), Types.NUMERIC);
-					}
-					else {
-						paramsource.addValue(tf.getName(),null);
-					}
-					break;
-				case "Date":
-				case "DateTime":
-					DateFormat format;
-					if(tf.getFieldType().equals("Date")) {
-						format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
-					}
-					else {
-						format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
-					}
-					Date date;
-	
-					if(dval.length()>0) {
-						date = format.parse(dval);
-						if(date!=null) {
-							if(tf.getFieldType().equals("Date")) {
-								paramsource.addValue(tf.getName(), date, Types.DATE);
-							}
-							else {
-								paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
-							}
+						dval = postdata.get("_val_" + tf.getName())[0];
+					} catch (NullPointerException ed) {
+						try {
+							dval = postdata.get("del_" + tf.getName())[0];
+						} catch (NullPointerException edd) {
+							
 						}
 					}
-					else {
-						paramsource.addValue(tf.getName(),null);
-					}
-	
 				}
-				submittednames.add(tf.getName());
+
+				if(dval!=null) {				
+					if(dval.equals("auto_field")) {					
+						Binding binding = new Binding();		
+						GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
+						binding.setVariable("pageService",pageService);
+						binding.setVariable("postdata", postdata);
+						binding.setVariable("request", request);
+						binding.setVariable("trackerService",this);
+						binding.setVariable("treeService",treeService);
+						binding.setVariable("userService",userService);
+						binding.setVariable("fileService",fileService);
+						binding.setVariable("settingService", settingService);
+						binding.setVariable("env", env);
+						try {
+							dval = (String)shell.evaluate(tf.getAutoValue());
+						}
+						catch(Exception e) {
+							System.out.println("Error in page:" + e.toString());
+						}
+					}
+					
+					switch(tf.getFieldType()) {
+					case "Checkbox":
+						boolean curval;
+						if(dval.equals("on")) {
+							curval = true;						
+						}
+						else {
+							curval = false;
+						}
+						paramsource.addValue(tf.getName(), curval, Types.SMALLINT);
+						break;
+					case "String":
+						paramsource.addValue(tf.getName(), dval, Types.VARCHAR);					
+						break;
+					case "Text":
+						paramsource.addValue(tf.getName(), dval, Types.LONGVARCHAR);					
+						break;
+					case "TrackerType":
+					case "TreeNode":
+					case "Integer":
+					case "User":
+						if(dval.length()>0) {
+							paramsource.addValue(tf.getName(), Integer.parseInt(dval), Types.NUMERIC);
+						}
+						else {
+							paramsource.addValue(tf.getName(),null);
+						}
+						break;
+					case "Number":
+						if(dval.length()>0) {
+							paramsource.addValue(tf.getName(), Double.parseDouble(dval), Types.NUMERIC);
+						}
+						else {
+							paramsource.addValue(tf.getName(),null);
+						}
+						break;
+					case "Date":
+					case "DateTime":
+						DateFormat format;
+						if(tf.getFieldType().equals("Date")) {
+							format = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+						}
+						else {
+							format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.ENGLISH);
+						}
+						Date date;
+		
+						if(dval.length()>0) {
+							date = format.parse(dval);
+							if(date!=null) {
+								if(tf.getFieldType().equals("Date")) {
+									paramsource.addValue(tf.getName(), date, Types.DATE);
+								}
+								else {
+									paramsource.addValue(tf.getName(), date, Types.TIMESTAMP);
+								}
+							}
+						}
+						else {
+							paramsource.addValue(tf.getName(),null);
+						}		
+					}
+					submittednames.add(tf.getName());
+				}
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				System.out.println("In parse error");
@@ -1382,10 +1394,8 @@ public class TrackerService {
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
-			System.out.println("Table " + tablename + " does not exists");
 			return false;
 		}
-		System.out.println("Table " + tablename + " already exists");
 		return true;		
 	}
 	
@@ -1398,10 +1408,8 @@ public class TrackerService {
 		SqlRowSet trythis = jdbctemplate.queryForRowSet(toquery);
 		trythis.next();
 		if(trythis.getInt("result")==0) {
-			System.out.println("Field " + columname + " does not exists");
 			return false;
 		}
-		System.out.println("Field " + columname + " already exists");
 		return true;
 	}
 	
@@ -1461,10 +1469,6 @@ public class TrackerService {
 									+ "changes text, allowedroles varchar(255),CONSTRAINT PK_" + tracker.getUpdatesTable().toLowerCase() + UUID.randomUUID().toString().replace("-", "") + " PRIMARY KEY(" + dbEscapeColumn("id") + "))");
 						}
 						else if(dataURL.contains("jdbc:postgresql")) {
-							System.out.println("Running query" + "create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY, "
-									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
-									+ "update_date timestamp, updater_id numeric(19,0), status varchar(255),"
-									+ "changes text, allowedroles varchar(255))");
 							jdbctemplate.execute("create table " + tracker.getUpdatesTable().toLowerCase() + " (" + dbEscapeColumn("id") + " serial PRIMARY KEY, "
 									+ "attachment_id numeric(19,0), description text, record_id numeric(19,0),"
 									+ "update_date timestamp, updater_id numeric(19,0), status varchar(255),"
@@ -1599,8 +1603,6 @@ public class TrackerService {
 				}
 				else {
 					if(fdata!=null) {
-						System.out.println("fdata:");
-						System.out.println(fdata);
 						return String.valueOf(fdata);
 					}
 					else {

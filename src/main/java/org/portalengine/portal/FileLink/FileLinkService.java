@@ -64,9 +64,11 @@ public class FileLinkService {
 	public void deleteById(Long id) {
 		FileLink fileLink = repo.findById(id).orElse(null);
 		if(fileLink!=null) {
-			File fpath = new File(fileLink.getPath());			
-			if(!fpath.exists()) {
-				fpath.delete();
+			if(fileLink.getPath()!=null && fileLink.getPath().length()>0) {
+				File fpath = new File(fileLink.getPath());			
+				if(fpath.exists()) {
+					fpath.delete();
+				}
 			}
 			repo.deleteById(id);
 		}
@@ -110,9 +112,12 @@ public class FileLinkService {
 				if(!fpath.exists()) {
 					fpath.mkdirs();
 				}
-				String filepath = targetpath + "/" + filelink.getName();
+				String slug = filelink.getSlug();
+				if(slug.length()>6) {
+					slug = slug.substring(slug.length()/2);
+				}
+				String filepath = targetpath + "/" + slug +  filelink.getName();
 
-				System.out.println("Filepath:" + filepath);
 				FileOutputStream fout = new FileOutputStream(filepath);
 				file.transferTo(fout);
 				filelink.setPath(filepath);
@@ -146,7 +151,6 @@ public class FileLinkService {
 			}
 			String filepath = targetpath + "/" + file.getOriginalFilename();
 			try {
-				System.out.println("Filepath:" + filepath);
 				file.transferTo(new File(filepath));
 			} catch (IllegalStateException e) {
 				// TODO Auto-generated catch block
