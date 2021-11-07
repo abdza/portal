@@ -92,7 +92,11 @@
                 </div>
                 <div class='col-sm-9'>
                     <ul>
-                    <li>Role: Name</li>
+                    <li th:each="tnu,iter: ${curnode.users}">
+                    <span th:name="${'role_' + tnu.id}" th:id="${'role_' + tnu.id}" th:text="${tnu.role + ':' + tnu.user.name}">Role: Name</span>
+                    <input type='hidden' th:id="${'delrole_' + tnu.id}" th:name="${'delrole_' + tnu.id}"/>
+                    <a th:id="${'delbutton_' + tnu.id}" href='#' class="p-1 delbutton" th:attr="data-id=${tnu.getId()}"><i class="far fa-window-close"></i></a>
+                    </li>
                     </ul>
                 </div>
             </div>
@@ -134,5 +138,16 @@ function updateObjectId(selection){
 	$('#searchObject').modal('hide');
 	
 }
+$('.delbutton').on("click",function(){
+	var id = $(this).data('id');
+	if($('#delrole_' + id).val()==''){
+		 $('#delrole_' + id).val('delete');
+		 $('#role_' + id).toggleClass('strike');
+	 }
+	 else{
+		 $('#delrole_' + id).val('');
+		 $('#role_' + id).toggleClass('strike');
+	 }
+});
 </script>
 </th:block>

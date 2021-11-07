@@ -182,6 +182,13 @@ public class TreeController {
 			}
 			curnode.setStatus(postdata.get("status"));
 			service.getNodeRepo().save(curnode);
+			for(TreeUser tn:curnode.getUsers()) {
+				if(postdata.get("delrole_" + tn.getId().toString())!=null) {
+					if(postdata.get("delrole_" + tn.getId().toString()).equals("delete")) {
+						service.getUserRepo().delete(tn);
+					}	
+				}
+			}
 			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString();
 		}
 		

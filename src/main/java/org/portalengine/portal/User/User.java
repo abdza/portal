@@ -72,6 +72,7 @@ public class User extends Auditable<String> implements UserDetails {
 		this.isAdmin = isAdmin;
 	}
 	
+	@JsonIgnore
 	@OneToMany(
 			mappedBy = "user",
 			orphanRemoval = true)

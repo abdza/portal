@@ -62,6 +62,7 @@ public class TreeNode extends Auditable<String> {
 			orphanRemoval = true)
 	private List<TreeUser> users = new ArrayList<>();	
 	
+	@JsonIgnore
 	@OneToMany(
 			mappedBy = "parent",
 			orphanRemoval = true)
