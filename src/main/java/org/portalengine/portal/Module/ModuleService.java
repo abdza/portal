@@ -1,6 +1,8 @@
 package org.portalengine.portal.Module;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +14,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +43,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.TemplateSpec;
 import org.thymeleaf.context.Context;
@@ -131,6 +136,61 @@ public class ModuleService {
 			}
 		});
 		return node;
+	}
+	
+	public void uploadModule(MultipartFile file) {
+		String cwd = new File("").getAbsolutePath() + "/custom_modules";
+		String prepend = settingService.StringSetting("module_folder",cwd);
+		File mpf = new File(prepend);
+		if(!mpf.exists()) {
+			mpf.mkdirs();
+		}
+		String filepath = prepend + "/" + file.getOriginalFilename();
+		try {
+			file.transferTo(new File(filepath));
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		FileInputStream fis;
+        //buffer for read and write data to file
+        byte[] buffer = new byte[1024];
+        try {
+            fis = new FileInputStream(filepath);
+            ZipInputStream zis = new ZipInputStream(fis);
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(prepend + File.separator + fileName);
+                System.out.println("Unzipping to "+newFile.getAbsolutePath());
+                //create directories for sub directories in zip
+                if(ze.isDirectory()) {
+                	newFile.mkdirs();
+                }
+                else {
+                	new File(newFile.getParent()).mkdirs();
+                	FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                }                
+                //close this ZipEntry
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+            //close last ZipEntry
+            zis.closeEntry();
+            zis.close();
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public void importModule(String module) {
@@ -585,66 +645,5 @@ public class ModuleService {
 				settingService.getRepo().flush();
 			});				
 		}
-			
-		/* List<Tree> trees = null;
-		try {
-			File treefile = new File(mod_path + "trees.json");
-			if(treefile.exists()) {
-				trees = objectMapper.readValue(treefile, new TypeReference<List<Tree>>() {});
-				if(trees.size()>0) {
-					trees.forEach(ctree -> {
-						Tree cctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
-						if(cctree!=null) {
-							ctree.setId(cctree.getId());
-						}
-						
-						List<TreeNode> nodes = new ArrayList<TreeNode>();					
-						ctree.getNodes().forEach(cnode -> {						
-							if(cctree!=null) {
-								TreeNode prevnode = treeService.getNodeRepo().findBySlugAndParent(cnode.getSlug(), cnode.getParent());
-								if(prevnode!=null) {
-									treeService.getNodeRepo().delete(prevnode);
-								}							
-							}						
-							nodes.add(cnode);						
-						});
-						
-						ctree.setNodes(new ArrayList<TreeNode>());
-						
-						treeService.getTreeRepo().save(ctree);
-						treeService.getTreeRepo().flush();
-						
-						final Tree fctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
-						nodes.forEach(cnode -> {						
-							cnode = fixNode(cnode,fctree);
-							TreeNode prevnode = treeService.getNodeRepo().findFirstByFullPathAndTree(cnode.getFullPath(), fctree);
-							if(prevnode==null) {							
-								TreeNode saved = treeService.getNodeRepo().save(cnode);
-								cnode.getChildren().forEach(child->{
-									child.setParent(saved);
-									TreeNode savedchild = treeService.getNodeRepo().save(child);
-								});
-							}
-							else {
-								cnode.getChildren().forEach(child->{
-									child.setParent(prevnode);
-									TreeNode savedchild = treeService.getNodeRepo().save(child);
-								});
-							}
-						});					
-						treeService.getNodeRepo().flush();
-					});
-				}
-			}
-		} catch (JsonMappingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (JsonProcessingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	*/	
 	}
 }

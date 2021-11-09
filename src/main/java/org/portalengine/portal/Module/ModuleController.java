@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -83,8 +85,19 @@ public class ModuleController {
 		@PostMapping("/copy/{id}")
 		public String docopy(@PathVariable Long id, Model model, HttpServletRequest request) {
 			Module module = service.getRepo().getOne(id);
-			//Map<String, String[]> postdata = request.getParameterMap();
 			service.copyModule(module.getName(),request.getParameter("new_module"));
+			return "redirect:/admin/modules";
+		}
+		
+		@GetMapping("/upload")
+		public String upload(Model model) {
+			return "module/upload.html";
+		}
+		
+		@PostMapping("/upload")
+		public String doupload(@RequestParam("upload_module") MultipartFile upload_module, Model model, HttpServletRequest request) {
+			service.uploadModule(upload_module);
+			service.updatelisting();
 			return "redirect:/admin/modules";
 		}
 }
