@@ -73,9 +73,13 @@ public class PageService {
 		return template;
 	}
 	
-	public String renderPage(String slug) {		
+	public String renderPage(String slug) {	
+		return renderPage("portal",slug);
+	}
+	
+	public String renderPage(String module, String slug) {		
 		try {
-			PortalPage curpage = this.repo.findOneByModuleAndSlug("portal", slug);
+			PortalPage curpage = this.repo.findOneByModuleAndSlug(module, slug);
 			if(curpage!=null) {
 				String toreturn = getTemplateFromMap(curpage.getContent(), null);
 				if(toreturn.trim().length()>0) {

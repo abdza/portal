@@ -36,11 +36,15 @@ public class TreeApiController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/nodequery")
-	public Object nodequery(HttpServletRequest request, Model model) {
+	@GetMapping(value={"/nodequery","/nodequery/{tree_id}"})
+	public Object nodequery(HttpServletRequest request, Model model, @PathVariable(required=false) Long tree_id) {
 		Map<String, Object> map = new HashMap<String,Object>();
 		int page = 0;
 		int size = 20;
+		Tree tree = null;
+		if(tree_id!=null) {
+			tree = service.getTreeRepo().getOne(tree_id);
+		}
 		if(request.getParameter("page") != null && !request.getParameter("page").isEmpty()) {
 			page = Integer.parseInt(request.getParameter("page")) - 1;
 		}
@@ -52,10 +56,22 @@ public class TreeApiController {
 		if(request.getParameter("q")!=null) {
 			search = "%" + request.getParameter("q").replace(" " , "%") + "%";		
 			Pageable pageable = PageRequest.of(page, size);
-			toreturn = service.getNodeRepo().apiquery(search,pageable);
+			if(tree!=null) {
+				toreturn = service.getNodeRepo().apiquery(tree,search,pageable);
+			}
+			else {
+				toreturn = service.getNodeRepo().apiquery(search,pageable);
+			}
 		}
 		else {
-			toreturn = service.getNodeRepo().findAll(PageRequest.of(page, size));
+			if(tree!=null) {
+				Pageable pageable = PageRequest.of(page, size);
+				System.out.println("Full tree for:" + tree.getName());
+				toreturn = service.getNodeRepo().findAllByTree(tree,pageable);
+			}
+			else {
+				toreturn = service.getNodeRepo().findAll(PageRequest.of(page, size));
+			}
 		}
 		
 		ArrayList<TreeNode> nodelist = new ArrayList<TreeNode>();
@@ -136,10 +152,14 @@ public class TreeApiController {
 	}
 	
 	@PostMapping("/node/{node_id}/delete")
-	public boolean deleteTreeNode(@PathVariable Long node_id) {
+	public Long deleteTreeNode(@PathVariable Long node_id) {
 		TreeNode curnode = service.getNodeRepo().findById(node_id).orElse(null);
+		Long parent_id = null;
+		if(curnode!=null) {
+			parent_id = curnode.getParent().getId();
+		}
 		service.deleteNode(curnode);
-		return true;
+		return parent_id;
 	}
 	
 	@GetMapping("/node/{node_id}")

@@ -37,7 +37,7 @@
 			<thead>
 			<tr>
 				<th>#</th>
-				<th>Username</th>
+				<th th:if="${@environment.getProperty('jpf.enable_username')}">Username</th>
 				<th>Staff Id</th>
 				<th>Name</th>
 				<th>Email</th>
@@ -46,9 +46,9 @@
 			</thead>
 			<tr th:each="user,iter: ${users}">
 				<td><a href='#'
-					th:href='@{/admin/users/edit/{id}(id=${user.id})}'
+					th:href='@{/admin/users/display/{id}(id=${user.id})}'
 					th:text="${iter.index + 1}">2</a></td>
-				<td th:text="${user.username}">module</td>
+				<td th:if="${@environment.getProperty('jpf.enable_username')}" th:text="${user.username}">module</td>
 				<td th:text="${user.staffid}">module</td>
 				<td th:text="${user.name}">module</td>
 				<td th:text="${user.email}">module</td>

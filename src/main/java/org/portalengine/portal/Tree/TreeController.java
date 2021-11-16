@@ -93,12 +93,15 @@ public class TreeController {
 			return "redirect:/admin/trees/display/" + String.valueOf(id);
 		}
 		
-		@GetMapping("/display/{id}")
-		public String display(@PathVariable Long id, Model model) {
+		@GetMapping(value={"/display/{id}","/display/{id}/{node_id}"})
+		public String display(@PathVariable Long id, Model model, @PathVariable(required=false) Long node_id) {
 			Tree curtree = service.getTreeRepo().getOne(id);
 			model.addAttribute("pageTitle","Tree - " + curtree.getName());
 			model.addAttribute("tree", curtree);
 			TreeNode curnode = service.getRoot(curtree);
+			if(node_id!=null) {
+				curnode = service.getNodeRepo().getOne(node_id);
+			}
 			model.addAttribute("curnode",curnode);
 			return "tree/display.html";
 		}
@@ -119,8 +122,8 @@ public class TreeController {
 		public String saveNode(Model model, HttpServletRequest request) {
 			Map<String, String[]> postdata = request.getParameterMap();
 			TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
-			service.addNode(parentnode, postdata.get("name")[0], "last");
-			return "redirect:/admin/trees/display/" + parentnode.getTree().getId().toString();
+			TreeNode newnode = service.addNode(parentnode, postdata.get("name")[0], "last");
+			return "redirect:/admin/trees/display/" + parentnode.getTree().getId().toString() + "/" + newnode.getId();
 		}
 		
 		@GetMapping("/nodes/{id}/create")

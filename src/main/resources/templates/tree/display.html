@@ -52,7 +52,9 @@
 					xhr.setRequestHeader(header,token);
 				}
 			}).done(function(data){
-				window.location.reload(true);
+				console.log(data);
+				var target = /*[[@{/admin/trees/display/{tree_id}(tree_id=${curnode.getTree().id})}]]*/"";
+				window.location = target + "/" + data;
 			});
 		}
 		return false;
@@ -94,7 +96,19 @@
 			alert('Please specify the role for the user');
 		};
 	});
-		$('#tree').fancytree({
+	
+	function expandTree(hierarchy) {
+	    $('#tree').fancytree("getTree").loadKeyPath(hierarchy).progress(function(data) {
+	        if (data.status === "loaded") {
+	            console.log("loaded intermediate node " + data.node);
+	            $.ui.fancytree.getTree('#tree').activateKey(data.node.key);
+	        } else if (data.status === "ok") {
+	        	data.node.toggleExpand();
+	        }
+	    }).done(function() {});
+	}
+	
+	var fancytree =	$('#tree').fancytree({
 			source : {
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
 			},
@@ -120,6 +134,14 @@
 				}).done(function(data){
 					updateNode(data);
 				});
+			},
+			init: function(event, data, flag) {
+				var tree = $.ui.fancytree.getTree("#tree");
+				console.log('init done');
+				console.log(tree);
+				var node = tree.getNodeByKey("[[${curnode.id}]]");
+				console.log(node);
+				expandTree(/*[[${@treeService.pathString(curnode)}]]*/);
 			},
 			extensions: ["dnd5"],
 			dnd5: {
@@ -177,11 +199,10 @@
 						});
 					}
 					node.setExpanded();
-				}
-				
+				}				
 			}
 		});
-
+	
 $('#user').select2({
 	  ajax: {
 	    url: /*[[@{/api/users}]]*/'/dummy/api/users',

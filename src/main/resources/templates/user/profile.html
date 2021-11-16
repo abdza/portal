@@ -6,22 +6,29 @@
 <div class="container">
 
 	<h1>User Profile</h1>
+	
+	<a href="#" th:href="@{/update_password}" class="btn btn-primary">Update Password</a>
 
-    <div class='row'>
-        <div class='col-sm  has-text-weight-bold'>Username:</div>
-        <div class='col-sm ' th:text="${user.username}">module</div>
-        <div class='col-sm  has-text-weight-bold'>Name:</div>
-        <div class='col-sm ' th:text="${user.name}">slug</div>
-    </div>
-
-    <div class='row'>
-        <div class='col-sm  has-text-weight-bold'>Staff Id:</div>
-        <div class='col-sm ' th:text="${user.staffid}">module</div>
-        <div class='col-sm  has-text-weight-bold'>Email:</div>
-        <div class='col-sm ' th:text="${user.email}">slug</div>
-    </div>
-    
-    <a href="#" th:href="@{/update_password}" class="btn btn-primary">Update Password</a>
+	<table class="table table-user-information">
+		<tbody>
+			<tr>
+				<th>Name:</th>
+				<td th:text="${user.name}">Name:</td>
+			</tr>
+			<tr th:if="${@environment.getProperty('jpf.enable_username')}">
+				<th>Username:</th>
+				<td th:text="${user.username}">Name:</td>
+			</tr>
+			<tr>
+				<th>Staff Id:</th>
+				<td th:text="${user.staffid}">Name:</td>
+			</tr>
+			<tr>
+				<th>Email:</th>
+				<td th:text="${user.email}">Name:</td>
+			</tr>
+		</tbody>
+	</table>
    
 </div>
 

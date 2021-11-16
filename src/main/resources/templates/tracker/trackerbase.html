@@ -106,7 +106,7 @@ $('#val_[(${field.name})]').datetimepicker({
 [# th:if="${field.fieldType=='TreeNode'}"]
 	$('#val_[(${field.name})]').select2({
 	  ajax: {
-	    url: /*[[@{/api/trees/nodequery}]]*/'/dummy/api/users',
+	    url: /*[[@{/api/trees/nodequery/{tree_id}(tree_id=${@trackerService.fieldTree(field)?.id})}]]*/'/dummy/api/users',
 	    dataType: 'json',
 	    processResults: function (data) {
 	    	var dat = $.map(data.content, function(obj){

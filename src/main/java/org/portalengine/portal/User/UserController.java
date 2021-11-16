@@ -1,5 +1,6 @@
 package org.portalengine.portal.User;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -11,6 +12,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,9 +75,14 @@ public class UserController {
 	
 	@GetMapping("/profile")
 	public String profile(Model model) {
-		model.addAttribute("pageTitle","User Profile");
-		model.addAttribute("user",service.currentUser());
-		return "user/profile.html";
+		if(service.currentUser()!=null) {
+			model.addAttribute("pageTitle","User Profile");
+			model.addAttribute("user",service.currentUser());
+			return "user/profile.html";
+		}
+		else {
+			return "redirect:/";
+		}
 	}
 	
 	@GetMapping("/register")
@@ -143,6 +154,15 @@ public class UserController {
 		model.addAttribute("pageTitle","User - " + curuser.getName());
 		model.addAttribute("user", curuser);
 		return "user/display.html";
+	}
+	
+	@GetMapping("/admin/users/switch/{id}")
+	public String switchuser(@PathVariable Long id, Model model) {
+		User curuser = service.getRepo().getOne(id);
+		
+		model.addAttribute("pageTitle","User - " + curuser.getName());
+		model.addAttribute("user", curuser);
+		return "redirect:/admin/users";
 	}
 	
 	@PostMapping("/admin/users/save")

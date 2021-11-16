@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/main}">
 
-<section layout:fragment="content" class='user-content'>
+<section layout:fragment="content" class='user-content'>	
 
-    <div class='columns'>
-        <div class='column has-text-weight-bold'>Username:</div>
-        <div class='column' th:text="${user.username}">module</div>
-        <div class='column has-text-weight-bold'>Name:</div>
-        <div class='column' th:text="${user.name}">slug</div>
-    </div>
+	<h1>User Details</h1>
+	
+	<a href="#" th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-primary">Edit</a>
+	<a href="#" th:href="@{/admin/users/switch/{id}(id=${user.id})}" class="btn btn-primary">Switch</a>
 
-    <div class='columns'>
-        <div class='column has-text-weight-bold'>Staff Id:</div>
-        <div class='column' th:text="${user.staffid}">module</div>
-        <div class='column has-text-weight-bold'>Email:</div>
-        <div class='column' th:text="${user.email}">slug</div>
-    </div>
+	<table class="table table-user-information">
+		<tbody>
+			<tr>
+				<th>Name:</th>
+				<td th:text="${user.name}">Name:</td>
+			</tr>
+			<tr th:if="${@environment.getProperty('jpf.enable_username')}">
+				<th>Username:</th>
+				<td th:text="${user.username}">Name:</td>
+			</tr>
+			<tr>
+				<th>Staff Id:</th>
+				<td th:text="${user.staffid}">Name:</td>
+			</tr>
+			<tr>
+				<th>Email:</th>
+				<td th:text="${user.email}">Name:</td>
+			</tr>
+		</tbody>
+	</table>
 
 </section>
 

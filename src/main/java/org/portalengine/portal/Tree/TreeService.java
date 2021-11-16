@@ -277,6 +277,15 @@ public class TreeService {
 		return nodeRepo.getPath(node);
 	}
 	
+	public String pathString(TreeNode node) {
+		List<TreeNode> path = getPath(node);
+		String ret = "";
+		for(TreeNode cn:path) {
+			ret += cn.getId().toString() + "/";
+		}
+		return ret;
+	}
+	
 	public List<TreeNode> publishedChildren(TreeNode node) {
 		System.out.println("In published children");
 		return nodeRepo.publishedChildren(node);

@@ -41,6 +41,7 @@ import org.portalengine.portal.Tracker.Status.TrackerStatus;
 import org.portalengine.portal.Tracker.Status.TrackerStatusRepository;
 import org.portalengine.portal.Tracker.Transition.TrackerTransition;
 import org.portalengine.portal.Tracker.Transition.TrackerTransitionRepository;
+import org.portalengine.portal.Tree.Tree;
 import org.portalengine.portal.Tree.TreeNode;
 import org.portalengine.portal.Tree.TreeService;
 import org.portalengine.portal.User.User;
@@ -153,6 +154,22 @@ public class TrackerService {
 			String dquery = "update " + tracker.getDataTable() + " set record_status='" + tracker.getInitialStatus() + "' where record_status not in (" + statuslist.toString() + ") or record_status is null";
 			jdbctemplate.execute(dquery);
 		}
+	}
+	
+	public Tree fieldTree(TrackerField field) {
+		Tree tree = null;
+		if(field.optionsJson().get("tree_id")!=null) {
+			tree = treeService.getTreeRepo().getOne((field.optionsJson().get("tree_id").asLong()));
+		}
+		else if(field.optionsJson().get("tree_slug")!=null) {
+			String module = "portal";
+			if(field.optionsJson().get("tree_module")!=null) {
+				module = field.optionsJson().get("tree_module").asText();
+			}
+			String slug = field.optionsJson().get("tree_slug").asText();
+			tree = treeService.getTreeRepo().findOneByModuleAndSlug(module, slug);
+		}
+		return tree;
 	}
 	
 	public String css_head(Tracker tracker, String list_name) {

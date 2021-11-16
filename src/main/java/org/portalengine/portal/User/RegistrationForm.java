@@ -26,6 +26,12 @@ public class RegistrationForm {
 			return curuser;
 		}
 		else {
+			if(username==null||username.equals("")) {
+				username = staffid;
+			}
+			if(username==null||username.equals("")) {
+				username = email;
+			}
 			return new User(username, staffid, name, email, passwordEncoder.encode(password), false);
 		}
 	}
