@@ -28,9 +28,11 @@ import org.portalengine.portal.FileLink.FileLinkService;
 import org.portalengine.portal.Page.PortalPage;
 import org.portalengine.portal.Page.PageService;
 import org.portalengine.portal.Tracker.Tracker;
+import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.portalengine.portal.Tracker.Field.TrackerFieldRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,12 @@ public class DataUpdateService {
 	
 	@Autowired
 	private FileLinkService fileservice;
+	
+	@Autowired
+	private TrackerService trackerservice;
+	
+	@Value("${spring.datasource.url}")
+    private String dataURL;
 	
 	@Autowired
 	public DataUpdateService() {
@@ -78,7 +86,8 @@ public class DataUpdateService {
 	
 	public void deleteUpdate(DataUpdate dataupdate) {
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
-		String delquery = "delete from " + dataupdate.getTracker().getDataTable() + " where dataupdate_id=" + dataupdate.getId();
+		String delquery = "delete from " + dataupdate.getTracker().getDataTable() + " where " + trackerservice.dbEscapeColumn("dataupdate_id") + "=:id";
+		paramsource.addValue("id", dataupdate.getId());
 		jdbctemplate.update(delquery,paramsource);
 		repo.deleteById(dataupdate.getId());
 	}
@@ -114,7 +123,7 @@ public class DataUpdateService {
 		JsonNode savedparams;
 		try {
 			savedparams = mapper.readTree(dataupdate.getSavedParams());
-			poiExcel.loadData(dataupdate.getFilelink().getPath(), jdbctemplate, savedparams, fields, dataupdate.getTracker().getDataTable(), dataupdate.getId().intValue(), false);
+			poiExcel.loadData(dataupdate.getFilelink().getPath(), jdbctemplate, savedparams, fields, dataupdate.getTracker().getDataTable(), dataupdate.getId().intValue(), false, dataURL);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

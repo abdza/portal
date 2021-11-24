@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +62,24 @@ public class FileLinkService {
 	public File getFile(FileLink filelink) {
 		File file = new File(filelink.getPath());
 		return file;
+	}
+	
+	public String base64(FileLink filelink) {
+		return base64(filelink.getPath());
+	}
+	
+	public String base64(String path) {
+		Path fpath = Paths.get(path);
+		String encodedString = null;
+		byte[] data;
+		try {
+			data = Files.readAllBytes(fpath);
+			encodedString = Base64.getEncoder().encodeToString(data);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		 
+		return encodedString;
 	}
 	
 	public void deleteById(Long id) {

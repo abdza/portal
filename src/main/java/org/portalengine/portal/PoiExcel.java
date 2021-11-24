@@ -43,13 +43,18 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.portalengine.portal.FileLink.FileLinkService;
+import org.portalengine.portal.Tracker.TrackerService;
 import org.portalengine.portal.Tracker.Field.TrackerField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,6 +71,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.sql.SQLException;
 
+@Service
 public class PoiExcel {
 		
         enum xssfDataType {
@@ -84,6 +90,9 @@ public class PoiExcel {
 	public int dataend=-1;
 	private List<CellRangeAddress> mergedRegions;
 	private HashMap<Integer, Object> titles;
+	
+	@Autowired
+	private TrackerService trackerservice;
 
 	public PoiExcel() {
 	}
@@ -309,12 +318,12 @@ public class PoiExcel {
 		}
 	}
 
-	public int loadData(String filename,NamedParameterJdbcTemplate sql,JsonNode savedparams,ArrayList<TrackerField> fields2, String filtertable, Integer batchno, boolean gotupdate) throws Exception {
+	public int loadData(String filename,NamedParameterJdbcTemplate sql,JsonNode savedparams,ArrayList<TrackerField> fields2, String filtertable, Integer batchno, boolean gotupdate, String dataURL) throws Exception {
 		// System.out.println("Loading data");
 		OPCPackage pkg = OPCPackage.open(filename);
 		XSSFReader r = new XSSFReader( pkg );
 		sst = new ReadOnlySharedStringsTable(pkg);
-		fetchSheetParser(sql,savedparams,fields2,filtertable,batchno,gotupdate);
+		fetchSheetParser(sql,savedparams,fields2,filtertable,batchno,gotupdate,dataURL);
 		InputStream sheet = r.getSheetsData().next();
 		InputSource sheetSource = new InputSource(sheet);
 		if(sheetSource!=null) {
@@ -330,9 +339,9 @@ public class PoiExcel {
 		return rowcount;
 	}
 
-	private void fetchSheetParser(NamedParameterJdbcTemplate sql, JsonNode savedparams,ArrayList<TrackerField> statementfields,String filtertable,Integer batchno,boolean gotupdate) throws SAXException, ParserConfigurationException {
+	private void fetchSheetParser(NamedParameterJdbcTemplate sql, JsonNode savedparams,ArrayList<TrackerField> statementfields,String filtertable,Integer batchno,boolean gotupdate,String dataURL) throws SAXException, ParserConfigurationException {
 		this.parser = XMLHelper.newXMLReader();
-		ContentHandler handler = new SheetHandler(sql,savedparams,statementfields,filtertable,batchno,gotupdate);
+		ContentHandler handler = new SheetHandler(sql,savedparams,statementfields,filtertable,batchno,gotupdate,dataURL);
 		this.parser.setContentHandler(handler);
 	}
 
@@ -348,17 +357,31 @@ public class PoiExcel {
 		private Integer batchno;
 		private boolean gotupdate;
 		private CellAddress cellAddress;
+		private String dataURL;
 
 		ArrayList<TrackerField> statementfields;
 		HashMap<Integer, Object> currow;
+		
+		private String dbEscapeColumn(String columname) {
+			if(dataURL.contains("jdbc:mysql")) {
+				return "`" + columname + "`";
+			}
+			else if(dataURL.contains("jdbc:postgresql") || dataURL.contains("jdbc:h2")) {
+				return "\"" + columname + "\"";
+			} 
+			else {
+				return "[" + columname + "]";	
+			}
+		}
 
-		private SheetHandler(NamedParameterJdbcTemplate sql, JsonNode savedparams, ArrayList<TrackerField> statementfields, String filtertable, Integer batchno, boolean gotupdate) {
+		private SheetHandler(NamedParameterJdbcTemplate sql, JsonNode savedparams, ArrayList<TrackerField> statementfields, String filtertable, Integer batchno, boolean gotupdate, String dataURL) {
 			this.sql = sql;
 			this.savedparams = savedparams;
 			this.statementfields = statementfields;
 			this.filtertable = filtertable;
 			this.batchno = batchno;
 			this.gotupdate = gotupdate;
+			this.dataURL = dataURL;
 			rowcount = 0;
 		}
 		public void startElement(String uri, String localName, String name,
@@ -443,17 +466,19 @@ public class PoiExcel {
 									paramsqlfields += " , ";
 									updatefields += " , ";
 								}								
-								sqlfields += field.getName();
-								paramsqlfields += ":" + field.getName();
-								updatefields += field.getName() + "=:" + field.getName();
-
-								if(curnode.get("key")!=null) {									
-									if(!firstcompare){
-										comparefields += " and ";
+								if(field.getName()!=null) {
+									sqlfields += dbEscapeColumn(field.getName());
+									paramsqlfields += ":" + field.getName();
+									updatefields += dbEscapeColumn(field.getName()) + "=:" + field.getName();
+	
+									if(curnode.get("key")!=null) {									
+										if(!firstcompare){
+											comparefields += " and ";
+										}
+										comparefields += field.getName() + "=:" + field.getName();
+										firstcompare = false;
+										gotupdate=true;
 									}
-									comparefields += field.getName() + "=:" + field.getName();
-									firstcompare = false;
-									gotupdate=true;
 								}
 							
 								try {
@@ -504,7 +529,7 @@ public class PoiExcel {
 						if(!nodata){
 							qparam.addValue("batchno",batchno);
 							if(!gotupdate){
-								torun = "insert into " + this.filtertable + " (" + sqlfields + " , dataupdate_id) values (" + paramsqlfields + " , :batchno)";
+								torun = "insert into " + this.filtertable + " (" + sqlfields + " , " + dbEscapeColumn("dataupdate_id") + ") values (" + paramsqlfields + " , :batchno)";
 								// System.out.println("running:" + torun);
 								sql.update(torun,qparam);
 							}
@@ -515,7 +540,7 @@ public class PoiExcel {
 								updated = sql.update(torun, qparam);
 								// System.out.println("running:" + torun);
 								if(updated==0){
-									torun = "insert into " + this.filtertable + " (" + sqlfields + " , dataupdate_id) values (" + paramsqlfields + " , :batchno)";
+									torun = "insert into " + this.filtertable + " (" + sqlfields + " , " + dbEscapeColumn("dataupdate_id") + ") values (" + paramsqlfields + " , :batchno)";
 									sql.update(torun, qparam);
 									// System.out.println("running:" + torun);
 								}
