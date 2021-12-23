@@ -107,6 +107,29 @@ public class TreeService {
 		return toreturn;
 	}
 	
+	public Tree findBySlug(String slug) {
+		Tree tree = treeRepo.findBySlug(slug);
+		return tree;
+	}
+	
+	public String nodeData(TreeNode cnode,String data) {
+		if(cnode.getData()!=null) {
+			String split[] = cnode.getData().split(";");
+			for(String s:split) {
+				String tkn[] = s.split(":");
+				if(tkn[0].equals(data)) {
+					if(tkn[1].length()>0) {
+						return tkn[1];
+					}
+					else {
+						return tkn[0];
+					}
+				}
+			}
+		}
+		return "";
+	}
+	
 	public String rootLessPath(TreeNode tnode) {
 		String toreturn = tnode.getFullPath().replaceFirst(rootnode + "/", "/");
 		if(tnode.getFullPath().equals(rootnode)) {
@@ -146,6 +169,10 @@ public class TreeService {
 			retroles.add(transform);
 		}
 		return retroles;
+	}
+	
+	public List<TreeNode> findChildren(TreeNode node) {
+		return nodeRepo.findChildren(node);
 	}
 	
 	public void saveTree(Tree tree) {
@@ -286,8 +313,7 @@ public class TreeService {
 		return ret;
 	}
 	
-	public List<TreeNode> publishedChildren(TreeNode node) {
-		System.out.println("In published children");
+	public List<TreeNode> publishedChildren(TreeNode node) { 
 		return nodeRepo.publishedChildren(node);
 	}
 	

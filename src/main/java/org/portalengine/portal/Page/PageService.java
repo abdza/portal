@@ -23,6 +23,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.StringTemplateResolver;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 @Service
 public class PageService {
 
@@ -81,7 +84,24 @@ public class PageService {
 		try {
 			PortalPage curpage = this.repo.findOneByModuleAndSlug(module, slug);
 			if(curpage!=null) {
-				String toreturn = getTemplateFromMap(curpage.getContent(), null);
+				String toreturn = "";
+				Object pdata = null;
+				Map<String, Object> attributes = null;
+				if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
+					Binding binding = new Binding();		
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+					Map<String, String[]> postdata = request.getParameterMap();
+					binding.setVariable("postdata", postdata);
+					binding.setVariable("request", request);
+					try {
+						pdata = shell.evaluate(curpage.getPageData());
+						attributes.put("pdata", pdata);
+					}
+					catch(Exception e) {
+						System.out.println("Error in page:" + e.toString());
+					}
+				}
+				toreturn = getTemplateFromMap(curpage.getContent(), attributes);
 				if(toreturn.trim().length()>0) {
 					return toreturn;
 				}

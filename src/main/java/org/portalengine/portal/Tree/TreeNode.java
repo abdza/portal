@@ -53,6 +53,8 @@ public class TreeNode extends Auditable<String> {
 	
 	private String status;
 	
+	private String data;
+	
 	private Long objectId;
 	
 	private Long recordId;

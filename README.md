@@ -1,6 +1,6 @@
 # portal
 
-A portal engine developed using spring boot
+A portal engine developed using spring boot. Check out the documentation at: https://javaportal.readthedocs.io/en/latest/
 
 To-Do
 =====

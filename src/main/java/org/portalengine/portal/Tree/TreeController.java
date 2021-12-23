@@ -183,6 +183,7 @@ public class TreeController {
 			if(postdata.get("recordId")!="") {
 				curnode.setRecordId(Long.parseLong(postdata.get("recordId")));
 			}
+			curnode.setData(postdata.get("data"));
 			curnode.setStatus(postdata.get("status"));
 			service.getNodeRepo().save(curnode);
 			for(TreeUser tn:curnode.getUsers()) {
@@ -192,7 +193,8 @@ public class TreeController {
 					}	
 				}
 			}
-			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString();
+			//return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString();
+			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString() + "/" + curnode.getId().toString();
 		}
 		
 		@PostMapping("/objectSearch")
