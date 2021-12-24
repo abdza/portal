@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.portalengine.portal.Tracker.TrackerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,9 @@ public class PageService {
 	
 	@Autowired
 	private HttpServletResponse response;
+	
+	@Autowired
+	private TrackerService trackerService;
 	
 	@Autowired
 	private ServletContext servletContext;
@@ -83,14 +87,15 @@ public class PageService {
 	public String renderPage(String module, String slug) {		
 		try {
 			PortalPage curpage = this.repo.findOneByModuleAndSlug(module, slug);
+			Map<String, String[]> postdata = request.getParameterMap();
 			if(curpage!=null) {
 				String toreturn = "";
 				Object pdata = null;
-				Map<String, Object> attributes = null;
+				Map<String, Object> attributes = new HashMap<String,Object>();
 				if(curpage.getPageData()!=null && curpage.getPageData().length()>0) {
 					Binding binding = new Binding();		
-					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
-					Map<String, String[]> postdata = request.getParameterMap();
+					GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);					
+					binding.setVariable("trackerService",trackerService);
 					binding.setVariable("postdata", postdata);
 					binding.setVariable("request", request);
 					try {
@@ -101,6 +106,10 @@ public class PageService {
 						System.out.println("Error in page:" + e.toString());
 					}
 				}
+				attributes.put("trackerService", trackerService);
+				attributes.put("postdata", postdata);
+				attributes.put("request", request);
+				
 				toreturn = getTemplateFromMap(curpage.getContent(), attributes);
 				if(toreturn.trim().length()>0) {
 					return toreturn;
