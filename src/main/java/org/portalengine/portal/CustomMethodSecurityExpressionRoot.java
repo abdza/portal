@@ -2,16 +2,16 @@ package org.portalengine.portal;
 
 import java.util.List;
 
-import org.portalengine.portal.FileLink.FileLinkRepository;
-import org.portalengine.portal.Page.PortalPage;
-import org.portalengine.portal.Page.PageRepository;
-import org.portalengine.portal.Setting.SettingRepository;
-import org.portalengine.portal.Tracker.Tracker;
-import org.portalengine.portal.Tracker.TrackerRepository;
-import org.portalengine.portal.Tracker.Field.TrackerField;
-import org.portalengine.portal.Tree.TreeRepository;
-import org.portalengine.portal.User.User;
-import org.portalengine.portal.User.Role.UserRole;
+import org.portalengine.portal.entities.PortalPage;
+import org.portalengine.portal.entities.Tracker;
+import org.portalengine.portal.entities.TrackerField;
+import org.portalengine.portal.entities.User;
+import org.portalengine.portal.entities.UserRole;
+import org.portalengine.portal.repositories.FileLinkRepository;
+import org.portalengine.portal.repositories.PageRepository;
+import org.portalengine.portal.repositories.SettingRepository;
+import org.portalengine.portal.repositories.TrackerRepository;
+import org.portalengine.portal.repositories.TreeRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;

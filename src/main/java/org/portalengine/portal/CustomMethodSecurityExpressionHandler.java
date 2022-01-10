@@ -1,13 +1,13 @@
 package org.portalengine.portal;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.portalengine.portal.FileLink.FileLinkRepository;
-import org.portalengine.portal.Page.PageRepository;
-import org.portalengine.portal.Setting.SettingRepository;
-import org.portalengine.portal.Tracker.TrackerRepository;
-import org.portalengine.portal.Tracker.Role.TrackerRoleRepository;
-import org.portalengine.portal.Tree.TreeRepository;
-import org.portalengine.portal.User.Role.UserRoleRepository;
+import org.portalengine.portal.repositories.FileLinkRepository;
+import org.portalengine.portal.repositories.PageRepository;
+import org.portalengine.portal.repositories.SettingRepository;
+import org.portalengine.portal.repositories.TrackerRepository;
+import org.portalengine.portal.repositories.TrackerRoleRepository;
+import org.portalengine.portal.repositories.TreeRepository;
+import org.portalengine.portal.repositories.UserRoleRepository;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
