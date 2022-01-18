@@ -1,4 +1,4 @@
-package org.portalengine.portal;
+package org.portalengine.portal.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class SecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			http
 				.authorizeRequests()
-				.antMatchers("/","/register","/login","/logout","/libs/**","/images/**").permitAll()
+				.antMatchers("/","/register","/login","/logout","/libs/**","/images/**","/setup").permitAll()
 				.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
 			.and()
 				.formLogin()

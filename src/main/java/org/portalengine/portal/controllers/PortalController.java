@@ -161,7 +161,7 @@ public class PortalController {
 	@GetMapping("/setup")
 	public String setupSite(Model model) {
 		var o = userService.getRepo().findByUsername("admin");
-		User admin = o.orElseThrow(() -> new UsernameNotFoundException("Username not found")); 
+		User admin = o.orElse(null);
 		model.addAttribute("admin",admin);
 		return "page/setup.html";
 	}
@@ -169,7 +169,7 @@ public class PortalController {
 	@PostMapping("/setup")
 	public String doSetupSite(Model model, HttpServletRequest request) {
 		var o = userService.getRepo().findByUsername("admin");
-		User admin = o.orElseThrow(() -> new UsernameNotFoundException("Username not found")); 
+		User admin = o.orElse(null);
 		
 		if(admin==null) {
 			admin = new User("admin", "admin", "Admin", "admin@portal.com", passwordEncoder.encode("admin123"), true);
