@@ -141,7 +141,7 @@ public class UserController {
 	@GetMapping(value= {"/admin/users/create","/admin/users/edit/{id}"})
 	public String form(@PathVariable(required=false) Long id, Model model) {
 		if(id!=null) {
-			User user = service.getRepo().getOne(id);
+			User user = service.getRepo().getById(id);
 			model.addAttribute("pageTitle","Edit User - " + user.getName());
 			model.addAttribute("user", user);
 		}
@@ -154,7 +154,7 @@ public class UserController {
 	
 	@GetMapping("/admin/users/display/{id}")
 	public String display(@PathVariable Long id, Model model) {
-		User curuser = service.getRepo().getOne(id);
+		User curuser = service.getRepo().getById(id);
 		model.addAttribute("pageTitle","User - " + curuser.getName());
 		model.addAttribute("user", curuser);
 		return "user/display.html";
@@ -162,7 +162,7 @@ public class UserController {
 	
 	@GetMapping("/admin/users/switch/{id}")
 	public String switchuser(@PathVariable Long id, Model model) {
-		User curuser = service.getRepo().getOne(id);
+		User curuser = service.getRepo().getById(id);
 		
 		model.addAttribute("pageTitle","User - " + curuser.getName());
 		model.addAttribute("user", curuser);

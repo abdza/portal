@@ -7,8 +7,15 @@ import java.util.List;
 import org.portalengine.portal.entities.User;
 import org.portalengine.portal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.query.LdapQueryBuilder;
+import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +42,12 @@ public class PortalAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private LdapTemplate ldapTemplate;
 
+    /* Read application.properties with the following function:
+	 * String keyValue = env.getProperty(key);
+	 */
+	@Autowired
+	private Environment env;
+
     @Override
     public Authentication authenticate(Authentication auth) 
       throws AuthenticationException {
@@ -46,24 +59,46 @@ public class PortalAuthenticationProvider implements AuthenticationProvider {
         
         if (curuser!=null) {
 
-            System.out.println("Found user:" + curuser.getName());
+            if(env.getProperty("spring.ldap.base")!=null){
+                ldapTemplate.setIgnorePartialResultException(true);            
 
-            List<String> fromldap = ldapTemplate.search(
-                query().where("uid").is(username),
-                    new AttributesMapper<String>() {
-                        public String mapFromAttributes(Attributes attrs)
-                    throws NamingException {
-                        return attrs.get("uid").get().toString();
-                    }
-            });
+                System.out.println("Found user:" + curuser.getName());
 
-            if(fromldap.size()>0){
-                System.out.println("Got ldap");
-                boolean authldap = ldapTemplate.authenticate("dc=springframework,dc=org","(uid=" + username + ")",password);
-                System.out.println("right pass:" + String.valueOf(authldap));
+                List<String> fromldap = ldapTemplate.search(
+                    query().where("uid").is(username),
+                        new AttributesMapper<String>() {
+                            public String mapFromAttributes(Attributes attrs)
+                        throws NamingException {
+                            return attrs.get("uid").get().toString();
+                        }
+                });
+
+                if(fromldap.size()>0){
+                    System.out.println("Got ldap");
+
+                    AndFilter filter = new AndFilter();
+                    filter.and(new EqualsFilter("objectclass", "person"));
+                    filter.and(new EqualsFilter("uid", username));
+
+                    // LdapQuery query = LdapQueryBuilder.query().filter(filter);
+
+                    System.out.println("password used:" + password);
+                    // boolean authldap = ldapTemplate.authenticate(LdapUtils.emptyLdapName(),filter.toString(),userService.getPasswordEncoder().encode(password));
+                    boolean authldap = ldapTemplate.authenticate(LdapUtils.emptyLdapName(),filter.toString(),password);
+
+                    /* try {
+                        ldapTemplate.authenticate(query, userService.getPasswordEncoder().encode(password));
+                        System.out.println("got correct password");
+                    } catch (final Exception e) {
+                        System.out.println("password incorrect");
+                        System.out.println(e.toString());
+                    } */
+
+                    System.out.println("right pass:" + String.valueOf(authldap));
+                }
+
+                System.out.println("list:" + fromldap.toString());
             }
-
-            System.out.println("list:" + fromldap.toString());
 
             boolean passmatch = userService.getPasswordEncoder().matches(password, curuser.getPassword());
             if(!passmatch){
