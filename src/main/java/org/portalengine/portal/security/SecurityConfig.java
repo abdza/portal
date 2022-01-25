@@ -19,25 +19,30 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfig {	
 
 	@Autowired
-	private DataSource dataSource;
-	
+	PortalAuthenticationProvider portalAuthenticationProvider;
+
 	@Bean
-	public PasswordEncoder encoder() {
+	public static PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}	
 	
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) { 
+	public void configureGlobal(AuthenticationManagerBuilder authbuilder, DataSource dataSource) { 
 		try {
-			/* auth.ldapAuthentication()
+
+			authbuilder.authenticationProvider(portalAuthenticationProvider);
+
+			authbuilder.ldapAuthentication()
 			.userDnPatterns("uid={0},ou=people")
 			.groupSearchBase("ou=groups")
 			.contextSource()
@@ -45,10 +50,15 @@ public class SecurityConfig {
 			.and()
 			.passwordCompare()
 			.passwordEncoder(new BCryptPasswordEncoder())
-			.passwordAttribute("userPassword"); */
+			.passwordAttribute("userPassword");
+			
 
-			/* auth.jdbcAuthentication()
-			.dataSource(dataSource); */
+			/*  auth.jdbcAuthentication()
+			.dataSource(dataSource)
+			.withDefaultSchema()
+			.withUser(User.withUsername("user")
+						.password(encoder().encode("pass"))
+			.roles("USER"));  */
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -73,7 +83,7 @@ public class SecurityConfig {
 	}
 	
 	@Configuration                                                  
-	public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {		
+	public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {	
 		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {

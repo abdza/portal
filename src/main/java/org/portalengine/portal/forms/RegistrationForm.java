@@ -20,7 +20,7 @@ public class RegistrationForm {
 	
 	public User toUser(PasswordEncoder passwordEncoder, UserService service) {		
 		if(id!=null) {
-			User curuser = service.getRepo().getOne((long)id);
+			User curuser = service.getRepo().getById(Long.valueOf(id));
 			curuser.setName(name);
 			curuser.setUsername(username);
 			curuser.setEmail(email);
