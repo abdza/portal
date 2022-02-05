@@ -60,6 +60,7 @@ public class PortalAuthenticationProvider implements AuthenticationProvider {
         if (curuser!=null) {
 
             if(env.getProperty("spring.ldap.base")!=null){
+                
                 ldapTemplate.setIgnorePartialResultException(true);            
 
                 System.out.println("Found user:" + curuser.getName());

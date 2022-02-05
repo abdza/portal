@@ -10,6 +10,7 @@ import org.portalengine.portal.repositories.SettingRepository;
 import org.portalengine.portal.repositories.TrackerRepository;
 import org.portalengine.portal.repositories.TrackerRoleRepository;
 import org.portalengine.portal.repositories.TreeRepository;
+import org.portalengine.portal.repositories.UserRepository;
 import org.portalengine.portal.repositories.UserRoleRepository;
 import org.springframework.security.core.Authentication;
 
@@ -26,5 +27,6 @@ public class RepoCollection {
 	private	SettingRepository settingRepository;
 	private TrackerRoleRepository trackerRoleRepository;
 	private UserRoleRepository userRoleRepository;
+	private UserRepository userRepository;
 
 }

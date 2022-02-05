@@ -1,4 +1,4 @@
-package org.portalengine.portal;
+package org.portalengine.portal.security;
 
 import java.io.Serializable;
 

@@ -1,11 +1,13 @@
-package org.portalengine.portal;
+package org.portalengine.portal.security;
 
+import org.portalengine.portal.RepoCollection;
 import org.portalengine.portal.repositories.FileLinkRepository;
 import org.portalengine.portal.repositories.PageRepository;
 import org.portalengine.portal.repositories.SettingRepository;
 import org.portalengine.portal.repositories.TrackerRepository;
 import org.portalengine.portal.repositories.TrackerRoleRepository;
 import org.portalengine.portal.repositories.TreeRepository;
+import org.portalengine.portal.repositories.UserRepository;
 import org.portalengine.portal.repositories.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +41,9 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Autowired
 	UserRoleRepository userRoleRepository;
 
+	@Autowired
+	UserRepository userRepository;
+
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
     	RepoCollection repos = new RepoCollection();
@@ -49,8 +54,10 @@ public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
       repos.setTreeRepository(treeRepository);
       repos.setSettingRepository(settingRepository); 
       repos.setUserRoleRepository(userRoleRepository);
-    	CustomMethodSecurityExpressionHandler expressionHandler = 
-          new CustomMethodSecurityExpressionHandler(repos);
+	  repos.setUserRepository(userRepository);
+
+    	PortalSecurityExpressionHandler expressionHandler = 
+          new PortalSecurityExpressionHandler(repos);
         expressionHandler.setPermissionEvaluator(new PermissionEvaluator());
         return expressionHandler;
     }   

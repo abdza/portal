@@ -38,6 +38,10 @@ public class SecurityUser implements UserDetails {
         return user.getUsername();
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub

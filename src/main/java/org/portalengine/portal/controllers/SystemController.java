@@ -299,44 +299,37 @@ public class SystemController {
 	}
 	
 	@PostMapping("/{module}/{slug}/save")
+	@PreAuthorize("trackerPermission(#module,#slug,'save')")
 	public String save(@PathVariable String module, @PathVariable String slug, Model model,Authentication authentication) {
 		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
-		if(tracker!=null) {
-			User curuser = null;
-			if(authentication!=null) {
-				curuser = (User)authentication.getPrincipal();
+		
+		Map<String, String[]> postdata = request.getParameterMap();
+		Long curid = null;
+		if(!postdata.containsKey("cancel")) {	
+			User curuser = userService.currentUser();			
+			curid = trackerService.saveForm(tracker,curuser);
+		}
+		
+		if(postdata.get("transition_id")!=null) {
+			TrackerTransition transition = trackerService.getTransitionRepo().getById(Long.parseLong(postdata.get("transition_id")[0]));
+		}
+		if(postdata.get("id")!=null) {				
+			PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostEdit());
+			if(postpage!=null) {
+				return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + postdata.get("id")[0].toString();
 			}
-			
-			Map<String, String[]> postdata = request.getParameterMap();
-			Long curid = null;
-			if(!postdata.containsKey("cancel")) {				
-				curid = trackerService.saveForm(tracker,curuser);
+			else {
+				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/display/" + postdata.get("id")[0].toString();
 			}
-			
-			if(postdata.get("transition_id")!=null) {
-				TrackerTransition transition = trackerService.getTransitionRepo().getOne(Long.parseLong(postdata.get("transition_id")[0]));
+		}
+		else {			
+			PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostCreate());
+			if(postpage!=null) {
+				return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + String.valueOf(curid);
 			}
-			if(postdata.get("id")!=null) {				
-				PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostEdit());
-				if(postpage!=null) {
-					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + postdata.get("id")[0].toString();
-				}
-				else {
-					return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/display/" + postdata.get("id")[0].toString();
-				}
+			else {
+				return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
 			}
-			else {			
-				PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(tracker.getModule(), tracker.getPostCreate());
-				if(postpage!=null) {
-					return "redirect:/view/" + tracker.getModule() + "/" + postpage.getSlug() + "/" + String.valueOf(curid);
-				}
-				else {
-					return "redirect:/" + tracker.getModule() + "/" + tracker.getSlug() + "/list";
-				}
-			}
-		} 
-		else {
-			return "404";
 		}
 	}
 		

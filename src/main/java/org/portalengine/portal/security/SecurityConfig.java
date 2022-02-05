@@ -42,7 +42,7 @@ public class SecurityConfig {
 
 			authbuilder.authenticationProvider(portalAuthenticationProvider);
 
-			authbuilder.ldapAuthentication()
+			/* authbuilder.ldapAuthentication()
 			.userDnPatterns("uid={0},ou=people")
 			.groupSearchBase("ou=groups")
 			.contextSource()
@@ -50,7 +50,7 @@ public class SecurityConfig {
 			.and()
 			.passwordCompare()
 			.passwordEncoder(new BCryptPasswordEncoder())
-			.passwordAttribute("userPassword");
+			.passwordAttribute("userPassword"); */
 			
 
 			/*  auth.jdbcAuthentication()

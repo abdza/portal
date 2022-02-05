@@ -74,6 +74,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import lombok.Data;
 
+import static java.util.stream.Collectors.joining;
+
 @Service
 @Transactional
 @Data
@@ -154,7 +156,7 @@ public class TrackerService {
 	public Tree fieldTree(TrackerField field) {
 		Tree tree = null;
 		if(field.optionsJson().get("tree_id")!=null) {
-			tree = treeService.getTreeRepo().getOne((field.optionsJson().get("tree_id").asLong()));
+			tree = treeService.getTreeRepo().getById((field.optionsJson().get("tree_id").asLong()));
 		}
 		else if(field.optionsJson().get("tree_slug")!=null) {
 			String module = "portal";
@@ -232,11 +234,44 @@ public class TrackerService {
 	}
 	
 	public List<TrackerTransition> record_transitions(Tracker tracker, Long id) {
+		System.out.println("Checking out record transition");
+		User curuser = userService.currentUser();
+		if(curuser!=null){
+			System.out.println("got user:" + curuser.getName());
+		}
+		else {
+			System.out.println("anon user");
+		}
 		List<TrackerTransition> toreturn = new ArrayList<TrackerTransition>();
 		HashMap<String,Object> currow = datarow(tracker,id);
 		for(TrackerTransition t:tracker.getTransitions()) {
-			if(currow.get("record_status") != null && t.getPrevStatus() != null && currow.get("record_status").equals(t.getPrevStatus())){
-				toreturn.add(t);
+			System.out.println("Looking out for " + t.getName());
+			if(currow.get("record_status") != null && t.getPrevStatus() != null){
+				System.out.println("got record and prev stat");
+				boolean gotprev = false;
+				for(String prevstat : t.getPrevStatus().split(",")) {
+					System.out.println("Testing prevstat of " + prevstat);
+					if(prevstat.trim().equals(currow.get("record_status"))){
+						gotprev = true;
+					}
+				}
+				if(gotprev){
+					System.out.println("Passed the prevstat");
+					List<String> cur_user_roles = record_roles(tracker, curuser, id);
+					for (String fname : t.getAllowedRoles().split(",")) {
+						System.out.println("checking allowed role " + fname);
+						if (fname.trim().equals("All")) {
+							System.out.println("Got all");
+							toreturn.add(t);
+						} else if (fname.trim().equals("Authenticated") && curuser!=null) {
+							System.out.println("Got authenticated");
+							toreturn.add(t);
+						} else if(cur_user_roles.contains(fname.trim())){
+							System.out.println("Got " + fname);
+							toreturn.add(t);
+						}
+					}
+				}
 			}
 		}
 		return toreturn;
@@ -560,9 +595,9 @@ public class TrackerService {
 			return dataset(tracker,null,false);
 		}
 	}
-	
-	public String role_query(Tracker tracker, User user) {
-		List<String> dquery = new ArrayList<String>();		
+
+	public HashMap<String,String> role_query_list(Tracker tracker, User user) {
+		HashMap<String,String> dquery = new HashMap<String,String>();
 		for(TrackerRole tr:tracker.getRoles()) {
 			if(tr.getRoleType().equals("Data Compare")) {
 				Binding binding = new Binding();		
@@ -579,7 +614,7 @@ public class TrackerService {
 				try {
 					content = (String) shell.evaluate(tr.getRoleRule());
 					if(content!=null && content.length()>0) {
-						dquery.add(" (" + content + ") ");
+						dquery.put(tr.getName()," (" + content + ") ");
 					}
 				}
 				catch(Exception e) {
@@ -587,8 +622,19 @@ public class TrackerService {
 				}
 			}
 		}
+		return dquery;
+	}
+	
+	public String role_query(Tracker tracker, User user) {
+		HashMap<String,String> dquery = role_query_list(tracker, user);		
+		
 		if(dquery.size()>0) {
-			return "(" + String.join(" or ",dquery) + ")";
+			StringBuilder sb = new StringBuilder();
+			String jq = dquery.entrySet().stream().map(e->e.getValue()).collect(joining(" or "));
+			sb.append("(");
+			sb.append(jq);
+			sb.append(")");
+			return sb.toString();
 		}
 		else {
 			return "";
@@ -613,6 +659,28 @@ public class TrackerService {
 		}
 		return roles;
 	}	
+
+	public List<String> record_roles(Tracker tracker, User user, Long id) {
+		List<String> roles = new ArrayList<String>();
+
+		List<UserRole> modroles = module_roles(tracker,user);
+		for(UserRole cr:modroles) {
+			roles.add(cr.getRole());
+		}
+
+		HashMap<String,String> dquery = role_query_list(tracker, user);
+		for(Map.Entry<String,String> curq:dquery.entrySet()){
+			StringBuilder qsq = new StringBuilder();
+			MapSqlParameterSource paramsource = new MapSqlParameterSource();
+			qsq.append("select * from ").append(tracker.getDataTable()).append(" ct where ").append(curq.getValue()).append(" and id=").append(id);
+			SqlRowSet toret = namedjdbctemplate.queryForRowSet(qsq.toString(), paramsource);
+			if(!toret.wasNull()){
+				roles.add(curq.getKey());
+			}
+		}	
+
+		return roles;
+	}
 
 	public DataSet dataset(Tracker tracker, JsonNode search, boolean pagelimit) {
 		DataSet dataset = new DataSet();
@@ -1435,7 +1503,7 @@ public class TrackerService {
 		else {
 			return "[" + columname + "]";	
 		}
-	}
+	} 
 	
 	public void updateDb(Tracker tracker) {
 		

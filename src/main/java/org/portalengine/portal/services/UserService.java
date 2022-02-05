@@ -100,12 +100,16 @@ public class UserService implements UserDetailsService {
 	
 	public User currentUser() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if(secuser!=null && secuser instanceof User){	
-			return (User)secuser;
+		if(secuser!=null){
+			if(secuser instanceof User){	
+				return (User)secuser;
+			}
+			if(secuser instanceof String){
+				User dbuser = repo.findByUsername((String)secuser).orElse(null);
+				return dbuser;
+			}
 		}
-		else{
-			return null;
-		}
+		return null;
 	}
 	
 	public User setPassword(User user,String password) {
