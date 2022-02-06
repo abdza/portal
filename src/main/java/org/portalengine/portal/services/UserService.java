@@ -87,9 +87,8 @@ public class UserService implements UserDetailsService {
 	}
 
 	public List<UserNotification> currentNotifications() {
-		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
-		if(secuser!=null){
-			User duser = repo.findById(((User)secuser).getId()).orElse(null);
+		User duser = currentUser();	
+		if(duser!=null){			
 			List<UserNotification> toret = notificationRepo.findByUser(duser);
 			return toret;
 		}

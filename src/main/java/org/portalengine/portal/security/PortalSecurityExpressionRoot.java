@@ -2,18 +2,12 @@ package org.portalengine.portal.security;
 
 import java.util.List;
 
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.portalengine.portal.RepoCollection;
 import org.portalengine.portal.entities.PortalPage;
 import org.portalengine.portal.entities.Tracker;
-import org.portalengine.portal.entities.TrackerField;
 import org.portalengine.portal.entities.User;
 import org.portalengine.portal.entities.UserRole;
-import org.portalengine.portal.repositories.FileLinkRepository;
-import org.portalengine.portal.repositories.PageRepository;
-import org.portalengine.portal.repositories.SettingRepository;
-import org.portalengine.portal.repositories.TrackerRepository;
-import org.portalengine.portal.repositories.TreeRepository;
-import org.portalengine.portal.repositories.UserRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -23,11 +17,33 @@ public class PortalSecurityExpressionRoot
 
 	private Authentication authentication;
 	private RepoCollection repos;
+	private User curuser;
 
 	public PortalSecurityExpressionRoot(Authentication authentication, RepoCollection repos) {
 		super(authentication);
 		this.authentication = authentication;
 		this.repos = repos;
+		this.curuser = null;
+		SecurityUser secuser = null;
+		Object userobj = this.authentication.getPrincipal();
+		if (userobj == null) {
+			System.out.println("User is anon");
+		} else {
+			if (userobj instanceof String) {
+				this.curuser = repos.getUserRepository().findByUsername((String)userobj).orElse(null);
+			} else if (userobj instanceof SecurityUser) {
+				secuser = (SecurityUser) userobj;
+				this.curuser = secuser.getUser();			
+			}
+		}
+	}
+
+	public List<UserRole> moduleRoles(String module) {
+		List<UserRole> mr = null;
+		if(curuser!=null){
+			mr = this.repos.getUserRoleRepository().findByUserAndModuleIgnoreCase(curuser, module);
+		}
+		return mr;
 	}
 
 	public boolean trackerPermission(String module, String slug, String permission) {
@@ -37,29 +53,7 @@ public class PortalSecurityExpressionRoot
 			return false;
 		}
 
-		Object userobj = this.authentication.getPrincipal();
-		System.out.println("username:" + this.authentication.getName());
-		System.out.println("password:" + this.authentication.getCredentials());
-		SecurityUser secuser = null;
-		User curuser = null;
-		List<UserRole> mr = null;
-
-		if (userobj == null) {
-			System.out.println("User is anon");
-		} else {
-			if (userobj instanceof String) {
-				System.out.println("User obj is " + userobj);
-				curuser = repos.getUserRepository().findByUsername((String)userobj).orElse(null);
-			} else if (userobj instanceof SecurityUser) {
-				secuser = (SecurityUser) userobj;
-				curuser = secuser.getUser();
-				System.out.println("Got user");				
-			}
-		}
-		if(curuser!=null){
-			mr = this.repos.getUserRoleRepository().findByUserAndModuleIgnoreCase(curuser,
-			curtracker.getModule());
-		}
+		List<UserRole> mr = moduleRoles(module);
 
 		StringBuilder rlist = new StringBuilder();		
 
@@ -74,9 +68,7 @@ public class PortalSecurityExpressionRoot
 		} else if (permission.equals("edit")) {
 			rlist.append(curtracker.getEditRoles());
 		} else if (permission.equals("save")) {
-			rlist.append(curtracker.getEditRoles());
-			rlist.append(",");
-			rlist.append(curtracker.getAddRoles());
+			rlist.append(curtracker.getEditRoles()).append(",").append(curtracker.getAddRoles());
 		}
 
 		String rolelist = rlist.toString();
@@ -111,32 +103,41 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean pagePermission(String module, String slug) {
-		// TODO Auto-generated method stub
-		// System.out.println(this.authentication.getPrincipal());
-
 		PortalPage curpage = repos.getPageRepository().findOneByModuleAndSlug(module, slug);
 
-		if (curpage != null) {
-			if (curpage.getPublished() != true) {
-				return false;
-			}
-			Object curuser = this.authentication.getPrincipal();
-			if (curuser instanceof String) {
-				System.out.println("User is anon");
-				if (curpage.getRequireLogin()) {
-					return false;
-				}
-			} else if (curuser instanceof User) {
-				System.out.println("Got user");
-			}
-			if (curpage != null) {
-				System.out.println("Got page:" + curpage.getTitle());
-			}
-			return true;
+		if (curpage == null) { 
+			return false;
+		}
+		if (curpage.getPublished() != true) {
+			return false;
+		}
+		if(curuser==null && curpage.getRequireLogin()) {
+			return false;
 		}
 
-		System.out.println("In has permission for module:" + module + " and slug:" + slug);
-		return false;
+		List<UserRole> mr = moduleRoles(module);
+
+		for (String fname : curpage.getAllowedRoles().split(",")) {
+			if (fname.trim().equals("All")) {
+				return true;
+			} else if (fname.trim().equals("None")) {
+				return false;
+			} else if (fname.trim().equals("Authenticated")) {
+				if (curuser != null) {
+					return true;
+				}
+			} else {
+				// Need to check user roles here
+				if (mr!=null && mr.size() > 0) {
+					for (UserRole cr : mr) {
+						if (fname.trim().equals(cr.getRole())) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override
