@@ -263,7 +263,7 @@ public class ModuleService {
 				 trackers = objectMapper.readValue(trackerfile, new TypeReference<List<Tracker>>() {});
 				 if(trackers.size()>0) {
 					 trackers.forEach(ctracker -> {
-						 Tracker cctracker = trackerService.getRepo().findOneByModuleAndSlug(ctracker.getModule(), ctracker.getSlug());
+						 Tracker cctracker = trackerService.getRepo().findByModuleAndSlug(ctracker.getModule(), ctracker.getSlug());
 						 if(cctracker!=null) {
 							 ctracker.setId(cctracker.getId());
 						 }
@@ -285,7 +285,7 @@ public class ModuleService {
 						 }
 						 trackerService.getRepo().save(ctracker);
 						 trackerService.getRepo().flush();
-						 final Tracker fctracker = trackerService.getRepo().findOneByModuleAndSlug(ctracker.getModule(), ctracker.getSlug());					 
+						 final Tracker fctracker = trackerService.getRepo().findByModuleAndSlug(ctracker.getModule(), ctracker.getSlug());					 
 						 fields.forEach(cfield -> {
 							 cfield.setTracker(fctracker);						 
 							 trackerService.getFieldRepo().save(cfield);						

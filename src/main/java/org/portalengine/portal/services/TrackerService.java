@@ -367,7 +367,7 @@ public class TrackerService {
 						String module = foptions.get("module").textValue();
 						String slug = foptions.get("slug").textValue();
 						String name_column = foptions.get("name_column").textValue();
-						Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+						Tracker targetTracker = repo.findByModuleAndSlug(module, slug);					
 						if(targetTracker!=null) {
 							HashMap<String,Object> dataobj = datarow(targetTracker,Long.valueOf(options.getString(field.getName())));
 							if(dataobj!=null) {
@@ -386,7 +386,7 @@ public class TrackerService {
 	}
 		
 	public HashMap<String,Object> datarow(String module, String slug, Long id) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			return datarow(tracker,id);
 		}
@@ -396,7 +396,7 @@ public class TrackerService {
 	}
 	
 	public HashMap<String,Object> datarow(String module, String slug, LinkedHashMap<String,Object> search) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			return datarow(tracker,search);
 		}
@@ -570,7 +570,7 @@ public class TrackerService {
 	}
 	
 	public DataSet dataset(String module, String slug, String json) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		return dataset(tracker, json);
 	}
 	
@@ -965,12 +965,12 @@ public class TrackerService {
 	}
 	
 	public Object[] dataRows(String module, String slug) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		return hashMapData(tracker,null,false).getDataRows();
 	}
 	
 	public Object[] dataRows(String module, String slug, LinkedHashMap<String,Object> search) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		return hashMapData(tracker,search,false).getDataRows();
 	}
 	
@@ -983,12 +983,12 @@ public class TrackerService {
 	}
 	
 	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		return hashMapData(tracker,search,false);
 	}
 	
 	public DataSet hashMapData(String module, String slug, LinkedHashMap<String,Object> search, boolean pagelimit) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		return hashMapData(tracker,search,pagelimit);
 	}
 	
@@ -1008,7 +1008,7 @@ public class TrackerService {
 	}
 	
 	public Long saveMap(String module, String slug,Map<String, Object> mapdata) {
-		Tracker tracker = repo.findOneByModuleAndSlug(module, slug);
+		Tracker tracker = repo.findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			return saveMap(tracker,mapdata);
 		}
@@ -1620,7 +1620,7 @@ public class TrackerService {
 							String module = foptions.get("module").textValue();
 							String slug = foptions.get("slug").textValue();
 							String name_column = foptions.get("name_column").textValue();
-							Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);					
+							Tracker targetTracker = repo.findByModuleAndSlug(module, slug);					
 							if(targetTracker!=null && fdata!=null) {						
 								BigDecimal cdata = (BigDecimal)fdata;						
 								if(cdata!=null) {
@@ -1644,7 +1644,7 @@ public class TrackerService {
 						String module = foptions.get("module").textValue();
 						String slug = foptions.get("slug").textValue();
 						String refer_field = foptions.get("refer_field").textValue();					
-						Tracker targetTracker = repo.findOneByModuleAndSlug(module, slug);
+						Tracker targetTracker = repo.findByModuleAndSlug(module, slug);
 						if(targetTracker!=null && datas.get("id")!=null) {						
 							HashMap<String,Object> curquery = new HashMap<String,Object>();
 							LinkedHashMap<String,Object> qq = new LinkedHashMap<String,Object>(curquery);
@@ -1748,6 +1748,6 @@ public class TrackerService {
 	}
 	
 	public Tracker load(String module, String slug) {
-		return repo.findOneByModuleAndSlug(module, slug);
+		return repo.findByModuleAndSlug(module, slug);
 	}
 }

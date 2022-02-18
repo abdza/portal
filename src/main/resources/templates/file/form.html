@@ -29,6 +29,39 @@
                     <input class="form-control col-sm-8 col-md-6" type='file' name='file' />
                 </div>
             </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>File Group</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{fileGroup}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Allowed Roles</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{allowedRoles}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Sort Num</label></div>
+                <div class='col-sm-9'>
+                    <input class="form-control col-sm-8 col-md-6" type='text' th:field="*{sortNum}" />
+                </div>
+            </div>
+            <div class='form-group row'>
+                <div class='col-sm-3 col-form-label text-sm-right pr-0'>
+                    <label class='mb-0'>Type</label></div>
+                <div class='col-sm-9'>
+                    <select class="form-control col-sm-8 col-md-6" th:field="*{fileType}">
+                        <option th:value="'Document'" th:text="Document"></option>
+                        <option th:value="'Image'" th:text="Image"></option>
+                        <option th:value="'Javascript'" th:text="Javascript"></option>
+                        <option th:value="'Css'" th:text="Css"></option>
+                    </select>
+                </div>
+            </div>
 
             <div class='form-group row'>
                 <div class="offset-md-3 col-md-9">

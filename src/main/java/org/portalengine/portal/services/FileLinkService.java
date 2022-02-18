@@ -147,7 +147,7 @@ public class FileLinkService {
 			}
 			else {
 				if(filelink.getId()!=null) {
-					FileLink cfile = repo.getOne(filelink.getId());
+					FileLink cfile = repo.getById(filelink.getId());
 					if(cfile!=null) {
 						filelink.setName(cfile.getName());
 						filelink.setPath(cfile.getPath());
@@ -187,7 +187,7 @@ public class FileLinkService {
 		}
 		else {
 			if(filelink.getId()!=null) {
-				FileLink cfile = repo.getOne(filelink.getId());
+				FileLink cfile = repo.getById(filelink.getId());
 				if(cfile!=null) {
 					filelink.setName(cfile.getName());
 					filelink.setPath(cfile.getPath());

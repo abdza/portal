@@ -74,7 +74,7 @@ public class FileLinkController {
 		@GetMapping(value={"/create","/edit/{id}"})
 		public String form(@PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
-				FileLink curfile = service.getRepo().getOne(id);
+				FileLink curfile = service.getRepo().getById(id);
 				model.addAttribute("pageTitle","Update File - " + curfile.getName());
 				model.addAttribute("filelink", curfile);
 			}
@@ -88,8 +88,20 @@ public class FileLinkController {
 		@GetMapping("/download/{id}")
 		@ResponseBody
 		public ResponseEntity<Resource> download(@PathVariable Long id, Model model) {
-			FileLink curfile = service.getRepo().getOne(id);
+			FileLink curfile = service.getRepo().getById(id);
 			Resource resfile = service.getResource(curfile);
+			System.out.println("curfile:" + curfile.getName());
+			if(curfile.getFileType().equals("Css")||curfile.getFileType().equals("Javascript")){
+				System.out.println("scripters");
+				return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.TEXT_PLAIN).body(resfile);	
+			}
+			if(curfile.getFileType().equals("Image")){
+				System.out.println("imagers");
+				return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.IMAGE_JPEG).body(resfile);	
+			}
+			System.out.println("just default");
 			return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
 					"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);
 		}
@@ -97,7 +109,6 @@ public class FileLinkController {
 		@PostMapping("/save")
 		public String save(@RequestParam("file") MultipartFile file, @Valid FileLink filelink,Model model) {
 			if(file != null) {
-				filelink.setType("user");
 				filelink = service.SaveFile(file, filelink);
 			}
 			service.getRepo().save(filelink);

@@ -205,7 +205,7 @@ public class TrackerApiController {
 					}
 					JsonNode qnode = ((ObjectNode)optJson.get("query")).put("q", search);			
 									
-					Tracker targetTracker = service.getRepo().findOneByModuleAndSlug(optJson.get("module").asText(), optJson.get("slug").asText());
+					Tracker targetTracker = service.getRepo().findByModuleAndSlug(optJson.get("module").asText(), optJson.get("slug").asText());
 					
 					toreturn = service.dataset(targetTracker, qnode, false);
 					

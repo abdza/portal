@@ -37,5 +37,5 @@ public class FileLink extends Auditable<String> {
 	
 	private Long sortNum;
 	
-	private String type;
+	private String fileType;
 }

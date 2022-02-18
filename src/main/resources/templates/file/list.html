@@ -9,9 +9,10 @@
 	.responsive td:nth-of-type(3):before { content:'Slug'; }
 	.responsive td:nth-of-type(4):before { content:'Name'; }	
 	.responsive td:nth-of-type(5):before { content:'Path'; }
-	.responsive td:nth-of-type(6):before { content:'Filegroup'; }
-	.responsive td:nth-of-type(7):before { content:'Allowed Roles'; }
-	.responsive td:nth-of-type(8):before { content:'Sort Num'; }
+	.responsive td:nth-of-type(6):before { content:'Type'; }
+	.responsive td:nth-of-type(7):before { content:'Filegroup'; }
+	.responsive td:nth-of-type(8):before { content:'Allowed Roles'; }
+	.responsive td:nth-of-type(9):before { content:'Sort Num'; }
 }
 </style>
 </th:block>
@@ -53,6 +54,7 @@
                 <th>Slug</th>
                 <th>Name</th>
                 <th>Path</th>
+				<th>Type</th>
                 <th>Filegroup</th>
                 <th>Allowed Roles</th>
                 <th>Sort Num</th>
@@ -66,6 +68,7 @@
                 <td th:text="${filelink.slug}">Slug</td>
                 <td th:text="${filelink.name}">Name</td>
                 <td th:text="${filelink.path}">Path</td>
+				<td th:text="${filelink.fileType}">Type</td>
                 <td th:text="${filelink.fileGroup}">File Group</td>
                 <td th:text="${filelink.allowedRoles}">Allowed Roles</td>
                 <td th:text="${filelink.sortNum}">Sort Num</td>

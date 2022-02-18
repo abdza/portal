@@ -526,7 +526,7 @@ public class PortalController {
 				
 		if(curpage!=null) {
 			if(curpage.getPublished()!=null && curpage.getPublished()==true) {
-				if(curpage.getRunable()) {
+				if(curpage.getRunable()!=null && curpage.getRunable()==true) {
 					if(curpage.getPage_type().toLowerCase().equals("json")) {
 						return "redirect:/json/" + module + "/" + slug;
 					} 
@@ -639,8 +639,30 @@ public class PortalController {
 		if(curfile!=null) {
 			Resource resfile = fileService.getResource(curfile);
 			if(resfile!=null) {
-				return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=\"" + curfile.getName() + "\"").contentType(MediaType.APPLICATION_OCTET_STREAM).body(resfile);		
+				if(curfile.getFileType().equals("Javascript")){
+					return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + curfile.getName() + "\"")
+					.header("content-type","application/javascript")
+					.header("charset","utf-8")
+					.body(resfile);	
+				}
+				if(curfile.getFileType().equals("Css")){
+					return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + curfile.getName() + "\"")
+					.header("content-type","text/css")
+					.header("charset","utf-8")
+					.body(resfile);	
+				}				
+				if(curfile.getFileType().equals("Image")){
+					return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + curfile.getName() + "\"")
+					.contentType(MediaType.IMAGE_JPEG)
+					.body(resfile);	
+				}
+				return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + curfile.getName() + "\"")
+					.contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.body(resfile);		
 			}
 			else {
 				return ResponseEntity.notFound().build();

@@ -47,7 +47,7 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean trackerPermission(String module, String slug, String permission) {
-		Tracker curtracker = repos.getTrackerRepository().findOneByModuleAndSlug(module, slug);
+		Tracker curtracker = repos.getTrackerRepository().findByModuleAndSlug(module, slug);
 
 		if (curtracker == null) {
 			return false;
@@ -117,21 +117,23 @@ public class PortalSecurityExpressionRoot
 
 		List<UserRole> mr = moduleRoles(module);
 
-		for (String fname : curpage.getAllowedRoles().split(",")) {
-			if (fname.trim().equals("All")) {
-				return true;
-			} else if (fname.trim().equals("None")) {
-				return false;
-			} else if (fname.trim().equals("Authenticated")) {
-				if (curuser != null) {
+		if(curpage.getAllowedRoles()!=null){
+			for (String fname : curpage.getAllowedRoles().split(",")) {
+				if (fname.trim().equals("All")) {
 					return true;
-				}
-			} else {
-				// Need to check user roles here
-				if (mr!=null && mr.size() > 0) {
-					for (UserRole cr : mr) {
-						if (fname.trim().equals(cr.getRole())) {
-							return true;
+				} else if (fname.trim().equals("None")) {
+					return false;
+				} else if (fname.trim().equals("Authenticated")) {
+					if (curuser != null) {
+						return true;
+					}
+				} else {
+					// Need to check user roles here
+					if (mr!=null && mr.size() > 0) {
+						for (UserRole cr : mr) {
+							if (fname.trim().equals(cr.getRole())) {
+								return true;
+							}
 						}
 					}
 				}

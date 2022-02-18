@@ -96,9 +96,9 @@ public class SystemController {
 	
 	@GetMapping("/{module}/{slug}/transition/{transition_id}/{data_id}")
 	public String createdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long transition_id, @PathVariable Long data_id, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
-			TrackerTransition transition = trackerService.getTransitionRepo().getOne(transition_id);
+			TrackerTransition transition = trackerService.getTransitionRepo().getById(transition_id);
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
 			model.addAttribute("transition",transition);
@@ -145,7 +145,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/create")
 	@PreAuthorize("trackerPermission(#module,#slug,'add')")
 	public String createdata(@PathVariable String module, @PathVariable String slug, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			model.addAttribute("trackerservice",trackerService);
 			model.addAttribute("tracker", tracker);
@@ -192,7 +192,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/display/{id}")
 	@PreAuthorize("trackerPermission(#module,#slug,'detail')")
 	public String displaydata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			model.addAttribute("tracker", tracker);
 			HashMap<String,Object> datarow = trackerService.datarow(tracker, id);
@@ -239,7 +239,7 @@ public class SystemController {
 	@PostMapping("/{module}/{slug}/delete/{id}")
 	@PreAuthorize("trackerPermission(#module,#slug,'delete')")
 	public String deletedata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		MapSqlParameterSource paramsource = new MapSqlParameterSource();
 		paramsource.addValue("id", id);
 		namedjdbctemplate.update("delete from " + tracker.getDataTable() + " where " + trackerService.dbEscapeColumn("id") + "=:id", paramsource);
@@ -255,7 +255,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/edit/{id}")
 	@PreAuthorize("trackerPermission(#module,#slug,'edit')")
 	public String editdata(@PathVariable String module, @PathVariable String slug, @PathVariable Long id, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		if(tracker!=null) {
 			model.addAttribute("tracker", tracker);
 			String formtitle = "Edit " + tracker.getName();
@@ -301,7 +301,7 @@ public class SystemController {
 	@PostMapping("/{module}/{slug}/save")
 	@PreAuthorize("trackerPermission(#module,#slug,'save')")
 	public String save(@PathVariable String module, @PathVariable String slug, Model model,Authentication authentication) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		
 		Map<String, String[]> postdata = request.getParameterMap();
 		Long curid = null;
@@ -336,7 +336,7 @@ public class SystemController {
 	@GetMapping("/{module}/{slug}/list")
 	@PreAuthorize("trackerPermission(#module,#slug,'list')")
 	public String list(@PathVariable String module, @PathVariable String slug, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		model.addAttribute("tracker", tracker);
 		String listtitle = tracker.getName();
 		DataSet dataset = trackerService.dataset(tracker);
@@ -378,7 +378,7 @@ public class SystemController {
 	@PreAuthorize("trackerPermission(#module,#slug,'list')")
 	@ResponseBody
 	public ResponseEntity<StreamingResponseBody> excel(@PathVariable String module, @PathVariable String slug, Model model) {
-		Tracker tracker = trackerService.getRepo().findOneByModuleAndSlug(module, slug);
+		Tracker tracker = trackerService.getRepo().findByModuleAndSlug(module, slug);
 		model.addAttribute("tracker", tracker);
 		String listtitle = tracker.getName();
 		DataSet dataset = trackerService.dataset(tracker,false);

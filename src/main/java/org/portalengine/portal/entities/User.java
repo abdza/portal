@@ -50,6 +50,8 @@ public class User extends Auditable<String> {
 	private String staffid;
 	private String name;
 	private String email;
+	private String lan_id;
+	private Boolean isActive;
 	
 	@JsonIgnore
 	private String password;

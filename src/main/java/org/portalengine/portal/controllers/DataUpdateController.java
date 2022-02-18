@@ -112,7 +112,7 @@ public class DataUpdateController {
 	
 	@GetMapping("/display/{id}")
 	public String display(@PathVariable Long id, Model model) {
-		DataUpdate dataupdate = service.getRepo().getOne(id);
+		DataUpdate dataupdate = service.getRepo().getById(id);
 		model.addAttribute("pageTitle","Data Update - " + dataupdate.getTracker().getName());
 		model.addAttribute("dataupdate", dataupdate);
 		return "dataupdate/display.html";
@@ -122,7 +122,7 @@ public class DataUpdateController {
 	public String save(@RequestParam("file") MultipartFile file, @Valid DataUpdate dataupdate, Model model) {
 		FileLink filelink = new FileLink();
 		filelink.setModule(dataupdate.getTracker().getModule());
-		filelink.setType("system");
+		filelink.setFileType("Document");
 		Date curdate = new Date();
 		filelink.setSlug(dataupdate.getTracker().getModule() + "_upload_" + curdate.toString().replace(" ", "_"));
 		filelink.setName(dataupdate.getTracker().getModule() + "_upload_" + curdate.toString().replace(" ", "_"));
@@ -145,7 +145,7 @@ public class DataUpdateController {
 	
 	@PostMapping("/setparam/{id}")
 	public String saveparam(@PathVariable Long id, Model model) {
-		DataUpdate dataupdate = service.getRepo().getOne(id);
+		DataUpdate dataupdate = service.getRepo().getById(id);
 		Map<String, String[]> postdata = request.getParameterMap();
 		HashMap<String, Object> savedfield = new HashMap<String, Object>();
 		
@@ -181,7 +181,7 @@ public class DataUpdateController {
 	
 	@GetMapping("/runupdate/{id}")
 	public String runupdate(@PathVariable Long id, Model model) {		
-		DataUpdate dataupdate = service.getRepo().getOne(id);
+		DataUpdate dataupdate = service.getRepo().getById(id);
 		service.runupdate(dataupdate);		
 		PortalPage postpage = pageService.getRepo().findOneByModuleAndSlug(dataupdate.getTracker().getModule(),dataupdate.getTracker().getPostDataUpdate());
 		if(postpage!=null) {			
@@ -196,7 +196,7 @@ public class DataUpdateController {
 	public String setparam(@PathVariable Long id, Model model) {
 		HashMap<Integer, String> columns = new HashMap<Integer, String>();
 		
-		DataUpdate dataupdate = service.getRepo().getOne(id);
+		DataUpdate dataupdate = service.getRepo().getById(id);
 		PoiExcel poiExcel = new PoiExcel();
 		poiExcel.setLimits(dataupdate.getHeaderStart().intValue(), dataupdate.getHeaderEnd().intValue(), dataupdate.getHeaderEnd().intValue()+1);
 		

@@ -25,6 +25,7 @@ public class RegistrationForm {
 			curuser.setUsername(username);
 			curuser.setEmail(email);
 			curuser.setPassword(passwordEncoder.encode(password));
+			curuser.setIsActive(true);
 			return curuser;
 		}
 		else {
@@ -34,7 +35,9 @@ public class RegistrationForm {
 			if(username==null||username.equals("")) {
 				username = email;
 			}
-			return new User(username, staffid, name, email, passwordEncoder.encode(password), false);
+			User curuser =  new User(username, staffid, name, email, passwordEncoder.encode(password), false);
+			curuser.setIsActive(true);
+			return curuser;
 		}
 	}
 
