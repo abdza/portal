@@ -107,11 +107,30 @@ public class FileLinkController {
 		}
 		
 		@PostMapping("/save")
-		public String save(@RequestParam("file") MultipartFile file, @Valid FileLink filelink,Model model) {
+		public String save(@RequestParam("file") MultipartFile[] file, @Valid FileLink filelink, Model model) {
 			if(file != null) {
-				filelink = service.SaveFile(file, filelink);
-			}
-			service.getRepo().save(filelink);
+				int curpos = 0;
+				for (MultipartFile multipartFile : file) {
+					if(file.length==1){
+						filelink = service.SaveFile(multipartFile, filelink);
+						service.getRepo().save(filelink);
+					}
+					else{						
+						FileLink curlink = new FileLink();
+						curlink.setModule(filelink.getModule());
+						curlink.setFileGroup(filelink.getFileGroup());
+						curlink.setAllowedRoles(filelink.getAllowedRoles());
+						if(filelink.getSortNum()!=null){
+							curlink.setSortNum(filelink.getSortNum() + curpos++);
+						}
+						curlink.setFileType(filelink.getFileType());
+						curlink.setSlug(filelink.getSlug() + multipartFile.getOriginalFilename().replaceAll("[^a-zA-Z0-9]", "_"));
+						curlink = service.SaveFile(multipartFile, curlink);
+						service.getRepo().save(curlink);
+					}
+					
+				}				
+			}			
 			return "redirect:/admin/files";
 		}
 		
