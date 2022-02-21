@@ -1,5 +1,6 @@
 package org.portalengine.portal.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,11 +15,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_file")
+@Table(name = "file_link")
 public class FileLink extends Auditable<String> {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull
@@ -31,10 +32,13 @@ public class FileLink extends Auditable<String> {
 	
 	private String path;
 	
+	@Column(name="filegroup")
 	private String fileGroup;
 	
+	@Column(name="allowedroles")
 	private String allowedRoles;
 	
+	@Column(name="sortnum")
 	private Long sortNum;
 	
 	private String fileType;

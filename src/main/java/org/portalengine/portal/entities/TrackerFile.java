@@ -21,7 +21,7 @@ import lombok.Data;
 @Table(name = "portal_tracker_file")
 public class TrackerFile extends Auditable<String> {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 		
 	private String name;

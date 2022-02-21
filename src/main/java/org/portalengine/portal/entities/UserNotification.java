@@ -19,7 +19,7 @@ import lombok.Data;
 public class UserNotification extends Auditable<String> {
     	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
     private String notification;

@@ -23,7 +23,7 @@ import lombok.Data;
 public class Setting extends Auditable<String> {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	private String module;
@@ -40,9 +40,15 @@ public class Setting extends Auditable<String> {
 	@JsonIgnore
 	public String getValue() {
 		if(this.type.equals("date")) {
+			if(dateValue==null){
+				return null;
+			}
 			return dateValue.toString();
 		}
 		else if(this.type.equals("number")) {
+			if(numberValue==null){
+				return null;
+			}
 			return numberValue.toString();
 		}
 		return textValue;

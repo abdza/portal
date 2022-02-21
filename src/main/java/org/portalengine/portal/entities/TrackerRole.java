@@ -24,7 +24,7 @@ import lombok.Data;
 public class TrackerRole extends Auditable<String> {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@JsonIgnore

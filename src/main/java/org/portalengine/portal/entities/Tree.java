@@ -31,7 +31,7 @@ import lombok.Data;
 public class Tree extends Auditable<String> {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull

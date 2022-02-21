@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@Table(name = "portal_user")
+@Table(name = "IAP_User")
 @JsonPropertyOrder({ "username", "staffid", "name", "email" })
 public class User extends Auditable<String> {
 	
@@ -43,14 +44,25 @@ public class User extends Auditable<String> {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(name="new_staffid")
 	private String username;
+
+	@Column(name="StaffId")
 	private String staffid;
+
+	@Column(name="EMP_NAME")
 	private String name;
+
+
 	private String email;
+
+	@Column(name="lanid")
 	private String lan_id;
+
+	@Column(name="IsActive")
 	private Boolean isActive;
 	
 	@JsonIgnore
@@ -59,6 +71,7 @@ public class User extends Auditable<String> {
 	@JsonIgnore
 	private Boolean isAdmin;
 	
+	@Column(name="date_joined")
 	private Date dateRegister;
 	
 	public User(String username, String staffid, String name, String email, String password, Boolean isAdmin) {
