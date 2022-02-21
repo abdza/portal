@@ -535,14 +535,16 @@ public class ModuleService {
 		
 		File folder = new File(prepend);
 		File[] listOfFiles = folder.listFiles(); 
-		for(int i=0;i<listOfFiles.length;i++) {
-			if(listOfFiles[i].isDirectory()) {				
-				String dmod = listOfFiles[i].getName();
-				if(!cmodules.contains(dmod)){
-					cmodules.add(dmod);
+		if(listOfFiles!=null){ 
+			for(int i=0;i<listOfFiles.length;i++) {
+				if(listOfFiles[i].isDirectory()) {				
+					String dmod = listOfFiles[i].getName();
+					if(!cmodules.contains(dmod)){
+						cmodules.add(dmod);
+					}
 				}
-			}
-		}		
+			}		
+		}
 		
 		jdbctemplate.execute("delete from portal_module");
 		cmodules.forEach(cmod -> {
