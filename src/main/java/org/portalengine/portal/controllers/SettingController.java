@@ -67,7 +67,7 @@ public class SettingController {
 		@GetMapping(value= {"/create/{type}","/edit/{id}"})
 		public String edit(@PathVariable(required=false) String type, @PathVariable(required=false) Long id, Model model) {
 			if(id!=null) {
-				Setting cursetting = service.getRepo().getOne(id);
+				Setting cursetting = service.getRepo().getById(id);
 				model.addAttribute("pageTitle","Edit Setting - " + cursetting.getName());
 				model.addAttribute("setting", cursetting);
 			}
@@ -94,7 +94,7 @@ public class SettingController {
 		
 		@GetMapping("/display/{id}")
 		public String display(@PathVariable Long id, Model model) {
-			Setting cursetting = service.getRepo().getOne(id);
+			Setting cursetting = service.getRepo().getById(id);
 			model.addAttribute("pageTitle","Setting - " + cursetting.getName());
 			model.addAttribute("setting", cursetting);
 			return "setting/display.html";

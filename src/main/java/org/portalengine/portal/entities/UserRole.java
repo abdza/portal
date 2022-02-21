@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @Data
-@Table(name = "portal_user_role")
+@Table(name = "user_role")
 @Entity
 public class UserRole extends Auditable<String> {
 	

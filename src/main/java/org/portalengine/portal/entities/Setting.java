@@ -2,6 +2,7 @@ package org.portalengine.portal.entities;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +20,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_setting")
+@Table(name = "settings")
 public class Setting extends Auditable<String> {
 
 	@Id
@@ -30,12 +31,17 @@ public class Setting extends Auditable<String> {
 	private String name;
 	private String type;
 	
+	@Column(name="text")
 	private String textValue;
 	
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	private Date dateValue;
 	
+	@Column(name="number")
 	private Long numberValue;
+
+	@org.springframework.data.annotation.Version
+	protected long version;
 	
 	@JsonIgnore
 	public String getValue() {
