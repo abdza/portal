@@ -90,6 +90,7 @@ public class TrackerField extends Auditable<String> {
 		newfield.fieldType = this.fieldType;
 		newfield.fieldWidget = this.fieldWidget;
 		newfield.optionSource = this.optionSource;
+		newfield.optionSourceGroovy = this.optionSourceGroovy;
 		newfield.autoValue = this.autoValue;
 		newfield.tracker = destTracker;
 		return newfield;

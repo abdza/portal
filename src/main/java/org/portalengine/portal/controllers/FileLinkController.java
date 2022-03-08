@@ -50,7 +50,6 @@ public class FileLinkController {
 			String search = "";
 			Page<FileLink> toreturn = null;
 			if(request.getParameter("q")!=null||(request.getParameter("module")!=null && !request.getParameter("module").equals("All"))) {
-				System.out.println("doing query");
 				String module = request.getParameter("module");
 				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
 				Pageable pageable = PageRequest.of(page, size);
@@ -66,8 +65,6 @@ public class FileLinkController {
 			}
 			
 			model.addAttribute("files", toreturn);
-			
-			//model.addAttribute("files", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "file/list.html";
 		}
 		

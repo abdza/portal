@@ -39,7 +39,7 @@ public class TrackerFieldController {
 
 	@GetMapping("/{tracker_id}")
 	public String fields_list(@PathVariable Long tracker_id, Model model) {
-		Tracker tracker = service.getRepo().getOne(tracker_id);
+		Tracker tracker = service.getRepo().getById(tracker_id);
 		model.addAttribute("pageTitle","Field Listing - " + tracker.getName());
 		model.addAttribute("tracker", tracker);
 		return "tracker/field/list.html";
@@ -47,9 +47,9 @@ public class TrackerFieldController {
 
 	@GetMapping(value= {"/{tracker_id}/create","/{tracker_id}/edit/{field_id}"})
 	public String form(@PathVariable Long tracker_id, Model model,@PathVariable(required=false) Long field_id) {
-		Tracker tracker = service.getRepo().getOne(tracker_id);
+		Tracker tracker = service.getRepo().getById(tracker_id);
 		if(field_id!=null) {
-			TrackerField field = service.getFieldRepo().getOne(field_id);
+			TrackerField field = service.getFieldRepo().getById(field_id);
 			model.addAttribute("pageTitle","Edit Field - " + field.getName());
 			model.addAttribute("tracker_field", field);
 		}
@@ -65,8 +65,8 @@ public class TrackerFieldController {
 
 	@PostMapping("/{tracker_id}/delete/{field_id}")
 	public String delete_field(@PathVariable Long tracker_id, @PathVariable Long field_id, Model model) {
-		Tracker tracker = service.getRepo().getOne(tracker_id);
-		TrackerField field = service.getFieldRepo().getOne(field_id);
+		Tracker tracker = service.getRepo().getById(tracker_id);
+		TrackerField field = service.getFieldRepo().getById(field_id);
 		if(field!=null) {
 			tracker.remove(field);
 			service.getFieldRepo().deleteById(field_id);
@@ -77,7 +77,7 @@ public class TrackerFieldController {
 	@PostMapping("/{tracker_id}/save")
 	public String save_field(@PathVariable Long tracker_id,@Valid TrackerField tracker_field, Model model) {
 
-		Tracker tracker = service.getRepo().getOne(tracker_id);
+		Tracker tracker = service.getRepo().getById(tracker_id);
 		tracker.add(tracker_field);
 
 		service.getFieldRepo().save(tracker_field);

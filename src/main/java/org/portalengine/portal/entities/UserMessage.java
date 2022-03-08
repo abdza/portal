@@ -2,6 +2,7 @@ package org.portalengine.portal.entities;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
 
 import lombok.Data;
@@ -29,10 +31,11 @@ public class UserMessage extends Auditable<String> {
     private Date sentDate;
 
     @ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "user_id" )
+	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
+    @Type(type = "big_decimal")
 	private User user; 
     
     @ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "from_id" )
+	@JoinColumn( name = "from_id", columnDefinition = "numeric(19,0)"  )
 	private User from; 
 }

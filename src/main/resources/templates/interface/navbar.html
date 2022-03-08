@@ -99,7 +99,7 @@
                     <img id="id-navbar-user-image" class="d-none d-lg-inline-block radius-round border-2 brc-white-tp1 mr-2" th:src="@{/images/profile.png}" alt="Profile Photo">
                     <span class="d-inline-block d-lg-none d-xl-inline-block">
                         <span class="text-90" id="id-user-welcome">Welcome,</span>
-                        <span class="nav-user-name" sec:authentication="principal">Jason</span>
+                        <span class="nav-user-name" th:text="${#authentication.getPrincipal().getName()}">Jason</span>
                     </span>
 
                     <i class="caret fa fa-angle-down d-none d-xl-block"></i>
@@ -123,6 +123,13 @@
                         <i class="fa fa-cog text-success-m1 text-105 mr-1"></i>
                         Settings
                     </a>
+                                   
+                    <form sec:authorize="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')" id="restoreuser" method="POST" th:action="@{/restore_user}">
+                    <button class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100" type="submit">
+                        <i class="fa fa-reply text-success-m1 text-105 mr-1"></i>
+                        Restore
+                    </button>
+                    </form>
 
                     <div class="dropdown-divider brc-primary-l2"></div>
 

@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
 
 import lombok.Data;
@@ -42,4 +43,7 @@ public class FileLink extends Auditable<String> {
 	private Long sortNum;
 	
 	private String fileType;
+
+	@org.springframework.data.annotation.Version
+	protected long version;
 }

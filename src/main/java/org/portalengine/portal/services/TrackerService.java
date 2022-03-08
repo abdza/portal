@@ -324,25 +324,43 @@ public class TrackerService {
 	
 	public List<HashMap<String,String>> field_options(TrackerField field) {
 		ArrayList<HashMap<String,String>> toret = new ArrayList<HashMap<String,String>>();
-		if(field.getFieldWidget().equals("DropDown")) {			
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode savefield;
-			try {
-				savefield = mapper.readTree(field.getOptionSource());
-				if(savefield.isArray()) {
-					ArrayNode opts = (ArrayNode) savefield;
-					for(int i=0;i<opts.size();i++) {
-						HashMap<String,String> toin = new HashMap<String,String>();
-						toin.put("val", savefield.get(i).asText());
-						toin.put("label", savefield.get(i).asText());
-						toret.add(toin);
+		if(field.getFieldWidget().equals("DropDown")) {
+			if(field.getOptionSourceType().equals("JSON")){		
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode savefield;
+				try {
+					savefield = mapper.readTree(field.getOptionSource());
+					if(savefield.isArray()) {
+						ArrayNode opts = (ArrayNode) savefield;
+						for(int i=0;i<opts.size();i++) {
+							HashMap<String,String> toin = new HashMap<String,String>();
+							toin.put("val", savefield.get(i).asText());
+							toin.put("label", savefield.get(i).asText());
+							toret.add(toin);
+						}
 					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			
+			else if(field.getOptionSourceType().equals("Groovy")){		
+				Binding binding = new Binding();		
+				GroovyShell shell = new GroovyShell(getClass().getClassLoader(),binding);
+				Map<String, String[]> postdata = request.getParameterMap();
+				binding.setVariable("trackerService",this);
+				binding.setVariable("postdata", postdata);
+				binding.setVariable("request", request);
+				binding.setVariable("env", env);
+				Object content = null;
+				try {
+					content = shell.evaluate(field.getOptionSourceGroovy());
+				}
+				catch(Exception e) {
+					System.out.println("Error in page:" + e.toString());
+				}
+				return (List<HashMap<String,String>>) content;	
+			}			
 		}
 		return toret;
 	}

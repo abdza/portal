@@ -1,5 +1,6 @@
 package org.portalengine.portal.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
 
 import lombok.Data;
@@ -29,6 +31,7 @@ public class UserNotification extends Auditable<String> {
     private String badgeColor;
 
     @ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "user_id" )
+	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
+    @Type(type = "big_decimal")
 	private User user; 
 }

@@ -12,6 +12,8 @@ import org.portalengine.portal.services.FileLinkService;
 import org.portalengine.portal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +44,25 @@ public class UserRoleController {
 			size = Integer.parseInt(request.getParameter("size"));
 		}
 		model.addAttribute("pageTitle","User Role Listing");
-		model.addAttribute("user_roles", service.getRoleRepo().findAll(PageRequest.of(page, size)));
+
+		String search = "";
+		Page<UserRole> toreturn = null;
+		if(request.getParameter("q")!=null||(request.getParameter("module")!=null && !request.getParameter("module").equals("All"))) {
+			System.out.println("doing query");
+			String module = request.getParameter("module");
+			search = "%" + request.getParameter("q").replace(" " , "%") + "%";
+			Pageable pageable = PageRequest.of(page, size);
+			if(module.equals("All")) {
+				toreturn = service.getRoleRepo().apiquery(search,pageable);
+			}
+			else {
+				toreturn = service.getRoleRepo().apimodulequery(search, module, pageable);
+			}
+		}
+		else {
+			toreturn = service.getRoleRepo().findAll(PageRequest.of(page, size));
+		}
+		model.addAttribute("user_roles", toreturn);
 		return "user/role/list.html";
 	}
 	

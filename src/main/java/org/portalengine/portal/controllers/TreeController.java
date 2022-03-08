@@ -78,7 +78,7 @@ public class TreeController {
 		@GetMapping(value={"/create","/edit/{id}"})
 		public String form(Model model,@PathVariable(required=false) Long id) {
 			if(id!=null) {
-				Tree curtree = service.getTreeRepo().getOne(id);
+				Tree curtree = service.getTreeRepo().getById(id);
 				model.addAttribute("pageTitle","Edit Tree - " + curtree.getName());
 				model.addAttribute("tree", curtree);	
 			}
@@ -92,19 +92,19 @@ public class TreeController {
 		
 		@GetMapping("/fixtree/{id}")
 		public String fixtree(@PathVariable Long id, Model model) {
-			Tree curtree = service.getTreeRepo().getOne(id);
+			Tree curtree = service.getTreeRepo().getById(id);
 			service.fixTree(curtree);
 			return "redirect:/admin/trees/display/" + String.valueOf(id);
 		}
 		
 		@GetMapping(value={"/display/{id}","/display/{id}/{node_id}"})
 		public String display(@PathVariable Long id, Model model, @PathVariable(required=false) Long node_id) {
-			Tree curtree = service.getTreeRepo().getOne(id);
+			Tree curtree = service.getTreeRepo().getById(id);
 			model.addAttribute("pageTitle","Tree - " + curtree.getName());
 			model.addAttribute("tree", curtree);
 			TreeNode curnode = service.getRoot(curtree);
 			if(node_id!=null) {
-				curnode = service.getNodeRepo().getOne(node_id);
+				curnode = service.getNodeRepo().getById(node_id);
 			}
 			model.addAttribute("curnode",curnode);
 			return "tree/display.html";
@@ -125,14 +125,14 @@ public class TreeController {
 		@PostMapping("/nodes/save")
 		public String saveNode(Model model, HttpServletRequest request) {
 			Map<String, String[]> postdata = request.getParameterMap();
-			TreeNode parentnode = service.getNodeRepo().getOne(Long.parseLong(postdata.get("parent_id")[0]));
+			TreeNode parentnode = service.getNodeRepo().getById(Long.parseLong(postdata.get("parent_id")[0]));
 			TreeNode newnode = service.addNode(parentnode, postdata.get("name")[0], "last");
 			return "redirect:/admin/trees/display/" + parentnode.getTree().getId().toString() + "/" + newnode.getId();
 		}
 		
 		@GetMapping("/nodes/{id}/create")
 		public String createNode(@PathVariable Long id, Model model) {
-			TreeNode parentnode = service.getNodeRepo().getOne(id);
+			TreeNode parentnode = service.getNodeRepo().getById(id);
 			TreeNode newnode = new TreeNode();
 			model.addAttribute("pageTitle","Create Node - " + parentnode.getTree().getName());
 			newnode.setParent(parentnode);
@@ -143,7 +143,7 @@ public class TreeController {
 		
 		@GetMapping("/nodes/{id}/edit")
 		public String editNode(@PathVariable Long id, Model model) {
-			TreeNode curnode = service.getNodeRepo().getOne(id);
+			TreeNode curnode = service.getNodeRepo().getById(id);
 			model.addAttribute("pageTitle","Edit Node - " + curnode.getName());
 			model.addAttribute("curnode",curnode);
 			ArrayList<String> objectTypes = new ArrayList<String>(Arrays.asList("","Folder","Page","File","Tracker","Record","TreeNode"));
@@ -172,13 +172,13 @@ public class TreeController {
 		
 		@PostMapping("/nodes/{id}/update")
 		public String updateNode(@RequestParam Map<String,String> postdata, @PathVariable Long id, HttpServletRequest request,Model model) {
-			TreeNode curnode = service.getNodeRepo().getOne(id);
+			TreeNode curnode = service.getNodeRepo().getById(id);
 			curnode.setName(postdata.get("name"));
 			curnode.setObjectType(postdata.get("objectType"));
 			if(postdata.get("objectId")!="") {
 				Long objectId = Long.parseLong(postdata.get("objectId"));
 				if(postdata.get("objectType").equals("Tracker")) {
-					Tracker curtracker = trackerService.getRepo().getOne(objectId);
+					Tracker curtracker = trackerService.getRepo().getById(objectId);
 					if(curtracker!=null) {	
 						curnode.setObjectId(curtracker.getId());						
 					}
@@ -197,7 +197,6 @@ public class TreeController {
 					}	
 				}
 			}
-			//return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString();
 			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString() + "/" + curnode.getId().toString();
 		}
 		
@@ -253,7 +252,7 @@ public class TreeController {
 									JsonNode search = ((ObjectNode)jnode.get("search")).put("q",tosearch);									
 									System.out.println("found type:" + curname);
 									model.addAttribute("object",jnode);
-									Tracker tracker = trackerService.getRepo().getOne((long) jnode.get("objectId").asInt());
+									Tracker tracker = trackerService.getRepo().getById((long) jnode.get("objectId").asInt());
 									DataSet dataset = trackerService.dataset(tracker,search,false);
 									System.out.println("datas:" + dataset.getDataRows().toString());
 									model.addAttribute("items",dataset.getDataRows());

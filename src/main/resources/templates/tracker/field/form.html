@@ -119,7 +119,9 @@ var options = {
 		mode: 'tree'
 };
 var editor = new JSONEditor(container,options);
-editor.set(JSON.parse($('#optionSource').val()));
+if($('#optionSource').val()){
+    editor.set(JSON.parse($('#optionSource').val()));
+}
 
 var aceeditor = ace.edit("contenteditor");
 aceeditor.setTheme("ace/theme/chrome");

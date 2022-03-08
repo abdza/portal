@@ -5,8 +5,10 @@
 
 	<h1>User Details</h1>
 	
-	<a href="#" th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-primary">Edit</a>
-	<a href="#" th:href="@{/admin/users/switch/{id}(id=${user.id})}" class="btn btn-primary">Switch</a>
+	<div class="form-row">
+	<a href="#" th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-primary m-1">Edit</a>
+	<form class="form-inline" th:action="@{/impersonate}" method="POST"><input type='hidden' name='username' th:value="${user.username}"/><button class="btn btn-primary m-1">Switch Form</button></form>
+	</div>
 
 	<table class="table table-user-information">
 		<tbody>

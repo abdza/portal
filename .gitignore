@@ -42,3 +42,4 @@ src/main/resources/application.properties
 
 docs/_build/
 upload/
+/dump.sql

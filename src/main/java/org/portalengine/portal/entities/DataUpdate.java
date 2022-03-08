@@ -1,5 +1,6 @@
 package org.portalengine.portal.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,7 +34,8 @@ public class DataUpdate extends Auditable<String> {
 	private Tracker tracker;
 	
 	@OneToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "filelink_id" )
+	@JoinColumn( name = "filelink_id" , columnDefinition = "numeric(19,0)" )
+	@Type(type = "big_decimal")
 	private FileLink filelink;
 	
 	private Long uploadStatus;
@@ -45,7 +48,7 @@ public class DataUpdate extends Auditable<String> {
 	private String filePath;
 	
 	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "user_id" )
+	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)"  )
 	private User user;
 	
 	@org.hibernate.annotations.Type( type = "text" )

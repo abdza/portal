@@ -1,20 +1,21 @@
 package org.portalengine.portal.security;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
 import org.portalengine.portal.entities.User;
 import org.portalengine.portal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
-import org.springframework.ldap.query.LdapQuery;
-import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,11 +25,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
-
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class PortalAuthenticationProvider implements AuthenticationProvider {
@@ -100,16 +97,16 @@ public class PortalAuthenticationProvider implements AuthenticationProvider {
 
                 System.out.println("list:" + fromldap.toString());
             }
-
+            
             boolean passmatch = userService.getPasswordEncoder().matches(password, curuser.getPassword());
             if(!passmatch){
                 throw new BadCredentialsException("External system authentication failed");
             }
-            List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+            ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
             if(curuser.getIsAdmin()!=null && curuser.getIsAdmin()) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_SYSTEM_ADMIN"));
             }
-            return new UsernamePasswordAuthenticationToken(username, password, authorities);
+            return new UsernamePasswordAuthenticationToken(curuser, password, authorities);
         } else {
             throw new BadCredentialsException("External system authentication failed");
         }

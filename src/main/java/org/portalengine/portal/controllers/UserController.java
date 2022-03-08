@@ -160,12 +160,16 @@ public class UserController {
 		return "user/display.html";
 	}
 	
-	@GetMapping("/admin/users/switch/{id}")
-	public String switchuser(@PathVariable Long id, Model model) {
-		User curuser = service.getRepo().getById(id);
-		
-		model.addAttribute("pageTitle","User - " + curuser.getName());
-		model.addAttribute("user", curuser);
+	@GetMapping(value={"/admin/users/switch","/admin/users/switch/{username}"})
+	public String switchuser(@PathVariable(required=false) String username, Model model, HttpServletRequest request) {
+		if(username!=null) {
+			User curuser = service.getRepo().findByUsername(username).orElse(null);
+			if(curuser!=null){
+				service.switchUser(curuser, request);
+			}		
+			model.addAttribute("pageTitle","User - " + curuser.getName());
+			model.addAttribute("user", curuser);
+		}		
 		return "redirect:/admin/users";
 	}
 	

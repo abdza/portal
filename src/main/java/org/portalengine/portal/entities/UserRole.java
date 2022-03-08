@@ -1,5 +1,7 @@
 package org.portalengine.portal.entities;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,8 +33,10 @@ public class UserRole extends Auditable<String> {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "user_id" )
+	@ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
+	@Type(type = "big_decimal")
+	@JsonBackReference
 	private User user;
 	
 	@NotNull
@@ -38,5 +45,12 @@ public class UserRole extends Auditable<String> {
 	@NotNull
 	private String module;
 	
+	@org.springframework.data.annotation.Version
+	protected long version;
+	
+	@Override
+	public String toString() {
+		return this.module + " - " + this.role;
+	}
 	
 }

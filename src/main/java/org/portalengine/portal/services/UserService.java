@@ -1,8 +1,10 @@
 package org.portalengine.portal.services;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.portalengine.portal.entities.User;
 import org.portalengine.portal.entities.UserMessage;
@@ -16,7 +18,9 @@ import org.portalengine.portal.repositories.UserRoleRepository;
 import org.portalengine.portal.repositories.UserTaskRepository;
 import org.portalengine.portal.security.SecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -109,6 +113,11 @@ public class UserService implements UserDetailsService {
 			}
 		}
 		return null;
+	}
+
+	public Boolean switchUser(User target, HttpServletRequest req){
+		
+		return true;
 	}
 	
 	public User setPassword(User user,String password) {

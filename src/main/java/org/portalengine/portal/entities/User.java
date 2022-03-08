@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Type;
 import org.portalengine.portal.Auditable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.Data;
@@ -33,9 +36,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Data
 @Table(name = "IAP_User")
 @JsonPropertyOrder({ "username", "staffid", "name", "email" })
+@Data
 public class User extends Auditable<String> {
 	
 	/**
@@ -86,16 +89,22 @@ public class User extends Auditable<String> {
 	public User() {
 	}
 
-	@JsonIgnore
 	@OneToMany(
+			fetch = FetchType.EAGER, 
 			mappedBy = "user",
 			orphanRemoval = true)
+	@JsonManagedReference
 	private List<UserRole> roles = new ArrayList<>();
 	
 	@JsonIgnore
 	@PrePersist
 	void dateRegister() {
 		this.dateRegister = new Date();
+	}
+	
+	@Override
+	public String toString() {
+		return this.name;
 	}
 
 }

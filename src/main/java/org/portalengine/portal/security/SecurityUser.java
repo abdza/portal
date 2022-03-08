@@ -41,6 +41,10 @@ public class SecurityUser implements UserDetails {
     public User getUser() {
         return user;
     }
+    
+    public String getName() {
+    	return user.getName();
+    }
 
     @Override
     public boolean isAccountNonExpired() {
