@@ -59,7 +59,6 @@ public class User extends Auditable<String> {
 	@Column(name="EMP_NAME")
 	private String name;
 
-
 	private String email;
 
 	@Column(name="lanid")
@@ -73,6 +72,9 @@ public class User extends Auditable<String> {
 	
 	@JsonIgnore
 	private Boolean isAdmin;
+	
+	@JsonIgnore
+	private Date sessionStart;
 	
 	@Column(name="date_joined")
 	private Date dateRegister;

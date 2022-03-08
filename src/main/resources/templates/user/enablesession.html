@@ -1,0 +1,11 @@
+<html>
+<head>
+</head>
+<body>
+<span th:text="${user.name}">Here</span>
+ <form id="userform" th:action="@{/impersonate}" method="POST"><input type='hidden' name='username' th:value="${user.username}"/></form>
+ <script>
+ document.getElementById('userform').submit();
+ </script>
+</body>
+</html>

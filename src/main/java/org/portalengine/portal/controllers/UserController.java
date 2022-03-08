@@ -1,7 +1,10 @@
 package org.portalengine.portal.controllers;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.portalengine.portal.entities.Tracker;
@@ -42,6 +45,9 @@ public class UserController {
 	 */
 	@Autowired
 	private Environment env;
+	
+	@Autowired 
+	private HttpSession httpSession;
 		
 	@GetMapping("/update_password")
 	public String updatePassword(UpdatePasswordForm updatePasswordForm, Model model) {
@@ -183,6 +189,16 @@ public class UserController {
 	public String delete(@PathVariable Long id, Model model) {
 		service.getRepo().deleteById(id);
 		return "redirect:/admin/users";
+	}
+	
+	@GetMapping("/enablesession/{id}")
+	public String enablesession(@PathVariable Long id, Model model,HttpServletRequest request) {
+		User curuser = service.getRepo().getById(id);
+		curuser.setSessionStart(new Date());
+		service.getRepo().save(curuser);
+		model.addAttribute("user", curuser);
+		httpSession.setAttribute("normal_user", true);
+		return "user/enablesession.html";
 	}
 
 }

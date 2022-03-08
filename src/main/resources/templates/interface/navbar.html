@@ -124,12 +124,12 @@
                         Settings
                     </a>
                                    
-                    <form sec:authorize="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')" id="restoreuser" method="POST" th:action="@{/restore_user}">
+                    <form th:if="${session.normal_user!=true}" sec:authorize="hasRole('ROLE_PREVIOUS_ADMINISTRATOR')" id="restoreuser" method="POST" th:action="@{/restore_user}">
                     <button class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100" type="submit">
                         <i class="fa fa-reply text-success-m1 text-105 mr-1"></i>
                         Restore
                     </button>
-                    </form>
+                    </form >
 
                     <div class="dropdown-divider brc-primary-l2"></div>
 

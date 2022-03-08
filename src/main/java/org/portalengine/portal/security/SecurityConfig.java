@@ -118,7 +118,7 @@ public class SecurityConfig {
 			http
 				.addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
 				.authorizeRequests()
-				.antMatchers("/","/register","/login","/logout","/libs/**","/images/**","/setup","/restore_user").permitAll()
+				.antMatchers("/","/register","/login","/logout","/libs/**","/images/**","/setup","/restore_user","/enablesession/**").permitAll()
 				.antMatchers("/admin/**").hasAuthority("ROLE_SYSTEM_ADMIN")
 			.and()
 				.formLogin()
