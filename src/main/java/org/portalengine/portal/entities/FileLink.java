@@ -16,8 +16,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "file_link")
+@Table(name = FileLink.TABLE_NAME)
 public class FileLink extends Auditable<String> {
+	
+	public static final String TABLE_NAME= "file_link";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

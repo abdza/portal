@@ -494,35 +494,36 @@ public class ModuleService {
 	
 	public void updatelisting() {		
 		List<String> cmodules = new ArrayList<String>();
-		SqlRowSet modules = jdbctemplate.queryForRowSet("select distinct module from portal_page");			
+		SqlRowSet modules = jdbctemplate.queryForRowSet("select distinct module from portal_page");
 		while(modules.next()){
 			String dmod = modules.getString(1);
 			if(!cmodules.contains(dmod)){
 				cmodules.add(dmod);
 			}
 		}
-		modules = jdbctemplate.queryForRowSet("select distinct module from portal_file");			
+		
+		modules = jdbctemplate.queryForRowSet("select distinct module from " + FileLink.TABLE_NAME);
 		while(modules.next()){
 			String dmod = modules.getString(1);
 			if(!cmodules.contains(dmod)){
 				cmodules.add(dmod);
 			}
 		}
-		modules = jdbctemplate.queryForRowSet("select distinct module from portal_tracker");			
+		modules = jdbctemplate.queryForRowSet("select distinct module from portal_tracker");
 		while(modules.next()){
 			String dmod = modules.getString(1);
 			if(!cmodules.contains(dmod)){
 				cmodules.add(dmod);
 			}
 		}
-		modules = jdbctemplate.queryForRowSet("select distinct module from portal_setting");			
+		modules = jdbctemplate.queryForRowSet("select distinct module from " + Setting.TABLE_NAME);
 		while(modules.next()){
 			String dmod = modules.getString(1);
 			if(!cmodules.contains(dmod)){
 				cmodules.add(dmod);
 			}
 		}
-		modules = jdbctemplate.queryForRowSet("select distinct module from portal_tree");			
+		modules = jdbctemplate.queryForRowSet("select distinct module from portal_tree");
 		while(modules.next()){
 			String dmod = modules.getString(1);
 			if(!cmodules.contains(dmod)){

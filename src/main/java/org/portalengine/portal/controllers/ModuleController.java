@@ -8,13 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.portalengine.portal.entities.Module;
+import org.portalengine.portal.entities.PortalPage;
 import org.portalengine.portal.services.FileLinkService;
 import org.portalengine.portal.services.ModuleService;
 import org.portalengine.portal.services.TrackerService;
 import org.portalengine.portal.services.TreeService;
 import org.portalengine.portal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.support.Repositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -51,8 +54,21 @@ public class ModuleController {
 			if(request.getParameter("size") != null && !request.getParameter("size").isEmpty()) {
 				size = Integer.parseInt(request.getParameter("size"));
 			}
+			
+			String search = "";
+			Page<Module> toreturn = null;
+			if(request.getParameter("q")!=null) {
+				System.out.println("doing query");
+				search = "%" + request.getParameter("q").replace(" " , "%") + "%";
+				Pageable pageable = PageRequest.of(page, size);
+				toreturn = service.getRepo().apiquery(search,pageable);
+			}
+			else {
+				toreturn = service.getRepo().findAll(PageRequest.of(page, size));
+			}
+			
 			model.addAttribute("pageTitle","Module Listing");
-			model.addAttribute("modules", service.getRepo().findAll(PageRequest.of(page, size)));
+			model.addAttribute("modules", toreturn);
 			return "module/list.html";
 		}
 		

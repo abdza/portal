@@ -20,8 +20,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "settings")
+@Table(name = Setting.TABLE_NAME)
 public class Setting extends Auditable<String> {
+	
+	public static final String TABLE_NAME= "settings";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
