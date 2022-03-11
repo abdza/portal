@@ -34,6 +34,8 @@ public class PortalSecurityExpressionRoot
 			} else if (userobj instanceof SecurityUser) {
 				secuser = (SecurityUser) userobj;
 				this.curuser = secuser.getUser();			
+			} else if (userobj instanceof User) {
+				this.curuser = (User) userobj;			
 			}
 		}
 	}

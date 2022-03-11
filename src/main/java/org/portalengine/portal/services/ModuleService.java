@@ -339,7 +339,7 @@ public class ModuleService {
 				trees = objectMapper.readValue(treefile, new TypeReference<List<Tree>>() {});
 				if(trees.size()>0) {
 					trees.forEach(ctree -> {
-						Tree cctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
+						Tree cctree = treeService.getTreeRepo().findByModuleAndSlug(ctree.getModule(), ctree.getSlug());
 						if(cctree!=null) {
 							ctree.setId(cctree.getId());
 						}
@@ -360,7 +360,7 @@ public class ModuleService {
 						treeService.getTreeRepo().save(ctree);
 						treeService.getTreeRepo().flush();
 						
-						final Tree fctree = treeService.getTreeRepo().findOneByModuleAndSlug(ctree.getModule(), ctree.getSlug());
+						final Tree fctree = treeService.getTreeRepo().findByModuleAndSlug(ctree.getModule(), ctree.getSlug());
 						nodes.forEach(cnode -> {						
 							cnode = fixNode(cnode,fctree);
 							TreeNode prevnode = treeService.getNodeRepo().findFirstByFullPathAndTree(cnode.getFullPath(), fctree);

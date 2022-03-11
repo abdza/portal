@@ -164,7 +164,7 @@ public class TrackerService {
 				module = field.optionsJson().get("tree_module").asText();
 			}
 			String slug = field.optionsJson().get("tree_slug").asText();
-			tree = treeService.getTreeRepo().findOneByModuleAndSlug(module, slug);
+			tree = treeService.getTreeRepo().findByModuleAndSlug(module, slug);
 		}
 		return tree;
 	}

@@ -17,7 +17,7 @@ public interface TreeRepository extends JpaRepository<Tree, Long> {
 	
 	Tree findBySlug(String slug);
 	
-	Tree findOneByModuleAndSlug(String module,String slug);
+	Tree findByModuleAndSlug(String module,String slug);
 	
 	List<Tree> findAllByModule(String module);
 }

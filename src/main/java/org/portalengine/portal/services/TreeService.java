@@ -72,7 +72,7 @@ public class TreeService {
 	
 	public TreeNode getNodeFromPath(String path) {
 		TreeNode toreturn = null;
-		Tree portaltree = treeRepo.findOneByModuleAndSlug("portal", "portal");
+		Tree portaltree = treeRepo.findByModuleAndSlug("portal", "portal");
 		if(portaltree!=null) {
 			String[] slugs = path.split("/");
 			

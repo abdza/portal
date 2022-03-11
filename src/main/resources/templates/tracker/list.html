@@ -26,7 +26,7 @@
 		  		<div class="col-sm-9 input-floating-label text-blue-d2 brc-blue-m1">
 		  			<select name="module" id="module" onchange="submit();">
 		  				<option>All</option>
-		  				<option th:each="module:${@moduleService.list()}" th:value="${module.name}" th:text="${module.name}" th:selected="${param.module?.toString()==module.name.toString()}">All</option>  				
+		  				<option th:each="module:${@moduleService.list()}" th:value="${module.name}" th:text="${module.name}" th:selected="${param.module?.toString()==module.name}">All</option>  				
 		  			</select>
 		  		</div>
 		  	</div>
