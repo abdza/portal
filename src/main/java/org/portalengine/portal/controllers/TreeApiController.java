@@ -1,25 +1,33 @@
 package org.portalengine.portal.controllers;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.portalengine.portal.entities.DataSet;
+import org.portalengine.portal.entities.FileLink;
+import org.portalengine.portal.entities.PortalPage;
+import org.portalengine.portal.entities.Setting;
+import org.portalengine.portal.entities.Tracker;
 import org.portalengine.portal.entities.Tree;
 import org.portalengine.portal.entities.TreeNode;
 import org.portalengine.portal.entities.TreeUser;
 import org.portalengine.portal.entities.User;
+import org.portalengine.portal.services.FileLinkService;
+import org.portalengine.portal.services.PageService;
+import org.portalengine.portal.services.SettingService;
+import org.portalengine.portal.services.TrackerService;
 import org.portalengine.portal.services.TreeService;
 import org.portalengine.portal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.Data;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @RestController
 @RequestMapping("/api/trees")
@@ -39,6 +49,18 @@ public class TreeApiController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PageService pageService;
+	
+	@Autowired
+	private FileLinkService fileLinkService;
+	
+	@Autowired
+	private TrackerService trackerService;
+	
+	@Autowired
+	private SettingService settingService;
 	
 	@GetMapping(value={"/nodequery","/nodequery/{tree_id}"})
 	public Object nodequery(HttpServletRequest request, Model model, @PathVariable(required=false) Long tree_id) {
@@ -194,6 +216,77 @@ public class TreeApiController {
 			map.put("children", children);
 		}
 		return map;
+	}
+	
+	@PostMapping("/objectSearch")
+	public String objectSearch(@RequestParam Map<String,String> postdata, Model model) {
+		String searchType = postdata.get("searchType").toLowerCase();
+		String tosearch = postdata.get("q");
+		tosearch = "%" + tosearch.replaceAll(" ", "%") + "%";
+		System.out.println("Searching:" + tosearch);
+		if(searchType.equals("page")) {
+			List<PortalPage> pages = pageService.getRepo().findAllByQ(tosearch);
+			model.addAttribute("pages",pages);
+		}
+		else if(searchType.equals("treenode")) {
+			String source = "";
+			if(postdata.get("source")!=null) {
+				source = postdata.get("source");
+			}
+			List<TreeNode> nodes;
+			if(source.equals("editpage")) {
+				nodes = service.getNodeRepo().findAllPublishedByQ(tosearch);
+			}
+			else {
+				nodes = service.getNodeRepo().findAllByQ(tosearch);
+			}
+			model.addAttribute("nodes",nodes);
+		}
+		else if(searchType.equals("file")) {
+			List<FileLink> files = fileLinkService.getRepo().findAllByQ(tosearch);
+			model.addAttribute("files",files);
+		}
+		else if(searchType.equals("tracker")) {
+			List<Tracker> trackers = trackerService.getRepo().findAllByQ(tosearch);
+			model.addAttribute("trackers",trackers);
+		}
+		else if(searchType.equals("folder")) {
+			List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
+			model.addAttribute("nodes",nodes);
+		}
+		else {				
+			Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
+			if(customTypes!=null) {
+				System.out.println("found settings");
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					JsonNode trackerType = mapper.readTree(customTypes.getTextValue());
+					if(trackerType.isArray()) {
+						for(final JsonNode jnode : trackerType) {
+							System.out.println("testing json:" + jnode.toString());
+							String curname = jnode.get("name").asText().toLowerCase();
+							System.out.println("comparing:" + curname + " with:" + searchType);
+							if(searchType.equals(curname)) {
+								JsonNode search = ((ObjectNode)jnode.get("search")).put("q",tosearch);									
+								System.out.println("found type:" + curname);
+								model.addAttribute("object",jnode);
+								Tracker tracker = trackerService.getRepo().getById((long) jnode.get("objectId").asInt());
+								DataSet dataset = trackerService.dataset(tracker,search,false);
+								System.out.println("datas:" + dataset.getDataRows().toString());
+								model.addAttribute("items",dataset.getDataRows());
+								model.addAttribute("title",jnode.get("title").asText());
+								model.addAttribute("detail",jnode.get("detail").asText());
+							}
+						}
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			searchType = "trackertype";
+		}
+		return "tree/node/object_search/" + searchType + ".html";
 	}
 	
 }

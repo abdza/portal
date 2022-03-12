@@ -37,6 +37,7 @@ public class Setting extends Auditable<String> {
 	private String textValue;
 	
 	@DateTimeFormat(pattern="dd/MM/yyyy")
+	@Column(name="date_value")
 	private Date dateValue;
 	
 	@Column(name="number")
@@ -47,13 +48,13 @@ public class Setting extends Auditable<String> {
 	
 	@JsonIgnore
 	public String getValue() {
-		if(this.type.equals("date")) {
+		if(this.type.toLowerCase().equals("date")) {
 			if(dateValue==null){
 				return null;
 			}
 			return dateValue.toString();
 		}
-		else if(this.type.equals("number")) {
+		else if(this.type.toLowerCase().equals("number")) {
 			if(numberValue==null){
 				return null;
 			}

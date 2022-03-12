@@ -1,5 +1,7 @@
 package org.portalengine.portal.controllers;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -60,7 +62,6 @@ public class SettingController {
 			
 			model.addAttribute("settings", toreturn);
 			
-			//model.addAttribute("settings", service.getRepo().findAll(PageRequest.of(page, size)));
 			return "setting/list.html";
 		}
 		
@@ -101,8 +102,11 @@ public class SettingController {
 		}
 		
 		@PostMapping("/save")
-		public String save(@Valid Setting setting,Model model) {
-			service.getRepo().save(setting);
+		public String save(@Valid Setting setting,Model model, HttpServletRequest request) {
+			Map<String, String[]> postdata = request.getParameterMap();
+			if(!postdata.containsKey("cancel")){
+				service.getRepo().save(setting);
+			}
 			return "redirect:/admin/settings";
 		}
 }

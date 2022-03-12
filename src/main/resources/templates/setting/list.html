@@ -7,7 +7,8 @@
 	.responsive td:nth-of-type(1):before { content:'#'; }
 	.responsive td:nth-of-type(2):before { content:'Module'; }
 	.responsive td:nth-of-type(3):before { content:'Name'; }
-	.responsive td:nth-of-type(4):before { content:'Value'; }	
+    .responsive td:nth-of-type(4):before { content:'Type'; }
+	.responsive td:nth-of-type(5):before { content:'Value'; }	
 }
 </style>
 </th:block>
@@ -50,6 +51,7 @@
                 <th>#</th>
                 <th>Module</th>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Value</th>
                 <th>&nbsp;</th>
             </tr>
@@ -59,6 +61,7 @@
                 </td>
                 <td th:text="${setting.module}">module</td>
                 <td th:text="${setting.name}">title</td>
+                <td th:text="${setting.type}">val</td>
                 <td th:text="${setting.getValue()}">val</td>
                 <td>
                     <form method='post' th:action='@{/admin/settings/delete/{id}(id=${setting.id})}' th:object="${setting}">

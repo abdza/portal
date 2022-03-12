@@ -4,15 +4,11 @@ package org.portalengine.portal.controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.portalengine.portal.entities.DataSet;
-import org.portalengine.portal.entities.FileLink;
-import org.portalengine.portal.entities.PortalPage;
 import org.portalengine.portal.entities.Setting;
 import org.portalengine.portal.entities.Tracker;
 import org.portalengine.portal.entities.Tree;
@@ -35,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Controller
 @RequestMapping("/admin/trees")
@@ -200,74 +195,5 @@ public class TreeController {
 			return "redirect:/admin/trees/display/" + curnode.getTree().getId().toString() + "/" + curnode.getId().toString();
 		}
 		
-		@PostMapping("/objectSearch")
-		public String objectSearch(@RequestParam Map<String,String> postdata, Model model) {
-			String searchType = postdata.get("searchType").toLowerCase();
-			String tosearch = postdata.get("q");
-			tosearch = "%" + tosearch.replaceAll(" ", "%") + "%";
-			System.out.println("Searching:" + tosearch);
-			if(searchType.equals("page")) {
-				List<PortalPage> pages = pageService.getRepo().findAllByQ(tosearch);
-				model.addAttribute("pages",pages);
-			}
-			else if(searchType.equals("treenode")) {
-				String source = "";
-				if(postdata.get("source")!=null) {
-					source = postdata.get("source");
-				}
-				List<TreeNode> nodes;
-				if(source.equals("editpage")) {
-					nodes = service.getNodeRepo().findAllPublishedByQ(tosearch);
-				}
-				else {
-					nodes = service.getNodeRepo().findAllByQ(tosearch);
-				}
-				model.addAttribute("nodes",nodes);
-			}
-			else if(searchType.equals("file")) {
-				List<FileLink> files = fileLinkService.getRepo().findAllByQ(tosearch);
-				model.addAttribute("files",files);
-			}
-			else if(searchType.equals("tracker")) {
-				List<Tracker> trackers = trackerService.getRepo().findAllByQ(tosearch);
-				model.addAttribute("trackers",trackers);
-			}
-			else if(searchType.equals("folder")) {
-				List<TreeNode> nodes = service.getNodeRepo().findAllByQ(tosearch);
-				model.addAttribute("nodes",nodes);
-			}
-			else {				
-				Setting customTypes = settingService.getRepo().findOneByModuleAndName("portal", "TrackerType");
-				if(customTypes!=null) {
-					System.out.println("found settings");
-					ObjectMapper mapper = new ObjectMapper();
-					try {
-						JsonNode trackerType = mapper.readTree(customTypes.getTextValue());
-						if(trackerType.isArray()) {
-							for(final JsonNode jnode : trackerType) {
-								System.out.println("testing json:" + jnode.toString());
-								String curname = jnode.get("name").asText().toLowerCase();
-								System.out.println("comparing:" + curname + " with:" + searchType);
-								if(searchType.equals(curname)) {
-									JsonNode search = ((ObjectNode)jnode.get("search")).put("q",tosearch);									
-									System.out.println("found type:" + curname);
-									model.addAttribute("object",jnode);
-									Tracker tracker = trackerService.getRepo().getById((long) jnode.get("objectId").asInt());
-									DataSet dataset = trackerService.dataset(tracker,search,false);
-									System.out.println("datas:" + dataset.getDataRows().toString());
-									model.addAttribute("items",dataset.getDataRows());
-									model.addAttribute("title",jnode.get("title").asText());
-									model.addAttribute("detail",jnode.get("detail").asText());
-								}
-							}
-						}
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				searchType = "trackertype";
-			}
-			return "tree/node/object_search/" + searchType + ".html";
-		}
+		
 }
