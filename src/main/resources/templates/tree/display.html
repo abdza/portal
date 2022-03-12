@@ -19,6 +19,7 @@
 			<div class="card-header bgc-default-d2">
 				<h3 th:text="${tree.name}" class="card-title text-130 text-white"></h3>
 				<div class="card-toolbar">
+				<form class='form-inline'><input type='text' name='nodefilter' id='nodefilter' placeholder='Search..'/></form>
 				<a id="addnode" th:href="@{/admin/trees/nodes/{parent_id}/create(parent_id=${curnode.id})}" href="#" class="card-toolbar-btn text-white">				
 				<i class="fa fa-plus"></i>
 				</a>
@@ -40,6 +41,15 @@
 
 <th:block layout:fragment="javascript">
 	<script th:inline="javascript">
+	
+	$('#nodefilter').on("keyup",function(){
+		console.log('chaing');
+		var q = $('#nodefilter').val();
+		if(q.length>3){
+			console.log('searching for ' + q);
+			$.ui.fancytree.getTree('#tree').filterNodes(q);
+		}
+	});
 	
 	$('#deletenode').on('click',function(){
 		if(confirm('Delete node?')){
@@ -97,10 +107,9 @@
 		};
 	});
 	
-	function expandTree(hierarchy) {
-	    $('#tree').fancytree("getTree").loadKeyPath(hierarchy).progress(function(data) {
+	function expandTree(tree,hierarchy) {
+	    tree.loadKeyPath(hierarchy).progress(function(data) {
 	        if (data.status === "loaded") {
-	            console.log("loaded intermediate node " + data.node);
 	            $.ui.fancytree.getTree('#tree').activateKey(data.node.key);
 	        } else if (data.status === "ok") {
 	        	data.node.toggleExpand();
@@ -108,7 +117,7 @@
 	    }).done(function() {});
 	}
 	
-	var fancytree =	$('#tree').fancytree({
+	var fancytreeobj =	$('#tree').fancytree({
 			source : {
 				url : /*[[@{/api/trees/{treeid}(treeid=${tree.id})}]]*/'/dummy/api/users',
 			},
@@ -138,13 +147,15 @@
 			},
 			init: function(event, data, flag) {
 				var tree = $.ui.fancytree.getTree("#tree");
-				console.log('init done');
-				console.log(tree);
 				var node = tree.getNodeByKey("[[${curnode.id}]]");
-				console.log(node);
-				expandTree(/*[[${@treeService.pathString(curnode)}]]*/);
+				expandTree(tree,/*[[${@treeService.pathString(curnode)}]]*/);
 			},
-			extensions: ["dnd5"],
+			extensions: ["dnd5","filter"],
+			filter: {  // override default settings
+			    counter: false, // No counter badges
+			    autoExpand: true,
+			    mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
+			},
 			dnd5: {
 				preventVoidModes: true,
 				preventRecursion: true,
@@ -203,6 +214,8 @@
 				}				
 			}
 		});
+	
+	
 	
 $('#user').select2({
 	  ajax: {
