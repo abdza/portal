@@ -34,7 +34,7 @@ public class SettingService {
 	}
 	
 	public String StringSetting(String name, String module, String defvalue) {
-		Setting setting = repo.findOneByModuleAndName(module, name);
+		Setting setting = repo.findByModuleAndName(module, name);
 		if(setting!=null) {
 			return setting.getTextValue();
 		}
@@ -42,7 +42,7 @@ public class SettingService {
 	}
 	
 	public void SaveValue(String name, String module, String value) {
-		Setting setting = repo.findOneByModuleAndName(module, name);
+		Setting setting = repo.findByModuleAndName(module, name);
 		if(setting!=null) {
 			setting.setTextValue(value);
 			repo.save(setting);
@@ -50,7 +50,7 @@ public class SettingService {
 	}
 	
 	public void SaveValue(String name, String module, Date value) {
-		Setting setting = repo.findOneByModuleAndName(module, name);
+		Setting setting = repo.findByModuleAndName(module, name);
 		if(setting!=null) {
 			setting.setDateValue(value);
 			repo.save(setting);
@@ -58,7 +58,7 @@ public class SettingService {
 	}
 	
 	public void SaveValue(String name, String module, Long value) {
-		Setting setting = repo.findOneByModuleAndName(module, name);
+		Setting setting = repo.findByModuleAndName(module, name);
 		if(setting!=null) {
 			setting.setNumberValue(value);
 			repo.save(setting);

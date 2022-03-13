@@ -312,7 +312,7 @@ public class ModuleService {
 				settings = objectMapper.readValue(settingfile, new TypeReference<List<Setting>>() {});
 				if(settings.size()>0) {
 					settings.forEach(csetting -> {
-						Setting ccsetting = settingService.getRepo().findOneByModuleAndName(csetting.getModule(), csetting.getName());
+						Setting ccsetting = settingService.getRepo().findByModuleAndName(csetting.getModule(), csetting.getName());
 						if(ccsetting!=null) {
 							csetting.setId(ccsetting.getId());
 						}

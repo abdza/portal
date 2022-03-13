@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.portalengine.portal.entities.FileLink;
 import org.portalengine.portal.entities.Setting;
 import org.portalengine.portal.services.SettingService;
 import org.springframework.beans.factory.annotation.Autowired;

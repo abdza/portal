@@ -1,6 +1,6 @@
 <ul class="list-group">
 <li class="list-group-item objectItem" th:each="item,iter: ${items}" onclick="updateObjectId($(this));" th:attr="data-object-id=${item.id}">
 <h6 th:text="${item.get(title)}">title</h6>
-<p th:text="${item.get(detail)}">preview</p>
+<p th:if="${detail}" th:text="${item.get(detail)}">preview</p>
 </li>
 </ul>

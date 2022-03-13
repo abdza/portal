@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SettingRepository extends JpaRepository<Setting, Long> {
 
-	Setting findOneByModuleAndName(String module,String name);
+	Setting findByModuleAndName(String module,String name);
 	
 	List<Setting> findAllByModule(String module);
 	
