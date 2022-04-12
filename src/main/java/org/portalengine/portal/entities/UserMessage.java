@@ -17,10 +17,12 @@ import org.portalengine.portal.Auditable;
 
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "portal_user_message")
+@Entity
+@Table(name = UserMessage.TABLE_NAME)
 public class UserMessage extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_user_message";
     	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -31,11 +33,12 @@ public class UserMessage extends Auditable<String> {
     private Date sentDate;
 
     @ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
-    @Type(type = "big_decimal")
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial" )
+    @Type(type = "bigserial")
 	private User user; 
     
     @ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "from_id", columnDefinition = "numeric(19,0)"  )
+	@JoinColumn( name = "from_id", columnDefinition = "bigserial"  )
+	@Type(type = "bigserial")
 	private User from; 
 }

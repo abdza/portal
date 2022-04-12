@@ -28,8 +28,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_tree_node")
+@Table(name = TreeNode.TABLE_NAME)
 public class TreeNode extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_tree_node";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

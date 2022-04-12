@@ -35,11 +35,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-@Entity
-@Table(name = "IAP_User")
-@JsonPropertyOrder({ "username", "staffid", "name", "email" })
 @Data
+@Entity
+@Table(name = User.TABLE_NAME)
+@JsonPropertyOrder({ "username", "staffid", "name", "email" })
 public class User extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_user";
 	
 	/**
 	 * 

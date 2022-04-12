@@ -23,7 +23,7 @@ import lombok.Data;
 @Table(name = Setting.TABLE_NAME)
 public class Setting extends Auditable<String> {
 	
-	public static final String TABLE_NAME= "settings";
+	public static final String TABLE_NAME= "portal_setting";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -42,9 +42,6 @@ public class Setting extends Auditable<String> {
 	
 	@Column(name="number")
 	private Long numberValue;
-
-	@org.springframework.data.annotation.Version
-	protected long version;
 	
 	@JsonIgnore
 	public String getValue() {

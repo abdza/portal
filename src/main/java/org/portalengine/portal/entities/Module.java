@@ -16,8 +16,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_module")
+@Table(name = Module.TABLE_NAME)
 public class Module extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_module";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

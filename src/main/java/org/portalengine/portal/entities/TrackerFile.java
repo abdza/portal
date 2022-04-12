@@ -18,8 +18,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_tracker_file")
+@Table(name = TrackerFile.TABLE_NAME)
 public class TrackerFile extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_tracker_file";
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;

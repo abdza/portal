@@ -25,17 +25,19 @@ import lombok.RequiredArgsConstructor;
 
 
 @Data
-@Table(name = "user_role")
 @Entity
+@Table(name = UserRole.TABLE_NAME)
 public class UserRole extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_user_role";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
-	@Type(type = "big_decimal")
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial" )
+	@Type(type = "bigserial")
 	@JsonBackReference
 	private User user;
 	
@@ -44,9 +46,6 @@ public class UserRole extends Auditable<String> {
 	
 	@NotNull
 	private String module;
-	
-	@org.springframework.data.annotation.Version
-	protected long version;
 	
 	@Override
 	public String toString() {

@@ -22,8 +22,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_tree_user")
+@Table(name = TreeUser.TABLE_NAME)
 public class TreeUser extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_tree_user";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -35,8 +37,8 @@ public class TreeUser extends Auditable<String> {
 	private TreeNode node;
 	
 	@ManyToOne( fetch = FetchType.EAGER )
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
-	@Type(type = "big_decimal")
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial" )
+	@Type(type = "bigserial")
 	private User user;
 	
 	@NotNull

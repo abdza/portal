@@ -19,7 +19,7 @@ import lombok.Data;
 @Table(name = FileLink.TABLE_NAME)
 public class FileLink extends Auditable<String> {
 	
-	public static final String TABLE_NAME= "file_link";
+	public static final String TABLE_NAME= "portal_file_link";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -45,7 +45,4 @@ public class FileLink extends Auditable<String> {
 	private Long sortNum;
 	
 	private String fileType;
-
-	@org.springframework.data.annotation.Version
-	protected long version;
 }

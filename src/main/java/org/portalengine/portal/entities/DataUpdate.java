@@ -22,8 +22,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_data_update")
+@Table(name = DataUpdate.TABLE_NAME)
 public class DataUpdate extends Auditable<String> {
+	
+	public static final String TABLE_NAME= "portal_data_update";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -34,8 +36,8 @@ public class DataUpdate extends Auditable<String> {
 	private Tracker tracker;
 	
 	@OneToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "filelink_id" , columnDefinition = "numeric(19,0)" )
-	@Type(type = "big_decimal")
+	@JoinColumn( name = "filelink_id" , columnDefinition = "bigserial" )
+	@Type(type = "bigserial")
 	private FileLink filelink;
 	
 	private Long uploadStatus;
@@ -48,7 +50,8 @@ public class DataUpdate extends Auditable<String> {
 	private String filePath;
 	
 	@ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)"  )
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial"  )
+	@Type(type = "bigserial")
 	private User user;
 	
 	@org.hibernate.annotations.Type( type = "text" )

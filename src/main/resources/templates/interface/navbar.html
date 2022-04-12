@@ -82,11 +82,11 @@
 
                         <div class="dropdown-divider brc-primary-l2"></div>
 
-                        <button class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100" type="submit">
+                        <button id="login_button" class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100" type="submit">
                             <i class="fa fa-power-off text-success-d1 text-105 mr-1"></i>
                             Login
                         </button>
-                        <a th:if="${@environment.getProperty('jpf.enable_register')}" class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100"
+                        <a id="register_button" th:if="${@environment.getProperty('jpf.enable_register')}" class="dropdown-item btn btn-outline-grey btn-h-lighter-secondary btn-a-lighter-secondary w-100"
                             th:href="@{/register}"> 
                             <i class="fa fa-address-card text-info-d1 text-105 mr-1"></i>
                             Register </a>

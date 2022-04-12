@@ -16,8 +16,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_page")
+@Table(name = PortalPage.TABLE_NAME)
 public class PortalPage extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_page";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

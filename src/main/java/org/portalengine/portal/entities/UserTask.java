@@ -17,10 +17,12 @@ import org.portalengine.portal.Auditable;
 
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "portal_user_task")
+@Entity
+@Table(name = UserTask.TABLE_NAME)
 public class UserTask extends Auditable<String> {
+
+    public static final String TABLE_NAME= "portal_user_task";
     	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -34,8 +36,8 @@ public class UserTask extends Auditable<String> {
     private Date sentDate;
 
     @ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
-    @Type(type = "big_decimal")
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial" )
+    @Type(type = "bigserial")
 	private User user; 
  
 }

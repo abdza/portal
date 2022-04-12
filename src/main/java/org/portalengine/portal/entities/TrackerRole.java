@@ -20,8 +20,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_tracker_role")
+@Table(name = TrackerRole.TABLE_NAME)
 public class TrackerRole extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_tracker_role";
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

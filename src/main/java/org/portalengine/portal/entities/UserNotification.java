@@ -15,10 +15,12 @@ import org.portalengine.portal.Auditable;
 
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "portal_user_notification")
+@Entity
+@Table(name = UserNotification.TABLE_NAME)
 public class UserNotification extends Auditable<String> {
+
+    public static final String TABLE_NAME= "portal_user_notification";
     	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -31,7 +33,7 @@ public class UserNotification extends Auditable<String> {
     private String badgeColor;
 
     @ManyToOne( fetch = FetchType.LAZY )
-	@JoinColumn( name = "user_id", columnDefinition = "numeric(19,0)" )
-    @Type(type = "big_decimal")
+	@JoinColumn( name = "user_id", columnDefinition = "bigserial" )
+    @Type(type = "bigserial")
 	private User user; 
 }

@@ -27,8 +27,10 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "portal_tree")
+@Table(name = Tree.TABLE_NAME)
 public class Tree extends Auditable<String> {
+
+	public static final String TABLE_NAME= "portal_tree";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
