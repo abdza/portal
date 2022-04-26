@@ -51,22 +51,17 @@ public class User extends Auditable<String> {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
-	@Column(name="new_staffid")
+
 	private String username;
 
-	@Column(name="StaffId")
 	private String staffid;
 
-	@Column(name="EMP_NAME")
 	private String name;
 
 	private String email;
 
-	@Column(name="lanid")
 	private String lan_id;
 
-	@Column(name="IsActive")
 	private Boolean isActive;
 	
 	@JsonIgnore

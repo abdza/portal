@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout/base}">
 
+<th:block layout:fragment="theme-css">
+    <link rel="stylesheet" th:href="@{/libs/ace/css/ace-font.min.css}" />
+    <link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}" />
+    <link rel="stylesheet" th:href="@{/libs/portal/portal.css}" />
+</th:block>
+
 <div layout:fragment="body-container" class="body-container">
 
     <div class="main-container container">

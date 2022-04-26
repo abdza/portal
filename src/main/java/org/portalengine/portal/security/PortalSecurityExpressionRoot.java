@@ -49,6 +49,9 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean trackerPermission(String module, String slug, String permission) {
+		if(module==null) {
+			module = "portal";
+		}
 		Tracker curtracker = repos.getTrackerRepository().findByModuleAndSlug(module, slug);
 
 		if (curtracker == null) {
@@ -105,6 +108,9 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean pagePermission(String module, String slug) {
+		if(module==null) {
+			module = "portal";
+		}
 		PortalPage curpage = repos.getPageRepository().findOneByModuleAndSlug(module, slug);
 
 		if (curpage == null) { 

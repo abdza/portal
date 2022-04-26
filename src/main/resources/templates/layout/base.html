@@ -11,12 +11,7 @@
 	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/regular.min.css}" />
 	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/brands.min.css}" />
 	<link rel="stylesheet" th:href="@{/libs/@fortawesome/fontawesome-free/css/solid.min.css}" />
-
-	<link rel="stylesheet" th:href="@{/libs/ace/css/ace-font.min.css}" />
-	<link rel="stylesheet" th:href="@{/libs/ace/css/ace.min.css}" />
-	
-	<link rel="stylesheet" th:href="@{/libs/portal/portal.css}" />
-
+	<th:block layout:fragment="theme-css"></th:block>
 	<th:block layout:fragment="head-context"></th:block>
 	<th:block layout:fragment="head-end"></th:block>
 </head>

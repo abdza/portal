@@ -160,16 +160,14 @@ public class PortalController {
 	
 	@GetMapping("/setup")
 	public String setupSite(Model model) {
-		var o = userService.getRepo().findByUsername("admin");
-		User admin = o.orElse(null);
+		User admin = userService.getRepo().findByUsername("admin").orElse(null);
 		model.addAttribute("admin",admin);
 		return "page/setup.html";
 	}
 	
 	@PostMapping("/setup")
 	public String doSetupSite(Model model, HttpServletRequest request) {
-		var o = userService.getRepo().findByUsername("admin");
-		User admin = o.orElse(null);
+		User admin = userService.getRepo().findByUsername("admin").orElse(null);
 		
 		if(admin==null) {
 			admin = new User("admin", "admin", "Admin", "admin@portal.com", passwordEncoder.encode("admin123"), true);
