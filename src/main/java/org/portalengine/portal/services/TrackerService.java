@@ -325,7 +325,7 @@ public class TrackerService {
 	public List<HashMap<String,String>> field_options(TrackerField field) {
 		ArrayList<HashMap<String,String>> toret = new ArrayList<HashMap<String,String>>();
 		if(field.getFieldWidget().equals("DropDown")) {
-			if(field.getOptionSourceType().equals("JSON")){		
+			if(field.getOptionSourceType()==null || field.getOptionSourceType().equals("JSON")){		
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode savefield;
 				try {

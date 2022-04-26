@@ -221,7 +221,7 @@ public class TreeService {
 		namedjdbctemplate.update("update portal_tree_node set lft=lft-:nodesize where lft>=:curlft and tree_id=:tree_id", paramsource);
 		namedjdbctemplate.update("update portal_tree_node set rgt=rgt-:nodesize where rgt>=:curlft and tree_id=:tree_id", paramsource);
 		
-		TreeNode prefresh = nodeRepo.getOne(parent.getId());
+		TreeNode prefresh = nodeRepo.getById(parent.getId());
 		paramsource.addValue("parentlft", prefresh.getLft());
 		paramsource.addValue("parentrgt", prefresh.getRgt());
 		//Third step is to make space where to be inserted		
