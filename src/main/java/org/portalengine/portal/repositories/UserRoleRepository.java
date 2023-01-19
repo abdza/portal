@@ -20,10 +20,10 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 	
 	UserRole findByUserAndModuleAndRoleIgnoreCase(User user, String module, String role);
 
-	@Query("from UserRole pg where pg.role like :#{#search} or pg.module like :#{#search}")
+	@Query("from UserRole pg where pg.role like :#{#search} or pg.module like :#{#search} or pg.user in (select user from User user where user.name like :#{#search})")
 	Page<UserRole> apiquery(String search, Pageable pageable);
 	
-	@Query("from UserRole pg where (pg.role like :#{#search}) and pg.module=:#{#module}")
+	@Query("from UserRole pg where (pg.role like :#{#search} or pg.user in (select user from User user where user.name like :#{#search})) and pg.module=:#{#module}")
 	Page<UserRole> apimodulequery(String search, String module, Pageable pageable);
 		
 }

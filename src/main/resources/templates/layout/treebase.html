@@ -6,17 +6,17 @@
 	<link rel="stylesheet" th:href="@{/libs/portal/portal.css}" />
 </th:block>
 <th:block layout:fragment="head-end">
-<link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
-<link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
-<link rel="stylesheet" th:href="@{/libs/fancytree/skin-lion/ui.fancytree.css}" />
-<link rel="stylesheet" th:href="@{/libs/jquery-ui/jquery-ui.min.css}"></script>
-<style>
-@media screen and (max-width: 767px) {
-    .select2 {
-        width: 100% !important;
-    }
-}
-</style>
+	<link rel="stylesheet" th:href="@{/libs/tagify/tagify.css}" />
+	<link rel="stylesheet" th:href="@{/libs/select2/css/select2.min.css}" />
+	<link rel="stylesheet" th:href="@{/libs/fancytree/skin-lion/ui.fancytree.css}" />
+	<link rel="stylesheet" th:href="@{/libs/jquery-ui/jquery-ui.min.css}"></script>
+	<style>
+	@media screen and (max-width: 767px) {
+		.select2 {
+			width: 100% !important;
+		}
+	}
+	</style>
 </th:block>
 
 <div layout:fragment="body-container" class="body-container">
@@ -53,6 +53,9 @@
 
 <script type="text/javascript" th:src="@{/libs/select2/js/select2.full.min.js}"></script>
 <script type="text/javascript" th:src="@{/libs/tagify/jQuery.tagify.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/libs/ace/js/ace.js}"></script>
+
 <script type="text/javascript">
 $(".tagifinput").each(function(i,obj){
 	var whitelist = $(this).data("tagify-whitelist").split(",");
@@ -72,5 +75,4 @@ $(".tagiform").on("submit",function(){
 });
 </script>
 </th:block>
-
 </html>

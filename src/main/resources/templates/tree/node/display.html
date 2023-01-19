@@ -1,53 +1,53 @@
-	<div class="row" th:fragment="nodecard(tree,curnode)">
-		<div class="card border-0 col-12">
-			<div class="card-header bgc-default-d2">
-				<h3 id="nodetitle" th:text="${curnode.name}" class="card-title text-130 text-white"></h3>
-				<div class="card-toolbar">
-				<a id="viewnode" th:href="@{/p/{fullpath}(fullpath=${@treeService.rootLessPath(curnode)})}" href="#" class="card-toolbar-btn text-white">
-				<i class="fa fa-link"></i>
-				</a>
-				<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#user_dialog">				
-				<i class="fa fa-user-plus"></i>
-				</a>				
-				<a id="editnode" th:href="@{/admin/trees/nodes/{curnodeid}/edit(curnodeid=${curnode.id})}" href="#" class="card-toolbar-btn text-white">
-				<i class="fa fa-edit"></i>
-				</a>
-				</div>
-			</div>
-			<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
-				<dl>
-					<div class='row'>
-					<dt class="col-md-3">Name</dt>
-					<dd class="col-md-9" id='bodynodetitle' th:text="${curnode.name}">Name</dd>
-					<dt class="col-md-3">Lft/Rgt</dt>
-					<dd class="col-md-9" id='bodynodelftrgt' th:text="${curnode.lft.toString() + '/' + curnode.rgt.toString()}">Name</dd>
-					<dt class="col-md-3">Slug</dt>
-					<dd class="col-md-9" id='bodynodeslug' th:text="${curnode.slug}">Name</dd>
-					<dt class="col-md-3">Full Path</dt>
-					<dd class="col-md-9" id='bodynodefullpath' th:text="${curnode.fullPath}">Name</dd>
-					<dt class="col-md-3">Object Type</dt>
-					<dd class="col-md-9" id='bodynodeobjecttype' th:text="${curnode.objectType}">Name</dd>
-					<dt class="col-md-3">Object Id</dt>
-					<dd class="col-md-9" id='bodynodeobjectid' th:text="${curnode.objectId}">Name</dd>
-					<dt class="col-md-3">Status</dt>
-					<dd class="col-md-9" id='bodynodestatus' th:text="${curnode.status}">Name</dd>
-					<dt class="col-md-3">Record Id</dt>
-					<dd class="col-md-9" id='bodynoderecordid' th:text="${curnode.recordId}">Name</dd>
-					<dt class="col-md-3">Data</dt>
-					<dd class="col-md-9" id='bodynodedata' th:text="${curnode.data}">Name</dd>
-					</div>
-					<div class='row'>
-					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">Users</button >
-					<div class="collapse" id="collapseUsers">
-					<div class='card card-body' id='bodynodeusers'>
-					<ul>
-					<li th:each="user:${curnode.users}" th:text="${ user.role + ' : ' + user.user.name}">Role: Name</li>
-					</ul>
-					</div>
-					</div>
-					</div>
-				</dl>
-				
+<div class="row" th:fragment="nodecard(tree,curnode)">
+	<div class="card border-0 col-12">
+		<div class="card-header bgc-default-d2">
+			<h3 id="nodetitle" th:text="${curnode.name}" class="card-title text-130 text-white"></h3>
+			<div class="card-toolbar">
+			<a id="viewnode" th:href="@{/p/{fullpath}(fullpath=${@treeService.rootLessPath(curnode)})}" href="#" class="card-toolbar-btn text-white">
+			<i class="fa fa-link"></i>
+			</a>
+			<a class="card-toolbar-btn text-white" data-toggle="modal" data-target="#user_dialog">				
+			<i class="fa fa-user-plus"></i>
+			</a>				
+			<a id="editnode" th:href="@{/admin/trees/nodes/{curnodeid}/edit(curnodeid=${curnode.id})}" href="#" class="card-toolbar-btn text-white">
+			<i class="fa fa-edit"></i>
+			</a>
 			</div>
 		</div>
+		<div class="card-body bgc-white border-1 border-t-0 brc-default-m2">
+			<dl>
+				<div class='row'>
+				<dt class="col-md-3">Name</dt>
+				<dd class="col-md-9" id='bodynodetitle' th:text="${curnode.name}">Name</dd>
+				<dt class="col-md-3">Lft/Rgt</dt>
+				<dd class="col-md-9" id='bodynodelftrgt' th:text="${curnode.lft.toString() + '/' + curnode.rgt.toString()}">Name</dd>
+				<dt class="col-md-3">Slug</dt>
+				<dd class="col-md-9" id='bodynodeslug' th:text="${curnode.slug}">Name</dd>
+				<dt class="col-md-3">Full Path</dt>
+				<dd class="col-md-9" id='bodynodefullpath' th:text="${curnode.fullPath}">Name</dd>
+				<dt class="col-md-3">Object Type</dt>
+				<dd class="col-md-9" id='bodynodeobjecttype' th:text="${curnode.objectType}">Name</dd>
+				<dt class="col-md-3">Object Id</dt>
+				<dd class="col-md-9" id='bodynodeobjectid' th:text="${curnode.objectId}">Name</dd>
+				<dt class="col-md-3">Status</dt>
+				<dd class="col-md-9" id='bodynodestatus' th:text="${curnode.status}">Name</dd>
+				<dt class="col-md-3">Record Id</dt>
+				<dd class="col-md-9" id='bodynoderecordid' th:text="${curnode.recordId}">Name</dd>
+				<dt class="col-md-3">Data</dt>
+				<dd class="col-md-9" id='bodynodedata' th:text="${curnode.data}">Name</dd>
+				</div>
+				<div class='row'>
+				<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">Users</button >
+				<div class="collapse" id="collapseUsers">
+				<div class='card card-body' id='bodynodeusers'>
+				<ul>
+				<li th:each="user:${curnode.users}" th:text="${ user.role + ' : ' + user.user.name}">Role: Name</li>
+				</ul>
+				</div>
+				</div>
+				</div>
+			</dl>
+			
+		</div>
 	</div>
+</div>
