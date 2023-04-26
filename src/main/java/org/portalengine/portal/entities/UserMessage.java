@@ -25,7 +25,7 @@ public class UserMessage extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_user_message";
     	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
     private String title;

@@ -42,8 +42,8 @@ public class PortalSecurityExpressionRoot
 
 	public List<UserRole> moduleRoles(String module) {
 		List<UserRole> mr = null;
-		if(curuser!=null){
-			mr = this.repos.getUserRoleRepository().findByUserAndModuleIgnoreCase(curuser, module);
+		if(this.curuser!=null){
+			mr = this.repos.getUserRoleRepository().findByUserAndModuleIgnoreCase(this.curuser, module);
 		}
 		return mr;
 	}
@@ -89,7 +89,7 @@ public class PortalSecurityExpressionRoot
 			} else if (fname.trim().equals("None")) {
 				return false;
 			} else if (fname.trim().equals("Authenticated")) {
-				if (curuser != null) {
+				if (this.curuser != null) {
 					return true;
 				}
 			} else {
@@ -108,6 +108,7 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean pagePermission(String module, String slug) {
+		System.out.println("In page permission");
 		if(module==null) {
 			module = "portal";
 		}
@@ -116,23 +117,27 @@ public class PortalSecurityExpressionRoot
 		if (curpage == null) { 
 			return false;
 		}
+		System.out.println("page not null");
 		if (curpage.getPublished() != true) {
 			return false;
 		}
-		if(curuser==null && curpage.getRequireLogin()) {
+		System.out.println("page published");
+		if(curpage.getRequireLogin() && this.curuser==null) {
 			return false;
 		}
+		System.out.println("page viewable");
 
 		List<UserRole> mr = moduleRoles(module);
 
-		if(curpage.getAllowedRoles()!=null){
+		if(curpage.getAllowedRoles()!=null && curpage.getAllowedRoles().length()>0){
+			System.out.println("page got allowed roles");
 			for (String fname : curpage.getAllowedRoles().split(",")) {
 				if (fname.trim().equals("All")) {
 					return true;
 				} else if (fname.trim().equals("None")) {
 					return false;
 				} else if (fname.trim().equals("Authenticated")) {
-					if (curuser != null) {
+					if (this.curuser != null) {
 						return true;
 					}
 				} else {

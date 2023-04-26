@@ -28,7 +28,7 @@ public class TreeUser extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_tree_user";
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@JsonIgnore

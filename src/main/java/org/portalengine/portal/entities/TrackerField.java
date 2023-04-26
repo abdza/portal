@@ -42,7 +42,7 @@ public class TrackerField extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_tracker_field";
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@NotNull

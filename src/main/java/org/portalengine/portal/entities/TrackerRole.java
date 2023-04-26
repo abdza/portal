@@ -26,7 +26,7 @@ public class TrackerRole extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_tracker_role";
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@JsonIgnore

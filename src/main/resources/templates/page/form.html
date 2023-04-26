@@ -45,7 +45,7 @@ form .ace_editor {
     <div class='content'>
         <h1 th:text="${pageTitle}">Create Page</h1>
         <form method='post' id='pageform' th:action='@{/admin/pages/save}' th:object="${page}">
-            <input type='hidden' th:field='*{id}' />
+            <input th:if="${page.id!=null}" type='hidden' th:field='*{id}' />
 
             <div class='form-group row'>
                 <div class='col-sm-3 col-form-label text-sm-right pr-0'>

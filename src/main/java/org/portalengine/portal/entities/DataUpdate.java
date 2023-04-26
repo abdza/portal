@@ -28,7 +28,7 @@ public class DataUpdate extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_data_update";
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@ManyToOne( fetch = FetchType.LAZY )

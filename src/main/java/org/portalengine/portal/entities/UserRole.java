@@ -32,7 +32,7 @@ public class UserRole extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_user_role";
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.LAZY)

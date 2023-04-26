@@ -34,7 +34,7 @@ public class TreeNode extends Auditable<String> {
 	public static final String TABLE_NAME= "portal_tree_node";
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
 	@JsonIgnore

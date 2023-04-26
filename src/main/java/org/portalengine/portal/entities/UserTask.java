@@ -25,7 +25,7 @@ public class UserTask extends Auditable<String> {
     public static final String TABLE_NAME= "portal_user_task";
     	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 
     private String title;
