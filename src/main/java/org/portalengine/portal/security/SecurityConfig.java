@@ -36,9 +36,6 @@ public class SecurityConfig {
 	protected AuthenticationSuccessHandler authenticationSuccessHandler;
 	protected LogoutSuccessHandler logoutSuccessHandler;
 
-	@Autowired
-	PortalAuthenticationProvider portalAuthenticationProvider;
-
 	@Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
     	return new SimpleUrlAuthenticationFailureHandler();
@@ -63,35 +60,6 @@ public class SecurityConfig {
 	public static PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}	
-	
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder authbuilder, DataSource dataSource) { 
-		try {
-
-			authbuilder.authenticationProvider(portalAuthenticationProvider);
-
-			/* authbuilder.ldapAuthentication()
-			.userDnPatterns("uid={0},ou=people")
-			.groupSearchBase("ou=groups")
-			.contextSource()
-			.url("ldap://localhost:2389/dc=springframework,dc=org")
-			.and()
-			.passwordCompare()
-			.passwordEncoder(new BCryptPasswordEncoder())
-			.passwordAttribute("userPassword"); */
-			
-
-			/*  auth.jdbcAuthentication()
-			.dataSource(dataSource)
-			.withDefaultSchema()
-			.withUser(User.withUsername("user")
-						.password(encoder().encode("pass"))
-			.roles("USER"));  */
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	@Configuration
 	@Order(1)                                                       

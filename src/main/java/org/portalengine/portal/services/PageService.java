@@ -121,7 +121,8 @@ public class PageService {
 			}
 		}
 		catch(Exception exp) {
-			System.out.println("Slug not found:" + slug);
+			System.out.println("Error rendering :" + slug);
+			System.out.println("Exp:" + exp.toString());
 		}		
 		return "<!-- -->";
 	}
@@ -135,6 +136,7 @@ public class PageService {
 		}
 		catch(Exception exp) {
 			System.out.println("Slug not found:" + slug);
+			System.out.println("Exp:" + exp.toString());
 		}
 		return false;
 	}

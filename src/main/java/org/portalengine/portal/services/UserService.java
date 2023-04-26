@@ -66,12 +66,12 @@ public class UserService implements UserDetailsService {
 	}
 	
 	public boolean hasRole(User curuser, String module, String role) {
-		UserRole userRole = roleRepo.findByUserAndModuleAndRoleIgnoreCase(curuser, module, role);
-		if(userRole != null && userRole instanceof UserRole) {
-			return true;
+		UserRole userRole = roleRepo.findByUserAndModuleIgnoreCaseAndRoleIgnoreCase(curuser, module, role);
+		if(userRole==null) {
+			return false;
 		}
 		else {
-			return false;
+			return true;
 		}
 	}
 	
@@ -104,6 +104,9 @@ public class UserService implements UserDetailsService {
 	public User currentUser() {
 		Object secuser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(secuser!=null){
+			if(secuser instanceof SecurityUser){	
+				return ((SecurityUser) secuser).getUser();
+			}
 			if(secuser instanceof User){	
 				return (User)secuser;
 			}

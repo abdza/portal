@@ -108,7 +108,6 @@ public class PortalSecurityExpressionRoot
 	}
 
 	public boolean pagePermission(String module, String slug) {
-		System.out.println("In page permission");
 		if(module==null) {
 			module = "portal";
 		}
@@ -117,20 +116,16 @@ public class PortalSecurityExpressionRoot
 		if (curpage == null) { 
 			return false;
 		}
-		System.out.println("page not null");
 		if (curpage.getPublished() != true) {
 			return false;
 		}
-		System.out.println("page published");
 		if(curpage.getRequireLogin() && this.curuser==null) {
 			return false;
 		}
-		System.out.println("page viewable");
 
 		List<UserRole> mr = moduleRoles(module);
 
 		if(curpage.getAllowedRoles()!=null && curpage.getAllowedRoles().length()>0){
-			System.out.println("page got allowed roles");
 			for (String fname : curpage.getAllowedRoles().split(",")) {
 				if (fname.trim().equals("All")) {
 					return true;
