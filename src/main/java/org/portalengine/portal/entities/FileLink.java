@@ -19,7 +19,7 @@ import lombok.Data;
 @Table(name = FileLink.TABLE_NAME)
 public class FileLink extends Auditable<String> {
 	
-	public static final String TABLE_NAME= "portal_file_link";
+	public static final String TABLE_NAME= "portal_file";
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
