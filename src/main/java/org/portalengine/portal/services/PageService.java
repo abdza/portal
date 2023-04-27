@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.portalengine.portal.entities.PortalPage;
 import org.portalengine.portal.repositories.PageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +49,9 @@ public class PageService {
 	
 	@Autowired
 	private ServletContext servletContext;
+
+	@Value( "${server.scheme:http}" )
+	private String scheme;
 	
 	private final static String TEMPLATE_LOCAL = "US";
 	
@@ -144,6 +148,7 @@ public class PageService {
 	public String urlParamUpdate(String param, String value) {		
 		ServletUriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
 		urlBuilder.replaceQueryParam(param, value);		
+		urlBuilder.scheme(scheme);
 		String result = urlBuilder.build().toUriString();
 		return result;
 	}
@@ -151,6 +156,7 @@ public class PageService {
 	public String urlChangePath(String newPath) {
 		ServletUriComponentsBuilder urlBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
 		urlBuilder.replacePath(newPath);		
+		urlBuilder.scheme(scheme);
 		String result = urlBuilder.build().toUriString();
 		return result;
 	}
